@@ -1,0 +1,86 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion COMPILE_SDK_VERSION as int
+    buildToolsVersion BUILD_TOOLS_VERSION
+
+    defaultConfig {
+        applicationId "com.nuu.nuuinfo"
+        minSdkVersion MIN_SDK_VERSION as int
+        targetSdkVersion TARGET_SDK_VERSION as int
+        versionCode 1
+        versionName "1.0"
+
+        multiDexEnabled true
+    }
+    signingConfigs {
+        release {
+            storeFile file('colourlife.keystore')
+            storePassword 'colourlife'
+            keyAlias 'colourlife'
+            keyPassword 'colourlife'
+        }
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+
+
+//指定打包后应用名称
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            if (variant.buildType.name == "release") {
+                outputFileName = "app_v${defaultConfig.versionName}_${releaseTime()}.apk"
+            } else {
+                outputFileName = "app_${defaultConfig.versionName}_${releaseTime()}_debug.apk"
+            }
+
+            variant.getAssembleProvider().configure() {
+                it.doLast {
+                    copyBuildApk()
+                }
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
+    implementation "com.android.support:design:${SUPPORT_VERSION}"
+
+    implementation 'com.google.protobuf:protobuf-java:3.4.0'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+}
+
+project.afterEvaluate {
+    //handleBuildTag()
+}
+
+def copyBuildApk() {
+    copy {
+        from("${buildDir}/outputs/apk/release") {
+            include "*.apk"
+        }
+        into '../dist'
+    }
+}
+
+
+def static releaseTime() {
+    return new Date().format("MMdd_HHmm")
+}
