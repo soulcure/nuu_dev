@@ -63,6 +63,8 @@ dependencies {
     implementation "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
     implementation "com.android.support:design:${SUPPORT_VERSION}"
 
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+    implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.google.protobuf:protobuf-java:3.4.0'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 }

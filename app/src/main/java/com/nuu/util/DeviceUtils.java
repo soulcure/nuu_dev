@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.nuu.entity.ReportData;
 import com.nuu.proto.DeviceStatus;
 
 import java.io.File;
@@ -595,4 +596,116 @@ public class DeviceUtils {
     }
 
 
+    public static ReportData.Sim1Bean getSimCardJson(Context context) {
+
+        TelephonyManager tm = (TelephonyManager) context.getApplicationContext()
+                .getSystemService(Context.TELEPHONY_SERVICE);
+        //返回设备的当前位置
+        CellLocation cellLocation = tm.getCellLocation();
+        List<CellInfo> cellInfoList = tm.getAllCellInfo();
+
+        //Returns the numeric name (MCC+MNC) of current registered operator.
+        String plmn = tm.getNetworkOperator();//默认plmn
+        String imsi = tm.getSubscriberId();//默认imsi
+        if (imsi == null) {
+            imsi = "";
+        }
+        if (plmn == null) {
+            plmn = "";
+        }
+
+        ReportData.Sim1Bean bean = new ReportData.Sim1Bean();
+        bean.setImsi(imsi);
+        bean.setPlmn(plmn);
+        int networkType = tm.getNetworkType();
+        bean.setNetMode(networkType);//network type
+
+        for (CellInfo cellInfo : cellInfoList) {
+            //GSM手机信息
+            if (cellInfo instanceof CellInfoGsm) {
+                CellSignalStrengthGsm cellSignalStrength = ((CellInfoGsm) cellInfo).getCellSignalStrength();
+                int asuLevel = cellSignalStrength.getAsuLevel();
+                int dbm = cellSignalStrength.getDbm();
+                int level = cellSignalStrength.getLevel();
+
+                CellInfoGsm cgsm = (CellInfoGsm) cellInfo;
+                CellIdentityGsm cellIdentity = cgsm.getCellIdentity();
+                int cid = cellIdentity.getCid();
+                int lac = cellIdentity.getLac();
+                int mcc = cellIdentity.getMcc();
+                int mnc = cellIdentity.getMnc();
+
+                bean.setLac(lac);
+                bean.setCi(cid);
+
+                bean.setSignal(dbm);
+                bean.setPsc(0);
+            }
+            //小区LTE
+            if (cellInfo instanceof CellInfoLte) {
+                CellSignalStrengthLte cellSignalStrength = ((CellInfoLte) cellInfo).getCellSignalStrength();
+                int dbm = cellSignalStrength.getDbm();
+                int asuLevel = cellSignalStrength.getAsuLevel();
+                int timingAdvance = cellSignalStrength.getTimingAdvance();
+                int level = cellSignalStrength.getLevel();
+
+                CellIdentityLte cellIdentity = ((CellInfoLte) cellInfo).getCellIdentity();
+                int mcc = cellIdentity.getMcc();
+                int mnc = cellIdentity.getMnc();
+                int ci = cellIdentity.getCi();
+                int pci = cellIdentity.getPci();
+                int tac = cellIdentity.getTac();
+
+                bean.setCi(ci);
+                bean.setLac(pci);
+                bean.setSignal(dbm);
+                bean.setPsc(tac);
+            }
+            //CDMA手机信息
+            if (cellInfo instanceof CellInfoCdma) {
+                CellSignalStrengthCdma cellSignalStrength = ((CellInfoCdma) cellInfo).getCellSignalStrength();
+                int asuLevel = cellSignalStrength.getAsuLevel();
+                int cdmaDbm = cellSignalStrength.getCdmaDbm();
+                int cdmaEcio = cellSignalStrength.getCdmaEcio();
+                int cdmaLevel = cellSignalStrength.getCdmaLevel();
+                int dbm = cellSignalStrength.getDbm();
+                int evdoDbm = cellSignalStrength.getEvdoDbm();
+                int evdoEcio = cellSignalStrength.getEvdoEcio();
+                int evdoLevel = cellSignalStrength.getEvdoLevel();
+                int evdoSnr = cellSignalStrength.getEvdoSnr();
+                int level = cellSignalStrength.getLevel();
+                CellIdentityCdma cellIdentity = ((CellInfoCdma) cellInfo).getCellIdentity();
+                int basestationId = cellIdentity.getBasestationId();
+                int latitude = cellIdentity.getLatitude();
+                int longitude = cellIdentity.getLongitude();
+                int networkId = cellIdentity.getNetworkId();
+                int systemId = cellIdentity.getSystemId();
+
+                bean.setCi(basestationId);
+                bean.setLac(networkId);
+                bean.setSignal(dbm);
+                //build.setNetMode(ReportData.NetworkMode.CDMA);
+                bean.setPsc(systemId);
+            }
+            //WCDMA手机信息
+            if (cellInfo instanceof CellInfoWcdma) {
+                CellSignalStrengthWcdma cellSignalStrength = ((CellInfoWcdma) cellInfo).getCellSignalStrength();
+                int asuLevel = cellSignalStrength.getAsuLevel();
+                int dbm = cellSignalStrength.getDbm();
+                int level = cellSignalStrength.getLevel();
+                CellIdentityWcdma cellIdentity = ((CellInfoWcdma) cellInfo).getCellIdentity();
+                int cid = cellIdentity.getCid();
+                int lac = cellIdentity.getLac();
+                int mcc = cellIdentity.getMcc();
+                int psc = cellIdentity.getPsc();
+
+                bean.setCi(cid);
+                bean.setLac(lac);
+                bean.setSignal(dbm);
+                //build.setNetMode(ReportData.NetworkMode.WCDMA);
+                bean.setPsc(psc);
+            }
+        }
+        return bean;
+    }
 }
