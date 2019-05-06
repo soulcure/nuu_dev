@@ -61,9 +61,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 String model = Build.MODEL;
                 ReceiveListener callback = new ReceiveListener() {
                     @Override
-                    public void OnRec(PduBase pduBase) {
+                    public void OnRec(byte[] body) {
                         try {
-                            final UpdateRequest.DeviceUpgradeResp ack = UpdateRequest.DeviceUpgradeResp.parseFrom(pduBase.params);
+                            final UpdateRequest.DeviceUpgradeResp ack = UpdateRequest.DeviceUpgradeResp.parseFrom(body);
                             String test = ack.getNewVerCode();
 
                         } catch (ExceptionInInitializerError e) {
@@ -87,9 +87,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 DeviceStatus.SimCardSlot sim1 = DeviceUtils.getSimCard(this);
                 ReceiveListener callback = new ReceiveListener() {
                     @Override
-                    public void OnRec(PduBase pduBase) {
+                    public void OnRec(byte[] body) {
                         try {
-                            final ServerResponse.ReportDeviceStatusInfoResp ack = ServerResponse.ReportDeviceStatusInfoResp.parseFrom(pduBase.params);
+                            final ServerResponse.ReportDeviceStatusInfoResp ack = ServerResponse.ReportDeviceStatusInfoResp.parseFrom(body);
                             String test = ack.getDeviceId();
                         } catch (ExceptionInInitializerError e) {
                             e.printStackTrace();

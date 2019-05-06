@@ -83,7 +83,8 @@ public class HuxinService extends Service {
          * 发送socket协议
          *
          * @param msg       消息体
-         * @param commandId 命令码
+         * @param commandId 发送命令码
+         * @param rspId     回复命令码
          * @param callback  回调
          */
         public void sendProto(GeneratedMessageV3 msg, short commandId,

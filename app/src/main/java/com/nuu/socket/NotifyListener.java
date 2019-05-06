@@ -11,5 +11,5 @@ public abstract class NotifyListener {
         return commandId;
     }
 
-    public abstract void OnRec(byte[] data);
+    public abstract void OnRec(byte[] body);
 }

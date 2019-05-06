@@ -152,7 +152,7 @@ public class TcpClient extends PduUtil implements Runnable {
 
         pduBase.commandId = commandId;
         pduBase.length = (short) msg.getSerializedSize();
-        pduBase.params = msg.toByteArray();
+        pduBase.body = msg.toByteArray();
 
         Log.v(TAG, "sendProto commandId:" + pduBase.commandId);
         if (callback != null) {
@@ -267,7 +267,7 @@ public class TcpClient extends PduUtil implements Runnable {
                 ReceiveListener callback = mCommonListener.get(key);
 
                 if (callback != null) {
-                    callback.OnRec(pduBase);
+                    callback.OnRec(pduBase.body);
                     mCommonListener.remove(key);
                 } else {
                     OnCallback(pduBase);
@@ -283,7 +283,7 @@ public class TcpClient extends PduUtil implements Runnable {
     public void OnCallback(PduBase pduBase) {
         for (NotifyListener item : mNotifyListener) {
             if (item.getCommandId() == pduBase.commandId) {
-                item.OnRec(pduBase.params);
+                item.OnRec(pduBase.body);
                 break;
             }
         }

@@ -27,7 +27,7 @@ public class PduBase {
     /****************************************************
      * index 3. pos:[4-4+n) 参数
      */
-    public byte[] params;
+    public byte[] body;
 
 }
 

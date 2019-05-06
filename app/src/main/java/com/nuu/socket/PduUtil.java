@@ -78,8 +78,8 @@ public abstract class PduUtil {
         Log.d(TAG, "tcp rec package params Length:" + length);
 
         if (length > 0) {
-            units.params = new byte[length];
-            buffer.get(units.params);
+            units.body = new byte[length];
+            buffer.get(units.body);
         }
 
         return units;
@@ -91,8 +91,8 @@ public abstract class PduUtil {
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         byteBuffer.putShort(req.commandId);
         byteBuffer.putShort(req.length);
-        if (req.params != null) {
-            byteBuffer.put(req.params);
+        if (req.body != null) {
+            byteBuffer.put(req.body);
         }
         return byteBuffer;
 

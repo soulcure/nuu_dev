@@ -263,16 +263,16 @@ public class MiFiManager {
     }
 
 
-    private void waitBindingNotify(final NotifyListener callback) {
+    private void waitBindingNotify(final NotifyListener listener) {
         init(mContext, new InitListener() {
             @Override
             public void success() {
-                huxinService.setNotifyListener(callback);
+                huxinService.setNotifyListener(listener);
             }
 
             @Override
             public void fail() {
-                String log = "bind server fail!";
+                Log.e(TAG, "bind server fail!");
             }
         });
     }

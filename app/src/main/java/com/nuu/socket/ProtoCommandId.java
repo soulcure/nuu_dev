@@ -158,20 +158,4 @@ public class ProtoCommandId {
     }
 
 
-    public static PduBase buildProto(short commandId, byte[] params) {
-
-        PduBase pdu = new PduBase();
-        pdu.commandId = commandId;
-        if (params != null) {
-            pdu.params = params;
-            pdu.length = (short) params.length;
-        } else {
-            pdu.params = null;
-            pdu.length = 0;
-        }
-
-        return pdu;
-    }
-
-
 }
