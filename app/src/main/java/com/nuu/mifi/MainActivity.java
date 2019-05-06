@@ -5,13 +5,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
 import android.view.View;
-import android.support.v7.widget.RecyclerView;
 
 import com.nuu.MiFiManager;
 import com.nuu.proto.DeviceStatus;
 import com.nuu.proto.ServerResponse;
 import com.nuu.proto.UpdateRequest;
-import com.nuu.socket.PduBase;
 import com.nuu.socket.ReceiveListener;
 import com.nuu.util.AppUtils;
 import com.nuu.util.DeviceUtils;

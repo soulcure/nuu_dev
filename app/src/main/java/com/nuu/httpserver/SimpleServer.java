@@ -8,7 +8,6 @@ import android.util.Log;
 
 
 import com.nuu.entity.ReportData;
-import com.nuu.proto.DeviceStatus;
 import com.nuu.util.DeviceUtils;
 import com.nuu.util.ShellUtils;
 
