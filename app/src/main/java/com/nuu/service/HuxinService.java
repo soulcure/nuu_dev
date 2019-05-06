@@ -83,13 +83,12 @@ public class HuxinService extends Service {
          * 发送socket协议
          *
          * @param msg       消息体
-         * @param commandId 发送命令码
-         * @param rspId     回复命令码
+         * @param msgType 发送命令码
          * @param callback  回调
          */
-        public void sendProto(GeneratedMessageV3 msg, short commandId,
-                              short rspId, ReceiveListener callback) {
-            mClient.sendProto(msg, commandId, rspId, callback);
+        public void sendProto(GeneratedMessageV3 msg, short msgType,
+                              ReceiveListener callback) {
+            mClient.sendProto(msg, msgType, callback);
         }
 
         public void setNotifyListener(NotifyListener listener) {
@@ -290,6 +289,8 @@ public class HuxinService extends Service {
      * 发送登录IM服务器请求
      */
     private void tcpLogin() {
+
+        Log.d(TAG, "socket connect success");
         /*MiFiManager.instance().chargerAuth(new ReceiveListener() {
             @Override
             public void OnRec(ByteBuffer buffer) {

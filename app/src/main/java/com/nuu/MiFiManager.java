@@ -21,6 +21,7 @@ import com.nuu.proto.DeviceStatus;
 import com.nuu.proto.UpdateRequest;
 import com.nuu.service.HuxinService;
 import com.nuu.socket.NotifyListener;
+import com.nuu.socket.ProtoCommandId;
 import com.nuu.socket.ReceiveListener;
 import com.nuu.util.AppUtils;
 
@@ -246,12 +247,12 @@ public class MiFiManager {
     }
 
 
-    private void waitBindingProto(final GeneratedMessageV3 msg, final short commandId,
-                                  final short rspId, final ReceiveListener callback) {
+    private void waitBindingProto(final GeneratedMessageV3 msg, final short msgType,
+                                  final ReceiveListener callback) {
         init(mContext, new InitListener() {
             @Override
             public void success() {
-                huxinService.sendProto(msg, commandId, rspId, callback);
+                huxinService.sendProto(msg, msgType, callback);
             }
 
 
@@ -281,16 +282,16 @@ public class MiFiManager {
     /**
      * 发送socket协议
      *
-     * @param commandId 命令码
+     * @param msgType 命令码
      * @param callback  数据
      */
-    public void sendProto(GeneratedMessageV3 msg, short commandId,
-                          short rspId, ReceiveListener callback) {
+    public void sendProto(GeneratedMessageV3 msg, short msgType,
+                          ReceiveListener callback) {
         if (mContext != null) {
             if (binded == BIND_STATUS.BINDED) {
-                huxinService.sendProto(msg, commandId, rspId, callback);
+                huxinService.sendProto(msg, msgType, callback);
             } else {
-                waitBindingProto(msg, commandId, rspId, callback);
+                waitBindingProto(msg, msgType, callback);
             }
         } else {
             throw new IllegalStateException("huxin sdk no init");
@@ -348,8 +349,8 @@ public class MiFiManager {
      */
     public void checkUpdate(String devId, String curVerCode, String brand,
                             String model, ReceiveListener callback) {
-        short commandId = 0x1132;
-        short rspId = 0x0033;
+        short msgType = ProtoCommandId.requestDeviceUpgrade();
+
         UpdateRequest.DeviceUpgradeReq.Builder builder = UpdateRequest.DeviceUpgradeReq.newBuilder();
         builder.setDevId(devId);
         builder.setCurVerCode(curVerCode);
@@ -357,7 +358,7 @@ public class MiFiManager {
         builder.setModel(model);
         UpdateRequest.DeviceUpgradeReq msg = builder.build();
 
-        sendProto(msg, commandId, rspId, callback);
+        sendProto(msg, msgType, callback);
     }
 
     /**
@@ -366,8 +367,8 @@ public class MiFiManager {
     public void deviceStatus(String devId, int status, int utc, String ip, String mac,
                              DeviceStatus.SimCardSlot sim1, DeviceStatus.SimCardSlot sim2,
                              ReceiveListener callback) {
-        short commandId = 0x1233;
-        short rspId = 0x0032;
+        short msgType = ProtoCommandId.reportDeviceStatusMsgType();
+
         DeviceStatus.ReportDeviceStatusReq.Builder builder = DeviceStatus.ReportDeviceStatusReq.newBuilder();
         builder.setDeviceId(devId);//set device id
         builder.setMac(mac);//设置mac
@@ -382,7 +383,7 @@ public class MiFiManager {
 
         DeviceStatus.ReportDeviceStatusReq msg = builder.build();
 
-        sendProto(msg, commandId, rspId, callback);
+        sendProto(msg, msgType, callback);
     }
 
 

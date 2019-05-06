@@ -20,7 +20,7 @@ public abstract class PduUtil {
     public abstract void OnCallback(PduBase pduBase);
 
     public int ParsePdu(ByteBuffer buffer) {
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.order(ByteOrder.BIG_ENDIAN);
         if (buffer.limit() >= PduBase.PDU_HEADER_LENGTH) {
             //has full header
             int totalLength = PduBase.PDU_HEADER_LENGTH + buffer.getShort(PduBase.PDU_BODY_LENGTH_INDEX);
@@ -57,22 +57,22 @@ public abstract class PduUtil {
     private PduBase buildPdu(byte[] bytes) {
         PduBase units = new PduBase();
         ByteBuffer buffer = ByteBuffer.allocate(bytes.length);
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.order(ByteOrder.BIG_ENDIAN);
         buffer.put(bytes);//准备从缓冲区中读取数据
         buffer.flip();
 
         if (BuildConfig.DEBUG) {
-            Log.d(TAG, "tcp rec package commandId:" + buffer.getShort(0));
+            Log.d(TAG, "tcp rec package msgType:" + buffer.get(1));
             byte[] data = new byte[buffer.remaining()];
             buffer.get(data);
             Log.d(TAG, "tcp rec buffer:" + HexUtil.bytes2HexString(data));
             buffer.flip();
         }
 
-        short commandId = buffer.getShort();
+        short msgType = buffer.getShort();
         short length = buffer.getShort();
 
-        units.commandId = commandId;
+        units.msgType = msgType;
         units.length = length;
 
         Log.d(TAG, "tcp rec package params Length:" + length);
@@ -88,8 +88,8 @@ public abstract class PduUtil {
 
     public ByteBuffer serializePdu(PduBase req) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(AppConfig.SEND_BUFFER_SIZE);
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        byteBuffer.putShort(req.commandId);
+        byteBuffer.order(ByteOrder.BIG_ENDIAN);
+        byteBuffer.putShort(req.msgType);
         byteBuffer.putShort(req.length);
         if (req.body != null) {
             byteBuffer.put(req.body);

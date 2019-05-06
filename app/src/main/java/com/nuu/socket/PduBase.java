@@ -15,7 +15,7 @@ public class PduBase {
     /****************************************************
      * index 0. pos:[0-2) 命令码
      */
-    public short commandId;
+    public short msgType;
 
     /****************************************************
      * index 1. pos:[2-4) 参数长度

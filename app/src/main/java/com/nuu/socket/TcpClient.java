@@ -146,17 +146,19 @@ public class TcpClient extends PduUtil implements Runnable {
      * @param msg      消息体
      * @param callback 回调
      */
-    public synchronized void sendProto(GeneratedMessageV3 msg, short commandId,
-                                       short rspId, ReceiveListener callback) {
+    public synchronized void sendProto(GeneratedMessageV3 msg, short msgType,
+                                       ReceiveListener callback) {
         PduBase pduBase = new PduBase();
 
-        pduBase.commandId = commandId;
+        pduBase.msgType = msgType;
         pduBase.length = (short) msg.getSerializedSize();
         pduBase.body = msg.toByteArray();
 
-        Log.v(TAG, "sendProto commandId:" + pduBase.commandId);
+        short key = (short) (msgType & 0x00FF);
+
+        Log.d(TAG, "length:" + pduBase.length);
         if (callback != null) {
-            mCommonListener.put(rspId, callback);
+            mCommonListener.put(key, callback);
         }
         sendPdu(pduBase);
     }
@@ -259,8 +261,13 @@ public class TcpClient extends PduUtil implements Runnable {
 
     @Override
     public void OnRec(final PduBase pduBase) {
-        final short key = pduBase.commandId;
-        Log.d(TAG, "tcp rec commandId:" + key);
+        final byte ver = (byte) ((pduBase.msgType >> 12) & 0x000F);
+        final byte cate = (byte) ((pduBase.msgType >> 8) & 0x000F);
+        final short key = (short) (pduBase.msgType & 0x00FF);
+
+        String log = "tcp rec ver:" + ver + "& tcp rec cate:" + cate + "& tcp rec commandId:" + key;
+        Log.d(TAG, log);
+
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -282,7 +289,7 @@ public class TcpClient extends PduUtil implements Runnable {
     @Override
     public void OnCallback(PduBase pduBase) {
         for (NotifyListener item : mNotifyListener) {
-            if (item.getCommandId() == pduBase.commandId) {
+            if (item.getCommandId() == pduBase.msgType) {
                 item.OnRec(pduBase.body);
                 break;
             }
