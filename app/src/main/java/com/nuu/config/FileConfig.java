@@ -6,22 +6,22 @@ import java.io.File;
 
 public class FileConfig {
 
-    public static final String HuXinPath = "/nuu";
-    public static final String ApkPaths = HuXinPath + "/Apk/";
-    public static final String PicPaths = HuXinPath + "/Pic/";
-    public static final String VideoPaths = HuXinPath + "/Video/";
-    public static final String LogPaths = HuXinPath + "/Log/";
-    public static final String CrashPaths = HuXinPath + "/Crash/";
-    public static final String AudioPaths = HuXinPath + "/Audio/";
-    public static final String FilePaths = HuXinPath + "/File/";
-    public static final String SDKPaths = HuXinPath + "/Sdk/";
-    public static final String InfoPaths = HuXinPath + "/Info/";
-    public static final String VcardPaths = HuXinPath + "/vcard/";
-    public static final String UserPaths = HuXinPath + "/User/";
-    public static final String HeaderPaths = HuXinPath + "/Head/";
-    public static final String HeaderLargePaths = HuXinPath + "/HeadLarge/";
-    public static final String GlideCachePaths = HuXinPath + "/GlideCache/";
-    public static final String ThumbImagePaths = HuXinPath + "/ThumbImage";
+    public static final String NuuPath = "/nuu";
+    public static final String ApkPaths = NuuPath + "/Apk/";
+    public static final String PicPaths = NuuPath + "/Pic/";
+    public static final String VideoPaths = NuuPath + "/Video/";
+    public static final String LogPaths = NuuPath + "/Log/";
+    public static final String CrashPaths = NuuPath + "/Crash/";
+    public static final String AudioPaths = NuuPath + "/Audio/";
+    public static final String FilePaths = NuuPath + "/File/";
+    public static final String SDKPaths = NuuPath + "/Sdk/";
+    public static final String InfoPaths = NuuPath + "/Info/";
+    public static final String VcardPaths = NuuPath + "/vcard/";
+    public static final String UserPaths = NuuPath + "/User/";
+    public static final String HeaderPaths = NuuPath + "/Head/";
+    public static final String HeaderLargePaths = NuuPath + "/HeadLarge/";
+    public static final String GlideCachePaths = NuuPath + "/GlideCache/";
+    public static final String ThumbImagePaths = NuuPath + "/ThumbImage";
 
     /**
      * 描述：SD卡是否能用.
@@ -46,7 +46,7 @@ public class FileConfig {
         if (!isCanUseSD()) {
             return null;
         }
-        String path = Environment.getExternalStorageDirectory().getPath() + HuXinPath;
+        String path = Environment.getExternalStorageDirectory().getPath() + NuuPath;
         File fileDir = new File(path);
         if (!fileDir.exists()) {
             fileDir.mkdirs();

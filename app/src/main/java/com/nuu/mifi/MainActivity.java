@@ -15,6 +15,7 @@ import com.nuu.http.OkHttpConnector;
 import com.nuu.proto.DeviceStatus;
 import com.nuu.proto.ServerResponse;
 import com.nuu.proto.UpdateRequest;
+import com.nuu.report.ConfigManager;
 import com.nuu.socket.ReceiveListener;
 import com.nuu.util.AppUtils;
 import com.nuu.util.DeviceUtils;
@@ -41,6 +42,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         initView();
 
         setNotifyListener();
+
+        ConfigManager.instance();
     }
 
     private void initView() {
@@ -59,15 +62,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         int id = v.getId();
         switch (id) {
             case R.id.btn_update: {
-                /*String devId = Build.SERIAL;
+                String devId = Build.SERIAL;
                 String curVerCode = AppUtils.getVersion(this);
                 String brand = Build.BRAND;
-                String model = Build.MODEL;*/
-
-                String devId = "8a9adcd4";
-                String curVerCode = "4";
-                String brand = "NUU";
-                String model = "i1";
+                String model = Build.MODEL;
+                if (BuildConfig.DEBUG) {
+                    devId = "8a9adcd4";
+                    curVerCode = "4";
+                    brand = "NUU";
+                    model = "i1";
+                }
                 ReceiveListener callback = new ReceiveListener() {
                     @Override
                     public void OnRec(byte[] body) {
@@ -76,10 +80,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             String newVerCode = ack.getNewVerCode();
                             String url = ack.getUrl();
                             boolean result = ack.getResult();
+                            Log.d(TAG, result + "@" + newVerCode + "@" + url);
 
                             if (result && !TextUtils.isEmpty(url)) {
-                                //String deviceId = Build.SERIAL;
-                                String deviceId = "8a9adcd4";
+                                String deviceId = Build.SERIAL;
+                                if (BuildConfig.DEBUG) {
+                                    deviceId = "8a9adcd4";
+                                }
                                 String token = AppUtils.md5("@com.nuu@" + deviceId);
                                 String reqUrl = url + "?hwid=" + deviceId + "&vercode=" + newVerCode + "&token=" + token;
 
@@ -110,7 +117,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                             }
 
-                            Log.d(TAG, result + "@" + newVerCode + "@" + url);
                         } catch (ExceptionInInitializerError e) {
                             e.printStackTrace();
                         } catch (Exception e) {
