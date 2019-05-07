@@ -15,7 +15,6 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
-
 import com.google.protobuf.GeneratedMessageV3;
 import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
@@ -34,8 +33,7 @@ public class NuuService extends Service {
 
     private static final String TAG = NuuService.class.getSimpleName();
 
-    public static final String BOOT_SERVICE = "com.youmai.huxin.service.BOOT_SERVICE"; //启动服务
-    public static final String IM_LOGIN_OUT = "com.youmai.huxin.service.IM_LOGIN_OUT";  //im login out
+    public static final String BOOT_SERVICE = "com.nuu.service.BOOT_SERVICE"; //启动服务
     public static final String REPORT_DEVICE_AM = "com.nuu.service.REPORT_DEVICE_AM";
 
     private Context mContext;
@@ -60,7 +58,7 @@ public class NuuService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.v(TAG, "service onBind...");
-        return new HuxinServiceBinder();
+        return new NuuServiceBinder();
     }
 
     private final class ServiceHandler extends Handler {
@@ -85,8 +83,7 @@ public class NuuService extends Service {
     /**
      * activity和service通信接口
      */
-    public class HuxinServiceBinder extends Binder {
-
+    public class NuuServiceBinder extends Binder {
         /**
          * 发送socket协议
          *
@@ -106,7 +103,6 @@ public class NuuService extends Service {
         public void clearNotifyListener(NotifyListener listener) {
             mClient.clearNotifyListener(listener);
         }
-
 
         public boolean isLogin() {
             return mClient.isLogin();
@@ -277,11 +273,6 @@ public class NuuService extends Service {
                         }
                     }
                     break;
-                case IM_LOGIN_OUT:
-                    if (mClient != null && mClient.isConnect() && mClient.isLogin()) {
-                        mClient.close();
-                    }
-                    break;
                 case REPORT_DEVICE_AM:
                     MiFiManager.instance().reportDeviceInfo();
                     mReportTaskManager.updateReportTask();
@@ -297,7 +288,6 @@ public class NuuService extends Service {
     @Override
     public void onTrimMemory(int level) {
 
-
     }
 
     @Override
@@ -309,7 +299,7 @@ public class NuuService extends Service {
         unregisterReceiver(mNetWorkReceiver);
         unregisterReceiver(mScreenReceiver);
 
-        Log.v(TAG, "HuXinService is onDestroy");
+        Log.v(TAG, "NuuService is onDestroy");
     }
 
 

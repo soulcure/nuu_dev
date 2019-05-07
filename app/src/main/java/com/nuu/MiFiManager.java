@@ -48,7 +48,7 @@ public class MiFiManager {
         IDLE, BINDING, BINDED
     }
 
-    private NuuService.HuxinServiceBinder huxinService = null;
+    private NuuService.NuuServiceBinder nuuService = null;
     private BIND_STATUS binded = BIND_STATUS.IDLE;
 
     private Context mContext;
@@ -189,7 +189,7 @@ public class MiFiManager {
     public boolean isLogin() {
         boolean res = false;
         if (mContext != null && binded == BIND_STATUS.BINDED) {
-            res = huxinService.isLogin();
+            res = nuuService.isLogin();
         }
         return res;
     }
@@ -229,7 +229,7 @@ public class MiFiManager {
     public boolean isConnect() {
         boolean res = false;
         if (mContext != null && binded == BIND_STATUS.BINDED) {
-            res = huxinService.isConnect();
+            res = nuuService.isConnect();
         }
         return res;
     }
@@ -240,7 +240,7 @@ public class MiFiManager {
      */
     public void reConnect() {
         if (mContext != null && binded == BIND_STATUS.BINDED) {
-            huxinService.reConnect();
+            nuuService.reConnect();
         }
     }
 
@@ -252,7 +252,7 @@ public class MiFiManager {
      */
     public void close() {
         if (mContext != null && binded == BIND_STATUS.BINDED) {
-            huxinService.close();
+            nuuService.close();
         }
     }
 
@@ -266,7 +266,7 @@ public class MiFiManager {
         init(mContext, new InitListener() {
             @Override
             public void success() {
-                huxinService.sendProto(msg, msgType, callback);
+                nuuService.sendProto(msg, msgType, callback);
             }
 
 
@@ -282,7 +282,7 @@ public class MiFiManager {
         init(mContext, new InitListener() {
             @Override
             public void success() {
-                huxinService.setNotifyListener(listener);
+                nuuService.setNotifyListener(listener);
             }
 
             @Override
@@ -303,7 +303,7 @@ public class MiFiManager {
                           ReceiveListener callback) {
         if (mContext != null) {
             if (binded == BIND_STATUS.BINDED) {
-                huxinService.sendProto(msg, msgType, callback);
+                nuuService.sendProto(msg, msgType, callback);
             } else {
                 waitBindingProto(msg, msgType, callback);
             }
@@ -317,7 +317,7 @@ public class MiFiManager {
     public void setNotifyListener(NotifyListener listener) {
         if (mContext != null) {
             if (binded == BIND_STATUS.BINDED) {
-                huxinService.setNotifyListener(listener);
+                nuuService.setNotifyListener(listener);
             } else {
                 waitBindingNotify(listener);
             }
@@ -329,7 +329,7 @@ public class MiFiManager {
 
     public void clearNotifyListener(NotifyListener listener) {
         if (mContext != null && binded == BIND_STATUS.BINDED) {
-            huxinService.clearNotifyListener(listener);
+            nuuService.clearNotifyListener(listener);
         }
     }
 
@@ -354,7 +354,7 @@ public class MiFiManager {
      */
     public void connectTcp(String uuid, InetSocketAddress isa) {
         if (mContext != null && binded == BIND_STATUS.BINDED) {
-            huxinService.connectTcp(uuid, isa);
+            nuuService.connectTcp(uuid, isa);
         }
     }
 
@@ -474,8 +474,8 @@ public class MiFiManager {
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            if (service instanceof NuuService.HuxinServiceBinder) {
-                huxinService = (NuuService.HuxinServiceBinder) service;
+            if (service instanceof NuuService.NuuServiceBinder) {
+                nuuService = (NuuService.NuuServiceBinder) service;
                 binded = BIND_STATUS.BINDED;
                 for (InitListener item : mInitListenerList) {
                     item.success();
@@ -488,7 +488,7 @@ public class MiFiManager {
         // 连接服务失败后，该方法被调用
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            huxinService = null;
+            nuuService = null;
             binded = BIND_STATUS.IDLE;
             for (InitListener item : mInitListenerList) {
                 item.fail();

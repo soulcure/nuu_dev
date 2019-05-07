@@ -61,9 +61,8 @@
             android:exported="false"
             android:persistent="true">
             <intent-filter>
-                <action android:name="com.youmai.huxin.service.BOOT_SERVICE" />
-                <action android:name="com.youmai.huxin.service.NEW_OUTGOING_CALL" />
-                <action android:name="com.youmai.huxin.service.IM_LOGIN_OUT" />
+                <action android:name="com.nuu.service.BOOT_SERVICE" />
+                <action android:name="com.nuu.service.IM_LOGIN_OUT" />
                 <action android:name="com.nuu.service.REPORT_DEVICE_AM" />
             </intent-filter>
         </service>
