@@ -18,6 +18,7 @@ import android.util.Log;
 import com.google.protobuf.GeneratedMessageV3;
 import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
+import com.nuu.entity.ReportConfig;
 import com.nuu.report.ConfigFileObserver;
 import com.nuu.report.ConfigManager;
 import com.nuu.report.ReportTaskManager;
@@ -213,8 +214,6 @@ public class NuuService extends Service {
         mScreenReceiver = new ScreenReceiver();
         registerReceiver(mScreenReceiver, filter);
 
-        mReportTaskManager = new ReportTaskManager(this);
-
         mConfigFileObserver = new ConfigFileObserver(AppConfig.getConfigFilePath(), this);//配置文件观察者
         mConfigFileObserver.startWatching();
 
@@ -247,8 +246,9 @@ public class NuuService extends Service {
                     }
                 });
 
-        createTcp();
+        mReportTaskManager = new ReportTaskManager(this);
 
+        createTcp();
     }
 
 
@@ -304,8 +304,9 @@ public class NuuService extends Service {
 
 
     private void createTcp() {
-        String ip = AppConfig.getSocketHost();
-        int port = AppConfig.getSocketPort();
+        ReportConfig config = ConfigManager.instance().getCurConfig();
+        String ip = config.getSendToIp();
+        int port = config.getPort();
 
         if (!mClient.isConnect()) {
             InetSocketAddress isa = new InetSocketAddress(ip, port);

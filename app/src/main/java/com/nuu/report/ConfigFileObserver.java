@@ -8,7 +8,7 @@ import android.util.Log;
 
 public class ConfigFileObserver extends FileObserver {
     private Context mContext;
-    private static String TAG = "ConfigFileObserver";
+    private static String TAG = ConfigFileObserver.class.getSimpleName();
 
     public ConfigFileObserver(String path, Context context) {
         super(path);

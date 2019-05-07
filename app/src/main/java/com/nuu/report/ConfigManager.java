@@ -8,10 +8,9 @@ import com.nuu.util.FileUtils;
 import com.nuu.util.GsonUtil;
 
 public class ConfigManager {
-    private static String TAG = "ConfigManager";
+    private static String TAG = ConfigManager.class.getSimpleName();
 
     private static ConfigManager instance;
-
 
     private ReportConfig curConfig;
     private OnChange changeListener;
@@ -25,6 +24,11 @@ public class ConfigManager {
         void onObtainReportRateChange(int freq);
 
         void onSendReportRateChange(int freq);
+    }
+
+
+    public void setChangeListener(OnChange changeListener) {
+        this.changeListener = changeListener;
     }
 
 
@@ -59,6 +63,10 @@ public class ConfigManager {
     }
 
 
+    public ReportConfig getCurConfig() {
+        return curConfig;
+    }
+
     /**
      * 配置文件发生改变时会调用该方法
      */
@@ -71,6 +79,16 @@ public class ConfigManager {
                         && changeListener != null) {
                     changeListener.onStorePathChange(temp.getReportStorePath());
                 }
+                if (curConfig.getObtainReportRate() != (temp.getObtainReportRate())
+                        && changeListener != null) {
+                    changeListener.onObtainReportRateChange(temp.getObtainReportRate());
+                }
+
+                if (curConfig.getSendReportRate() != (temp.getSendReportRate())
+                        && changeListener != null) {
+                    changeListener.onSendReportRateChange(temp.getSendReportRate());
+                }
+
                 curConfig = temp;
             }
             if (curConfig == null) {
@@ -81,7 +99,4 @@ public class ConfigManager {
     }
 
 
-    public void setChangeListener(OnChange changeListener) {
-        this.changeListener = changeListener;
-    }
 }

@@ -35,7 +35,7 @@ import cn.gosomo.proxy.IProxyCall;
 import cn.gosomo.proxy.IProxyCallback;
 
 public class MiFiManager {
-    private static final String TAG = "TcpClient";
+    private static final String TAG = MiFiManager.class.getSimpleName();
 
     private static final int HANDLER_THREAD_INIT_CONFIG_START = 1;
     private static final int HANDLER_REPORT_DEVICE_INFO = 2;
@@ -124,6 +124,8 @@ public class MiFiManager {
 
         if (binded == BIND_STATUS.IDLE) {
             binded = BIND_STATUS.BINDING;
+            bindServer(mContext);
+
             initHandler();
 
             mProcessHandler.sendEmptyMessage(HANDLER_THREAD_INIT_CONFIG_START);
@@ -141,13 +143,13 @@ public class MiFiManager {
     }
 
 
-    private void initWork(Context context) {
+    private void bindServer(Context context) {
         Intent intent = new Intent(context.getApplicationContext(), NuuService.class);
         context.getApplicationContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
         bindProxyService();
 
-        Log.v(TAG, "MiFiManager in init");
+        Log.v(TAG, "MiFiManager in bind server");
 
     }
 
@@ -339,10 +341,10 @@ public class MiFiManager {
      * tcp login
      */
     private void socketLogin(final String uuid) {
-        String ip = AppConfig.getSocketHost();
+        /*String ip = AppConfig.getSocketHost();
         int port = AppConfig.getSocketPort();
         InetSocketAddress isa = new InetSocketAddress(ip, port);
-        connectTcp(uuid, isa);
+        connectTcp(uuid, isa);*/
     }
 
 
@@ -540,7 +542,7 @@ public class MiFiManager {
         }
 
         @Override
-        public void onSimcardStateChange(int board, int slot, String imsi) {
+        public void onSimcardStateChange(int board, int slot, String imsi) throws RemoteException {
             if (board == 2 && slot == 0) {
                 String tempImsi = imsi == null ? "" : imsi;
                 curSim2.setImsi(tempImsi);
@@ -614,7 +616,6 @@ public class MiFiManager {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case HANDLER_THREAD_INIT_CONFIG_START:
-                    initWork(mContext);
                     break;
                 case HANDLER_REPORT_DEVICE_INFO:
                     sendDeviceInfo();
