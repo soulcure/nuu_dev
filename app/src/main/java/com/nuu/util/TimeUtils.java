@@ -12,7 +12,7 @@ import java.util.Locale;
 public class TimeUtils {
 
     public static final SimpleDateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat(
-            "yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
+            "yyyy-MM-dd HH:mm:ss", Locale.CHINA);
     public static final SimpleDateFormat DATE_FORMAT_DATE = new SimpleDateFormat(
             "yyyy-MM-dd", Locale.CHINA);
     public static final SimpleDateFormat HOUR_MIN = new SimpleDateFormat(

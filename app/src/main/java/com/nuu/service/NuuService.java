@@ -34,9 +34,9 @@ public class NuuService extends Service {
 
     private static final String TAG = NuuService.class.getSimpleName();
 
-    public static final String BOOT_SERVICE = "com.nuu.service.BOOT_SERVICE"; //启动服务
+    public static final String BOOT_NUU_SERVICE = "com.nuu.service.BOOT_SERVICE"; //启动服务
     public static final String REPORT_DEVICE_AM = "com.nuu.service.REPORT_DEVICE_AM";
-
+    public static final String OBTAIN_DEVICE_AM = "com.nuu.service.OBTAIN_DEVICE_AM";
     private Context mContext;
 
     /**
@@ -237,16 +237,18 @@ public class NuuService extends Service {
 
                     @Override
                     public void onObtainReportRateChange(int freq) {
-
+                        mReportTaskManager.setObtainPeriod(freq * 1000);
                     }
 
                     @Override
                     public void onSendReportRateChange(int freq) {
-
+                        mReportTaskManager.setSendPeriod(freq * 1000);
                     }
                 });
 
-        mReportTaskManager = new ReportTaskManager(this);
+        long sendPeriod = ConfigManager.instance().getCurConfig().getSendReportRate() * 1000;
+        long obtainPeriod = ConfigManager.instance().getCurConfig().getObtainReportRate() * 1000;
+        mReportTaskManager = new ReportTaskManager(this, sendPeriod, obtainPeriod);
 
         createTcp();
     }
@@ -263,7 +265,7 @@ public class NuuService extends Service {
 
         if (!TextUtils.isEmpty(action)) {
             switch (action) {
-                case BOOT_SERVICE:
+                case BOOT_NUU_SERVICE:
                     if (mClient.isIdle()) {
                         Log.v(TAG, "tcp is reconnect");
                         mClient.reConnect();
@@ -275,7 +277,11 @@ public class NuuService extends Service {
                     break;
                 case REPORT_DEVICE_AM:
                     MiFiManager.instance().reportDeviceInfo();
-                    mReportTaskManager.updateReportTask();
+                    mReportTaskManager.updateSendReportTask();
+                    break;
+                case OBTAIN_DEVICE_AM:
+                    MiFiManager.instance().obtainDeviceInfo(null);
+                    mReportTaskManager.updateObtainReportTask();
                     break;
             }
         }

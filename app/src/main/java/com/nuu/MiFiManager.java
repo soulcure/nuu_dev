@@ -39,7 +39,7 @@ public class MiFiManager {
 
     private static final int HANDLER_THREAD_INIT_CONFIG_START = 1;
     private static final int HANDLER_REPORT_DEVICE_INFO = 2;
-    private static final int HANDLER_GET_DEVICE_INFO = 3;
+    private static final int HANDLER_OBTAIN_DEVICE_INFO = 3;
 
     private static MiFiManager instance;
 
@@ -618,9 +618,9 @@ public class MiFiManager {
                 case HANDLER_THREAD_INIT_CONFIG_START:
                     break;
                 case HANDLER_REPORT_DEVICE_INFO:
-                    sendDeviceInfo();
+                    sendDeviceInfoList();
                     break;
-                case HANDLER_GET_DEVICE_INFO:
+                case HANDLER_OBTAIN_DEVICE_INFO:
                     initDeviceInfo();
                     break;
                 default:
@@ -637,20 +637,19 @@ public class MiFiManager {
         void onSuccess(String json);
     }
 
-    private ReportData curReportData;
     private OnDeviceInfo mOnDeviceInfo;
 
     private List<ReportData> reportDataList;
 
     public String getDeviceInfo() {
-        curReportData = new ReportData(mContext);
-        return curReportData.toString();
+        ReportData data = new ReportData(mContext);
+        return data.toJson();
     }
 
 
-    public void getDeviceInfo(OnDeviceInfo callback) {
+    public void obtainDeviceInfo(OnDeviceInfo callback) {
         this.mOnDeviceInfo = callback;
-        mProcessHandler.sendEmptyMessage(HANDLER_GET_DEVICE_INFO);
+        mProcessHandler.sendEmptyMessage(HANDLER_OBTAIN_DEVICE_INFO);
     }
 
 
@@ -660,19 +659,21 @@ public class MiFiManager {
 
 
     private void initDeviceInfo() {
-        curReportData = new ReportData(mContext);
+        ReportData data = new ReportData(mContext);
+        reportDataList.add(data);
+
         if (mOnDeviceInfo != null) {
-            mOnDeviceInfo.onSuccess(curReportData.toString());
+            mOnDeviceInfo.onSuccess(data.toString());
         }
     }
 
     private void sendDeviceInfo() {
-        curReportData = new ReportData(mContext);
-        String devId = curReportData.getDeviceId();
-        int status = curReportData.getNetStatus();
-        int utc = curReportData.getUnixTime();
-        String ip = curReportData.getIp();
-        String mac = curReportData.getMac();
+        ReportData data = new ReportData(mContext);
+        String devId = data.getDeviceId();
+        int status = data.getNetStatus();
+        int utc = data.getUnixTime();
+        String ip = data.getIp();
+        String mac = data.getMac();
         DeviceStatus.SimCardSlot sim1 = DeviceInfo.getProtoSim1(mContext);
         ReceiveListener callback = new ReceiveListener() {
             @Override
@@ -695,7 +696,7 @@ public class MiFiManager {
         deviceStatus(devId, status, utc, ip, mac,
                 sim1, null, callback);
 
-        FileConfig.writeFile(curReportData);
+        FileConfig.writeFile(data);
     }
 
     private void sendDeviceInfoList() {

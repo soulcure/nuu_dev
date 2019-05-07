@@ -4,11 +4,13 @@ import android.os.Environment;
 
 import com.nuu.entity.ReportData;
 import com.nuu.util.FileUtils;
-import com.nuu.util.TimeUtils;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class FileConfig {
 
@@ -77,7 +79,10 @@ public class FileConfig {
 
     public static void writeFile(ReportData reportData) {
         String content = reportData.toString();
-        String dateStr = TimeUtils.getTime(System.currentTimeMillis());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
+        String dateStr = sdf.format(new Date(System.currentTimeMillis()));
+
         String filePath = filePrefix + dateStr + fileSubfix;
         FileUtils.writeFile(filePath, content, true);
     }
@@ -94,7 +99,9 @@ public class FileConfig {
             strList.add(item.toString());
         }
 
-        String dateStr = TimeUtils.getTime(System.currentTimeMillis());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
+        String dateStr = sdf.format(new Date(System.currentTimeMillis()));
+
         String filePath = filePrefix + dateStr + fileSubfix;
         FileUtils.writeFile(filePath, strList, true);
     }
