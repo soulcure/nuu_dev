@@ -8,7 +8,7 @@ import java.io.File;
 
 public class AppConfig {
 
-    public static final int SEND_BUFFER_SIZE = 256; //1KB
+    public static final int SEND_BUFFER_SIZE = 1024; //1KB
 
     /**
      * pref文件名定义
@@ -39,7 +39,7 @@ public class AppConfig {
 
     public static int getSendReportRate() {//默认10分钟上报一次
         if (BuildConfig.DEBUG) {
-            return 2;
+            return 20;
         }
         return 10 * 60;
     }
@@ -53,7 +53,7 @@ public class AppConfig {
 
     public static int getObtainReportRate() {//默认2分钟
         if (BuildConfig.DEBUG) {
-            return 1;
+            return 10;
         }
         return 2 * 60;
     }

@@ -28,10 +28,6 @@ public class ReportData {
     private int netBrock;
 
 
-    public ReportData() {
-
-    }
-
     public ReportData(Context context) {
         deviceId = DeviceInfo.getDeviceId();
         deviceSN = DeviceInfo.getDeviceSN();
@@ -179,8 +175,8 @@ public class ReportData {
     }
 
     public static class Sim1Bean {
-        private String imsi;
-        private String plmn;
+        private String imsi = "";
+        private String plmn = "";
         private int signal;
         private int lac;
         private int ci;
@@ -245,8 +241,8 @@ public class ReportData {
     }
 
     public static class Sim2Bean {
-        private String imsi;
-        private String plmn;
+        private String imsi = "";
+        private String plmn = "";
         private int signal;
         private int lac;
         private int ci;

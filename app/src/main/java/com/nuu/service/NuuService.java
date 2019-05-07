@@ -250,6 +250,9 @@ public class NuuService extends Service {
         long obtainPeriod = ConfigManager.instance().getCurConfig().getObtainReportRate() * 1000;
         mReportTaskManager = new ReportTaskManager(this, sendPeriod, obtainPeriod);
 
+        mReportTaskManager.updateSendReportTask();
+        mReportTaskManager.updateObtainReportTask();
+
         createTcp();
     }
 

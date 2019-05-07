@@ -3,6 +3,7 @@ package com.nuu.config;
 import android.os.Environment;
 
 import com.nuu.entity.ReportData;
+import com.nuu.report.ConfigManager;
 import com.nuu.util.FileUtils;
 
 import java.io.File;
@@ -80,10 +81,11 @@ public class FileConfig {
     public static void writeFile(ReportData reportData) {
         String content = reportData.toString();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.CHINA);
         String dateStr = sdf.format(new Date(System.currentTimeMillis()));
 
-        String filePath = filePrefix + dateStr + fileSubfix;
+        String path = ConfigManager.instance().getCurConfig().getReportStorePath();
+        String filePath = path + "/" + filePrefix + dateStr + fileSubfix;
         FileUtils.writeFile(filePath, content, true);
     }
 
@@ -99,10 +101,11 @@ public class FileConfig {
             strList.add(item.toString());
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.CHINA);
         String dateStr = sdf.format(new Date(System.currentTimeMillis()));
 
-        String filePath = filePrefix + dateStr + fileSubfix;
+        String path = ConfigManager.instance().getCurConfig().getReportStorePath();
+        String filePath = path + "/" + filePrefix + dateStr + fileSubfix;
         FileUtils.writeFile(filePath, strList, true);
     }
 

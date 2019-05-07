@@ -30,6 +30,7 @@ import com.nuu.util.DeviceInfo;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.gosomo.proxy.IProxyCall;
 import cn.gosomo.proxy.IProxyCallback;
@@ -74,7 +75,7 @@ public class MiFiManager {
      */
     private MiFiManager() {
         mInitListenerList = new ArrayList<>();
-        reportDataList = new ArrayList<>();
+        reportDataList = new CopyOnWriteArrayList<>();
     }
 
 
@@ -502,7 +503,6 @@ public class MiFiManager {
 
 
     private IProxyCall mProxyCallService;
-    private ReportData mReportData = new ReportData();
     private ReportData.Sim2Bean curSim2 = new ReportData.Sim2Bean();
 
     private final static String PROXY_SERVICE = "cn.gosomo.proxy.ProxyService";
@@ -700,12 +700,14 @@ public class MiFiManager {
     }
 
     private void sendDeviceInfoList() {
+        FileConfig.writeFile(reportDataList);
         ReceiveListener callback = new ReceiveListener() {
             @Override
             public void OnRec(byte[] body) {
                 try {
                     final ServerResponse.ReportDeviceStatusInfoResp ack = ServerResponse.
                             ReportDeviceStatusInfoResp.parseFrom(body);
+                    reportDataList.clear();
                     String test = ack.getDeviceId();
                     int test2 = ack.getUtc();
                     Log.d("TcpClient", "sendDeviceInfo:" + test + "@" + test2);
@@ -719,6 +721,5 @@ public class MiFiManager {
             }
         };
         deviceStatus(reportDataList, callback);
-        FileConfig.writeFile(reportDataList);
     }
 }
