@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.nuu.MiFiManager;
 import com.nuu.config.FileConfig;
+import com.nuu.entity.ReportData;
 import com.nuu.http.DownloadListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.proto.DeviceStatus;
@@ -43,7 +44,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         setNotifyListener();
 
-        ConfigManager.instance();
     }
 
     private void initView() {
@@ -130,7 +130,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
             break;
             case R.id.btn_info:
-                test();
+                MiFiManager.instance().reportDeviceInfo();
                 break;
         }
     }
@@ -163,36 +163,5 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-
-    private void test() {
-        new Thread() {
-            @Override
-            public void run() {
-                String devId = Build.SERIAL;
-                int status = 1;
-                int utc = 1;
-                String ip = DeviceUtils.getIp();
-                String mac = DeviceUtils.getMacAddress(mContext);
-                DeviceStatus.SimCardSlot sim1 = DeviceUtils.getSimCard(mContext);
-                ReceiveListener callback = new ReceiveListener() {
-                    @Override
-                    public void OnRec(byte[] body) {
-                        try {
-                            final ServerResponse.ReportDeviceStatusInfoResp ack = ServerResponse.ReportDeviceStatusInfoResp.parseFrom(body);
-                            String test = ack.getDeviceId();
-                        } catch (ExceptionInInitializerError e) {
-                            e.printStackTrace();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } catch (NoClassDefFoundError e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-                MiFiManager.instance().deviceStatus(devId, status, utc, ip, mac,
-                        sim1, null, callback);
-            }
-        }.start();
-    }
 
 }

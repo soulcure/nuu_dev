@@ -1,6 +1,16 @@
 package com.nuu.entity;
 
+import android.content.Context;
+import android.os.Build;
+import android.os.SystemProperties;
+
+import com.nuu.mifi.BuildConfig;
+import com.nuu.proto.DeviceStatus;
+import com.nuu.util.DeviceInfo;
+import com.nuu.util.DeviceUtils;
 import com.nuu.util.GsonUtil;
+
+import java.util.List;
 
 public class ReportData {
     private String deviceSN;
@@ -18,6 +28,37 @@ public class ReportData {
     private int hotAmount;
     private String speedState;
     private int netBrock;
+
+
+    public ReportData() {
+
+    }
+
+    public ReportData(Context context) {
+        deviceId = DeviceInfo.getDeviceId();
+        deviceSN = DeviceInfo.getDeviceSN();
+        unixTime = DeviceInfo.getUnixTimeStamp();
+        ip = DeviceInfo.getIPAddress();
+
+        if (BuildConfig.DEBUG) {
+            deviceId = "8a9adcd4";
+        }
+
+        List<WifiClient> wifiApClientList = DeviceInfo.getWifiApClientList();
+        hotAmount = wifiApClientList.size();
+        mac = DeviceInfo.getMacAddress(wifiApClientList);
+
+        pow = DeviceInfo.getBatteryInfo(context).getPow();
+        charge = DeviceInfo.getBatteryInfo(context).getCharge();
+        speedState = DeviceInfo.getSpeedStateStr();
+        hotPoint = DeviceInfo.getHotPointState(context);
+        adb = DeviceInfo.getAdbStatus(context);
+        netStatus = DeviceInfo.getNetStatus(context);
+        netBrock = 0;
+
+        sim1 = DeviceInfo.getSim1(context);
+        sim2 = new ReportData.Sim2Bean();
+    }
 
     public String getDeviceSN() {
         return deviceSN;

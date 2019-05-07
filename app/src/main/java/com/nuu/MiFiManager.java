@@ -1,39 +1,44 @@
 package com.nuu;
 
-import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.content.ContextCompat;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.google.protobuf.GeneratedMessageV3;
+import com.nuu.entity.ReportData;
 import com.nuu.mifi.MiFiApplication;
 import com.nuu.config.AppConfig;
 import com.nuu.proto.DeviceStatus;
+import com.nuu.proto.ServerResponse;
 import com.nuu.proto.UpdateRequest;
-import com.nuu.service.HuxinService;
+import com.nuu.service.NuuService;
 import com.nuu.socket.NotifyListener;
 import com.nuu.socket.ProtoCommandId;
 import com.nuu.socket.ReceiveListener;
 import com.nuu.util.AppUtils;
+import com.nuu.util.DeviceInfo;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.gosomo.proxy.IProxyCall;
+import cn.gosomo.proxy.IProxyCallback;
+
 public class MiFiManager {
     private static final String TAG = "TcpClient";
 
     private static final int HANDLER_THREAD_INIT_CONFIG_START = 1;
-    private static final int HANDLER_THREAD_AUTO_LOGIN = 2;
+    private static final int HANDLER_REPORT_DEVICE_INFO = 2;
+    private static final int HANDLER_GET_DEVICE_INFO = 3;
 
     private static MiFiManager instance;
 
@@ -42,7 +47,7 @@ public class MiFiManager {
         IDLE, BINDING, BINDED
     }
 
-    private HuxinService.HuxinServiceBinder huxinService = null;
+    private NuuService.HuxinServiceBinder huxinService = null;
     private BIND_STATUS binded = BIND_STATUS.IDLE;
 
     private Context mContext;
@@ -139,8 +144,10 @@ public class MiFiManager {
 
 
     private void initWork(Context context) {
-        Intent intent = new Intent(context.getApplicationContext(), HuxinService.class);
+        Intent intent = new Intent(context.getApplicationContext(), NuuService.class);
         context.getApplicationContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+
+        bindProxyService();
 
         Log.v(TAG, "MiFiManager in init");
 
@@ -156,6 +163,15 @@ public class MiFiManager {
         if (mContext != null && binded == BIND_STATUS.BINDED) {
             binded = BIND_STATUS.IDLE;
             mContext.getApplicationContext().unbindService(serviceConnection);
+        }
+
+        if (mProxyCallService != null) {
+            try {
+                mProxyCallService.unregisterCallback(mContext.getPackageName(),
+                        mProxyCallback);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -282,8 +298,8 @@ public class MiFiManager {
     /**
      * 发送socket协议
      *
-     * @param msgType 命令码
-     * @param callback  数据
+     * @param msgType  命令码
+     * @param callback 数据
      */
     public void sendProto(GeneratedMessageV3 msg, short msgType,
                           ReceiveListener callback) {
@@ -381,7 +397,9 @@ public class MiFiManager {
             builder.setSlot2(sim2);
         }
 
-        DeviceStatus.ReportDeviceStatusReq msg = builder.build();
+        DeviceStatus.ReportDeviceStatusInfoReq.Builder b = DeviceStatus.ReportDeviceStatusInfoReq.newBuilder();
+        b.addDeviceStatus(builder);
+        DeviceStatus.ReportDeviceStatusInfoReq msg = b.build();
 
         sendProto(msg, msgType, callback);
     }
@@ -393,8 +411,8 @@ public class MiFiManager {
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            if (service instanceof HuxinService.HuxinServiceBinder) {
-                huxinService = (HuxinService.HuxinServiceBinder) service;
+            if (service instanceof NuuService.HuxinServiceBinder) {
+                huxinService = (NuuService.HuxinServiceBinder) service;
                 binded = BIND_STATUS.BINDED;
                 for (InitListener item : mInitListenerList) {
                     item.success();
@@ -417,12 +435,93 @@ public class MiFiManager {
         }
     };
 
-    private void autoLogin() {
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE)
-                == PackageManager.PERMISSION_GRANTED) {
-            mProcessHandler.sendEmptyMessage(HANDLER_THREAD_AUTO_LOGIN);
-        }
+
+    private IProxyCall mProxyCallService;
+    private ReportData mReportData = new ReportData();
+    private ReportData.Sim2Bean curSim2 = new ReportData.Sim2Bean();
+
+    private final static String PROXY_SERVICE = "cn.gosomo.proxy.ProxyService";
+    private final static String PROXY_SERVICE_PACKAGE = "cn.gosomo.proxy";
+
+    private void bindProxyService() {
+        Intent intent = new Intent(PROXY_SERVICE);
+        intent.setClassName(PROXY_SERVICE_PACKAGE, PROXY_SERVICE);
+        mContext.bindService(intent, mProxyCallConn, Context.BIND_AUTO_CREATE);
     }
+
+
+    private ServiceConnection mProxyCallConn = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mProxyCallService = null;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mProxyCallService = IProxyCall.Stub.asInterface(service);
+            try {
+                String packageName = mContext.getPackageName();
+                //注册了回调
+                mProxyCallService.registerCallback(packageName, mProxyCallback);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+
+            }
+        }
+    };
+
+    private IProxyCallback mProxyCallback = new IProxyCallback.Stub() {
+        @Override
+        public void onEventSys(int board, int event, int value) {
+            Log.d(TAG, "onEventSys");
+        }
+
+        @Override
+        public void onSimcardStateChange(int board, int slot, String imsi) {
+            if (board == 2 && slot == 0) {
+                String tempImsi = imsi == null ? "" : imsi;
+                curSim2.setImsi(tempImsi);
+            }
+
+        }
+
+        @Override
+        public void onLocationChange(int board, int slot, String plmn, int lac, int cid, int psc) throws RemoteException {
+            if (board == 2 && slot == 0) {
+                String tempPlmn = plmn == null ? "" : plmn;
+                curSim2.setPlmn(tempPlmn);
+                curSim2.setCi(cid);
+                curSim2.setLac(lac);
+                curSim2.setPsc(psc);
+            }
+        }
+
+        @Override
+        public void onServiceStateChange(int board, int slot, int serviceState, int networkType, int rssi) throws RemoteException {
+            if (board == 2 && slot == 0) {
+                curSim2.setSignal(rssi);
+                curSim2.setNetMode(networkType);
+            }
+
+        }
+
+        @Override
+        public void onDataStateChange(int board, int slot, int dataState, int networkType, int rssi) throws RemoteException {
+            if (board == 2 && slot == 0) {
+                curSim2.setNetMode(networkType);
+                curSim2.setSignal(rssi);
+            }
+        }
+
+        @Override
+        public void onSignalStrengthChange(int board, int slot, int rssi) throws RemoteException {
+            if (board == 2 && slot == 0) {
+                curSim2.setSignal(rssi);
+            }
+        }
+
+
+    };
 
 
     /**
@@ -454,7 +553,11 @@ public class MiFiManager {
                 case HANDLER_THREAD_INIT_CONFIG_START:
                     initWork(mContext);
                     break;
-                case HANDLER_THREAD_AUTO_LOGIN:
+                case HANDLER_REPORT_DEVICE_INFO:
+                    sendDeviceInfo();
+                    break;
+                case HANDLER_GET_DEVICE_INFO:
+                    initDeviceInfo();
                     break;
                 default:
                     break;
@@ -464,5 +567,65 @@ public class MiFiManager {
 
     }
 
+    /////////////////////////////////////////////
 
+    public interface OnDeviceInfo {
+        void onSuccess(String json);
+    }
+
+    private ReportData curReportData;
+    private OnDeviceInfo mOnDeviceInfo;
+
+    public String getDeviceInfo() {
+        curReportData = new ReportData(mContext);
+        return curReportData.toString();
+    }
+
+
+    public void getDeviceInfo(OnDeviceInfo callback) {
+        this.mOnDeviceInfo = callback;
+        mProcessHandler.sendEmptyMessage(HANDLER_GET_DEVICE_INFO);
+    }
+
+
+    public void reportDeviceInfo() {
+        mProcessHandler.sendEmptyMessage(HANDLER_REPORT_DEVICE_INFO);
+    }
+
+
+    private void initDeviceInfo() {
+        curReportData = new ReportData(mContext);
+        if (mOnDeviceInfo != null) {
+            mOnDeviceInfo.onSuccess(curReportData.toString());
+        }
+    }
+
+    private void sendDeviceInfo() {
+        curReportData = new ReportData(mContext);
+        String devId = curReportData.getDeviceId();
+        int status = curReportData.getNetStatus();
+        int utc = curReportData.getUnixTime();
+        String ip = curReportData.getIp();
+        String mac = curReportData.getMac();
+        DeviceStatus.SimCardSlot sim1 = DeviceInfo.getProtoSim1(mContext);
+        ReceiveListener callback = new ReceiveListener() {
+            @Override
+            public void OnRec(byte[] body) {
+                try {
+                    final ServerResponse.ReportDeviceStatusInfoResp ack = ServerResponse.ReportDeviceStatusInfoResp.parseFrom(body);
+                    String test = ack.getDeviceId();
+                    int test2 = ack.getUtc();
+                    Log.d("TcpClient", "sendDeviceInfo:" + test + "@" + test2);
+                } catch (ExceptionInInitializerError e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } catch (NoClassDefFoundError e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        MiFiManager.instance().deviceStatus(devId, status, utc, ip, mac,
+                sim1, null, callback);
+    }
 }

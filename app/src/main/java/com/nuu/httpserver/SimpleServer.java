@@ -7,6 +7,7 @@ import android.os.Build;
 import android.util.Log;
 
 
+import com.nuu.MiFiManager;
 import com.nuu.entity.ReportData;
 import com.nuu.util.DeviceUtils;
 import com.nuu.util.ShellUtils;
@@ -137,24 +138,8 @@ public class SimpleServer extends NanoHTTPD {
     }
 
     private Response getCurInfo() {
-        ReportData data = new ReportData();
-
-
-        String devId = Build.SERIAL;
-        int status = 1;
-        int utc = (int) System.currentTimeMillis() / 1000;
-        String ip = DeviceUtils.getIp();
-        String mac = DeviceUtils.getMacAddress(mContext);
-        ReportData.Sim1Bean sim1 = DeviceUtils.getSimCardJson(mContext);
-
-        data.setDeviceId(devId);
-        data.setNetStatus(status);
-        data.setUnixTime(utc);
-        data.setIp(ip);
-        data.setMac(mac);
-        data.setSim1(sim1);
-
-        return newFixedLengthResponse(Response.Status.OK, "application/json", data.toString());
+        String json = MiFiManager.instance().getDeviceInfo();
+        return newFixedLengthResponse(Response.Status.OK, "application/json", json);
     }
 
     private String shutdownDevice() {

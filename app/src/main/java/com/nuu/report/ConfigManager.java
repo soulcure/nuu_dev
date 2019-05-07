@@ -10,16 +10,30 @@ import com.nuu.util.GsonUtil;
 public class ConfigManager {
     private static String TAG = "ConfigManager";
 
-    private static ConfigManager configManager;
-    private static ReportConfig curConfig;
+    private static ConfigManager instance;
+
+
+    private ReportConfig curConfig;
+    private OnChange changeListener;
+
+
+    public interface OnChange {
+        void onStorePathChange(String path);
+
+        void onStoreKeepDaysChange(int days);
+
+        void onObtainReportRateChange(int freq);
+
+        void onSendReportRateChange(int freq);
+    }
 
 
     public static ConfigManager instance() {
         synchronized (ConfigManager.class) {
-            if (configManager == null) {
-                configManager = new ConfigManager();
+            if (instance == null) {
+                instance = new ConfigManager();
             }
-            return configManager;
+            return instance;
         }
     }
 
@@ -27,7 +41,8 @@ public class ConfigManager {
         String json = FileUtils.readFile(AppConfig.getConfigFilePath());
         if (!TextUtils.isEmpty(json)) {
             curConfig = GsonUtil.parse(json, ReportConfig.class);
-        } else {
+        }
+        if (curConfig == null) {
             defaultConfig();
         }
     }
@@ -43,4 +58,30 @@ public class ConfigManager {
         curConfig.setPort(AppConfig.getPort()); //发送的目标 端口
     }
 
+
+    /**
+     * 配置文件发生改变时会调用该方法
+     */
+    public void setCurConfig() {
+        synchronized (ConfigManager.class) {
+            String json = FileUtils.readFile(AppConfig.getConfigFilePath());
+            if (!TextUtils.isEmpty(json)) {
+                ReportConfig temp = GsonUtil.parse(json, ReportConfig.class);
+                if (!curConfig.getReportStorePath().equals(temp.getReportStorePath())
+                        && changeListener != null) {
+                    changeListener.onStorePathChange(temp.getReportStorePath());
+                }
+                curConfig = temp;
+            }
+            if (curConfig == null) {
+                defaultConfig();
+            }
+        }
+
+    }
+
+
+    public void setChangeListener(OnChange changeListener) {
+        this.changeListener = changeListener;
+    }
 }

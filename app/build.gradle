@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 
+
 android {
     compileSdkVersion COMPILE_SDK_VERSION as int
     buildToolsVersion BUILD_TOOLS_VERSION
@@ -8,17 +9,18 @@ android {
         applicationId "com.nuu.nuuinfo"
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
-        versionCode 1
-        versionName "1.0"
+        versionCode 6
+        versionName "6.0"
 
         multiDexEnabled true
     }
+
     signingConfigs {
         release {
-            storeFile file('colourlife.keystore')
-            storePassword 'colourlife'
-            keyAlias 'colourlife'
-            keyPassword 'colourlife'
+            storeFile file('keystore/nuu_info_keystore.jks')
+            storePassword '12345678910'
+            keyAlias 'key0'
+            keyPassword '12345678910'
         }
     }
 
@@ -39,9 +41,9 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.all {
             if (variant.buildType.name == "release") {
-                outputFileName = "app_v${defaultConfig.versionName}_${releaseTime()}.apk"
+                outputFileName = "nuuinfo.apk"
             } else {
-                outputFileName = "app_${defaultConfig.versionName}_${releaseTime()}_debug.apk"
+                outputFileName = "nuuinfo_debug.apk"
             }
 
             variant.getAssembleProvider().configure() {
@@ -49,6 +51,7 @@ android {
                     copyBuildApk()
                 }
             }
+
         }
     }
 
@@ -57,9 +60,8 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 }
-
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly files('libs/framework.jar')
     implementation "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
     implementation "com.android.support:design:${SUPPORT_VERSION}"
 
