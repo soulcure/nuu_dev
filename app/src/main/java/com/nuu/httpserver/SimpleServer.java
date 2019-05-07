@@ -3,13 +3,9 @@ package com.nuu.httpserver;
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.util.Log;
 
-
 import com.nuu.MiFiManager;
-import com.nuu.entity.ReportData;
-import com.nuu.util.DeviceUtils;
 import com.nuu.util.ShellUtils;
 
 import java.io.IOException;

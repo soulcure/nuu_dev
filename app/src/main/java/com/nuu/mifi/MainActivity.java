@@ -12,6 +12,7 @@ import com.nuu.MiFiManager;
 import com.nuu.config.FileConfig;
 import com.nuu.entity.ReportData;
 import com.nuu.http.DownloadListener;
+import com.nuu.http.IGetListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.proto.DeviceStatus;
 import com.nuu.proto.ServerResponse;
@@ -49,6 +50,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void initView() {
         findViewById(R.id.btn_update).setOnClickListener(this);
         findViewById(R.id.btn_info).setOnClickListener(this);
+        findViewById(R.id.btn_web).setOnClickListener(this);
     }
 
 
@@ -131,6 +133,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             break;
             case R.id.btn_info:
                 MiFiManager.instance().reportDeviceInfo();
+                break;
+            case R.id.btn_web:
+                String url = "http://localhost:8088/info";
+                OkHttpConnector.httpGet(url, new IGetListener() {
+                    @Override
+                    public void httpReqResult(String response) {
+                        Log.d("TcpClient", response);
+                    }
+                });
                 break;
         }
     }

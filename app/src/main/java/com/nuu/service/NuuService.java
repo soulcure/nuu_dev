@@ -19,6 +19,7 @@ import com.google.protobuf.GeneratedMessageV3;
 import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
 import com.nuu.entity.ReportConfig;
+import com.nuu.httpserver.SimpleServer;
 import com.nuu.report.ConfigFileObserver;
 import com.nuu.report.ConfigManager;
 import com.nuu.report.ReportTaskManager;
@@ -199,6 +200,9 @@ public class NuuService extends Service {
         super.onCreate();
         mContext = getApplicationContext();//this
         mClient = new TcpClient(this);
+
+        SimpleServer simpleServer = new SimpleServer(this, 8088);//开启服务器
+        simpleServer.startServer();
 
         HandlerThread thread = new HandlerThread("IntentService");
         thread.start();
