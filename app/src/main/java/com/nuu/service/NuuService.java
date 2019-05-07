@@ -276,10 +276,12 @@ public class NuuService extends Service {
                     }
                     break;
                 case REPORT_DEVICE_AM:
+                    Log.v(TAG, "reportDeviceInfo");
                     MiFiManager.instance().reportDeviceInfo();
                     mReportTaskManager.updateSendReportTask();
                     break;
                 case OBTAIN_DEVICE_AM:
+                    Log.v(TAG, "obtainDeviceInfo");
                     MiFiManager.instance().obtainDeviceInfo(null);
                     mReportTaskManager.updateObtainReportTask();
                     break;

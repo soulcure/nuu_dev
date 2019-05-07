@@ -2,13 +2,13 @@ package com.nuu.config;
 
 import android.os.Environment;
 
+import com.nuu.mifi.BuildConfig;
+
 import java.io.File;
 
 public class AppConfig {
 
-    public static final int SEND_BUFFER_SIZE = 1024; //1KB
-
-    private static boolean developMode = false;
+    public static final int SEND_BUFFER_SIZE = 256; //1KB
 
     /**
      * pref文件名定义
@@ -38,22 +38,22 @@ public class AppConfig {
 
 
     public static int getSendReportRate() {//默认10分钟上报一次
-        if (developMode) {
-            return 20;
+        if (BuildConfig.DEBUG) {
+            return 2;
         }
         return 10 * 60;
     }
 
     public static int getReportStoreKeepDays() {//默认文件保存30天以内的
-        if (developMode) {
+        if (BuildConfig.DEBUG) {
             return 5;
         }
         return 30;
     }
 
     public static int getObtainReportRate() {//默认2分钟
-        if (developMode) {
-            return 5;
+        if (BuildConfig.DEBUG) {
+            return 1;
         }
         return 2 * 60;
     }
