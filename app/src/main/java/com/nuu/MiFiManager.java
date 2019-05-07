@@ -13,6 +13,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.google.protobuf.GeneratedMessageV3;
+import com.nuu.config.FileConfig;
 import com.nuu.entity.ReportData;
 import com.nuu.mifi.MiFiApplication;
 import com.nuu.config.AppConfig;
@@ -73,12 +74,9 @@ public class MiFiManager {
      */
     private MiFiManager() {
         mInitListenerList = new ArrayList<>();
+        reportDataList = new ArrayList<>();
     }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 
     /**
      * 获取呼信sdk单例索引
@@ -406,6 +404,71 @@ public class MiFiManager {
 
 
     /**
+     * @param callback
+     */
+    public void deviceStatus(List<ReportData> list, ReceiveListener callback) {
+        if (list == null || list.size() == 0) {
+            return;
+        }
+
+        short msgType = ProtoCommandId.reportDeviceStatusMsgType();
+        DeviceStatus.ReportDeviceStatusInfoReq.Builder reqBuilder = DeviceStatus.ReportDeviceStatusInfoReq.newBuilder();
+
+        for (ReportData item : list) {
+            DeviceStatus.ReportDeviceStatusReq.Builder builder = DeviceStatus.ReportDeviceStatusReq.newBuilder();
+            builder.setDeviceId(item.getDeviceId());//set device id
+            builder.setMac(item.getMac());//设置mac
+            builder.setIp(item.getIp());//设置ip
+            builder.setDeviceStatus(item.getNetStatus());
+            builder.setUtc(item.getUnixTime());
+
+            ReportData.Sim1Bean sim1Bean = item.getSim1();
+            if (sim1Bean != null) {
+                DeviceStatus.SimCardSlot.Builder b = DeviceStatus.SimCardSlot.newBuilder();
+                b.setCi(sim1Bean.getCi());
+                b.setImsi(sim1Bean.getImsi());
+                b.setLac(sim1Bean.getLac());
+                try {
+                    int plmn = Integer.parseInt(sim1Bean.getPlmn());
+                    b.setPlmn(plmn);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+                b.setPsc(sim1Bean.getPsc());
+                b.setSignal(sim1Bean.getSignal());
+
+                int netMode = sim1Bean.getNetMode();
+                b.setMode(DeviceStatus.NetworkMode.forNumber(netMode));
+                builder.setSlot1(b);
+            }
+
+            ReportData.Sim2Bean sim2Bean = item.getSim2();
+            if (sim2Bean != null) {
+                DeviceStatus.SimCardSlot.Builder b = DeviceStatus.SimCardSlot.newBuilder();
+                b.setCi(sim2Bean.getCi());
+                b.setImsi(sim2Bean.getImsi());
+                b.setLac(sim2Bean.getLac());
+                try {
+                    int plmn = Integer.parseInt(sim2Bean.getPlmn());
+                    b.setPlmn(plmn);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+                b.setPsc(sim2Bean.getPsc());
+                b.setSignal(sim2Bean.getSignal());
+
+                int netMode = sim2Bean.getNetMode();
+                b.setMode(DeviceStatus.NetworkMode.forNumber(netMode));
+                builder.setSlot1(b);
+            }
+            reqBuilder.addDeviceStatus(builder);
+        }
+
+        DeviceStatus.ReportDeviceStatusInfoReq msg = reqBuilder.build();
+        sendProto(msg, msgType, callback);
+    }
+
+    /**
      * bind service callback
      */
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -576,6 +639,8 @@ public class MiFiManager {
     private ReportData curReportData;
     private OnDeviceInfo mOnDeviceInfo;
 
+    private List<ReportData> reportDataList;
+
     public String getDeviceInfo() {
         curReportData = new ReportData(mContext);
         return curReportData.toString();
@@ -612,7 +677,8 @@ public class MiFiManager {
             @Override
             public void OnRec(byte[] body) {
                 try {
-                    final ServerResponse.ReportDeviceStatusInfoResp ack = ServerResponse.ReportDeviceStatusInfoResp.parseFrom(body);
+                    final ServerResponse.ReportDeviceStatusInfoResp ack = ServerResponse.
+                            ReportDeviceStatusInfoResp.parseFrom(body);
                     String test = ack.getDeviceId();
                     int test2 = ack.getUtc();
                     Log.d("TcpClient", "sendDeviceInfo:" + test + "@" + test2);
@@ -625,7 +691,32 @@ public class MiFiManager {
                 }
             }
         };
-        MiFiManager.instance().deviceStatus(devId, status, utc, ip, mac,
+        deviceStatus(devId, status, utc, ip, mac,
                 sim1, null, callback);
+
+        FileConfig.writeFile(curReportData);
+    }
+
+    private void sendDeviceInfoList() {
+        ReceiveListener callback = new ReceiveListener() {
+            @Override
+            public void OnRec(byte[] body) {
+                try {
+                    final ServerResponse.ReportDeviceStatusInfoResp ack = ServerResponse.
+                            ReportDeviceStatusInfoResp.parseFrom(body);
+                    String test = ack.getDeviceId();
+                    int test2 = ack.getUtc();
+                    Log.d("TcpClient", "sendDeviceInfo:" + test + "@" + test2);
+                } catch (ExceptionInInitializerError e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } catch (NoClassDefFoundError e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        deviceStatus(reportDataList, callback);
+        FileConfig.writeFile(reportDataList);
     }
 }

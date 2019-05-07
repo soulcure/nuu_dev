@@ -17,9 +17,11 @@ import android.util.Log;
 
 
 import com.google.protobuf.GeneratedMessageV3;
+import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
 import com.nuu.report.ConfigFileObserver;
 import com.nuu.report.ConfigManager;
+import com.nuu.report.ReportTaskManager;
 import com.nuu.socket.NotifyListener;
 import com.nuu.socket.ReceiveListener;
 import com.nuu.socket.TcpClient;
@@ -34,6 +36,7 @@ public class NuuService extends Service {
 
     public static final String BOOT_SERVICE = "com.youmai.huxin.service.BOOT_SERVICE"; //启动服务
     public static final String IM_LOGIN_OUT = "com.youmai.huxin.service.IM_LOGIN_OUT";  //im login out
+    public static final String REPORT_DEVICE_AM = "com.nuu.service.REPORT_DEVICE_AM";
 
     private Context mContext;
 
@@ -49,6 +52,7 @@ public class NuuService extends Service {
     private BroadcastReceiver mScreenReceiver;
 
     private ConfigFileObserver mConfigFileObserver;
+    private ReportTaskManager mReportTaskManager;
 
     /**
      * Activity绑定后回调
@@ -213,6 +217,8 @@ public class NuuService extends Service {
         mScreenReceiver = new ScreenReceiver();
         registerReceiver(mScreenReceiver, filter);
 
+        mReportTaskManager = new ReportTaskManager(this);
+
         mConfigFileObserver = new ConfigFileObserver(AppConfig.getConfigFilePath(), this);//配置文件观察者
         mConfigFileObserver.startWatching();
 
@@ -276,6 +282,10 @@ public class NuuService extends Service {
                         mClient.close();
                     }
                     break;
+                case REPORT_DEVICE_AM:
+                    MiFiManager.instance().reportDeviceInfo();
+                    mReportTaskManager.updateReportTask();
+                    break;
             }
         }
 
@@ -325,21 +335,6 @@ public class NuuService extends Service {
      * 发送登录IM服务器请求
      */
     private void tcpLogin() {
-
         Log.d(TAG, "socket connect success");
-        /*MiFiManager.instance().chargerAuth(new ReceiveListener() {
-            @Override
-            public void OnRec(ByteBuffer buffer) {
-                mClient.setLogin(true);
-                short test1 = buffer.getShort();  //预留
-                short test2 = buffer.getShort();  //预留
-                int matchCode = buffer.getInt();  //报文随机数应答
-                byte loginAuth = buffer.get();  //登入验证
-                byte encryption = buffer.get();  //加密标志
-                byte[] rsaPublic = new byte[128];//RSA 公共模数
-                buffer.get(rsaPublic);
-                int rsaSecret = buffer.getInt();
-            }
-        });*/
     }
 }

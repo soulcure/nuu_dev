@@ -3,6 +3,7 @@ package com.nuu.util;
 import android.text.TextUtils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -135,16 +136,13 @@ public class FileUtils {
             fos.write(data);
             fos.flush();
             return true;
-
         } catch (Exception e) {
             return false;
-            // TODO: handle exception
         } finally {
             try {
                 if (fos != null)
                     fos.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -164,6 +162,7 @@ public class FileUtils {
             makeDirs(filePath);
             fileWriter = new FileWriter(filePath, append);
             fileWriter.write(content);
+            fileWriter.write("\r\n");
             fileWriter.close();
             return true;
         } catch (Exception e) {
@@ -193,12 +192,9 @@ public class FileUtils {
         try {
             makeDirs(filePath);
             fileWriter = new FileWriter(filePath, append);
-            int i = 0;
             for (String line : contentList) {
-                if (i++ > 0) {
-                    fileWriter.write("\r\n");
-                }
                 fileWriter.write(line);
+                fileWriter.write("\r\n");
             }
             fileWriter.close();
             return true;
