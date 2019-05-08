@@ -1,4 +1,4 @@
-package com.nuu.mifi;
+package com.nuu.nuuinfo;
 
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;

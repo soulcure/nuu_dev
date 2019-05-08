@@ -3,7 +3,7 @@ package com.nuu.socket;
 import android.util.Log;
 
 
-import com.nuu.mifi.BuildConfig;
+import com.nuu.nuuinfo.BuildConfig;
 import com.nuu.config.AppConfig;
 import com.nuu.util.HexUtil;
 

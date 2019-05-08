@@ -1,4 +1,4 @@
-package com.nuu.mifi;
+package com.nuu.nuuinfo;
 
 import android.os.Build;
 import android.os.Handler;

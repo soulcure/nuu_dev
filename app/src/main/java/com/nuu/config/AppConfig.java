@@ -2,7 +2,7 @@ package com.nuu.config;
 
 import android.os.Environment;
 
-import com.nuu.mifi.BuildConfig;
+import com.nuu.nuuinfo.BuildConfig;
 
 import java.io.File;
 

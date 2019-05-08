@@ -2,7 +2,7 @@ package com.nuu.entity;
 
 import android.content.Context;
 
-import com.nuu.mifi.BuildConfig;
+import com.nuu.nuuinfo.BuildConfig;
 import com.nuu.util.DeviceInfo;
 import com.nuu.util.GsonUtil;
 import com.nuu.util.TimeUtils;
