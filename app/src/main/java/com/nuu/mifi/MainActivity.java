@@ -10,17 +10,12 @@ import android.view.View;
 
 import com.nuu.MiFiManager;
 import com.nuu.config.FileConfig;
-import com.nuu.entity.ReportData;
 import com.nuu.http.DownloadListener;
 import com.nuu.http.IGetListener;
 import com.nuu.http.OkHttpConnector;
-import com.nuu.proto.DeviceStatus;
-import com.nuu.proto.ServerResponse;
 import com.nuu.proto.UpdateRequest;
-import com.nuu.report.ConfigManager;
 import com.nuu.socket.ReceiveListener;
 import com.nuu.util.AppUtils;
-import com.nuu.util.DeviceUtils;
 
 import java.io.File;
 import java.lang.ref.WeakReference;

@@ -6,6 +6,7 @@
     <uses-permission
         android:name="android.permission.INSTALL_PACKAGES"
         tools:ignore="ProtectedPermissions" />
+
     <uses-permission android:name="android.Manifest.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -33,12 +34,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.nuu.mifi.MainActivity">
+        <activity
+            android:name="com.nuu.mifi.MainActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-
             </intent-filter>
 
             <intent-filter>
@@ -54,7 +56,6 @@
             </intent-filter>
         </activity>
 
-
         <service
             android:name="com.nuu.service.NuuService"
             android:enabled="true"
@@ -62,12 +63,22 @@
             android:persistent="true">
             <intent-filter>
                 <action android:name="com.nuu.service.BOOT_SERVICE" />
-                <action android:name="com.nuu.service.IM_LOGIN_OUT" />
                 <action android:name="com.nuu.service.REPORT_DEVICE_AM" />
                 <action android:name="com.nuu.service.OBTAIN_DEVICE_AM" />
             </intent-filter>
         </service>
 
+        <receiver
+            android:name="com.nuu.receiver.NuuReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+        </receiver>
 
     </application>
 
