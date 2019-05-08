@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.nuu.MiFiManager;
+import com.nuu.config.AppConfig;
 import com.nuu.config.FileConfig;
 import com.nuu.http.DownloadListener;
 import com.nuu.http.IGetListener;
@@ -88,7 +89,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 String reqUrl = url + "?hwid=" + deviceId + "&vercode=" + newVerCode + "&token=" + token;
 
                                 final String filePath = FileConfig.getApkDownLoadPath();
-                                String fileName = "app.apk";
+                                String fileName = AppConfig.getDownloadApkName();
                                 OkHttpConnector.httpDownload(reqUrl, null,
                                         filePath, fileName, new DownloadListener() {
                                             @Override
