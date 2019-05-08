@@ -41,9 +41,9 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.all {
             if (variant.buildType.name == "release") {
-                outputFileName = "nuuinfo.apk"
+                outputFileName = "nuuinfo_${releaseTime()}.apk"
             } else {
-                outputFileName = "nuuinfo_debug.apk"
+                outputFileName = "nuuinfo_debug_${releaseTime()}.apk"
             }
 
             variant.getAssembleProvider().configure() {
