@@ -457,15 +457,6 @@ public class DeviceInfo {
                 case TelephonyManager.NETWORK_TYPE_HSPAP:
                     networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_HSPAP;
                     break;
-                case TelephonyManager.NETWORK_TYPE_GSM:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_GSM;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_TD_SCDMA:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_TD_SCDMA;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_IWLAN:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_IWLAN;
-                    break;
                 case 19:
                     networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_LTE_CA;
                     break;

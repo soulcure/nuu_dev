@@ -23,7 +23,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -45,7 +44,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -59,40 +57,6 @@ public class AppUtils {
 
     private AppUtils() {
         throw new AssertionError();
-    }
-
-    /**
-     * 把数字字符串每三位加逗号 如 1234567890 转为 1，234，567，890
-     *
-     * @param number 传入数字
-     * @return
-     */
-    public static String changeNumber(String number) {
-//        String newNumber = "";
-//        if (number.length() > 3) {
-//            int flag = 0;
-//            int max_index = number.length() - 1;
-//            for (int i = max_index; i >= 0; i--) {
-//                flag++;
-//                newNumber = number.charAt(i) + newNumber;
-//                if (flag % 3 == 0 && i != 0) {
-//                    newNumber = "," + newNumber;
-//                }
-//            }
-//        } else {
-//            newNumber = number;
-//        }
-//        return newNumber;
-        String newNumber = number;
-        try {
-            int a = Integer.valueOf(number);
-            DecimalFormat dfMoney = (DecimalFormat) DecimalFormat.getInstance();
-            dfMoney.setGroupingSize(3);
-            newNumber = dfMoney.format(a);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return newNumber;
     }
 
     /**
@@ -162,35 +126,6 @@ public class AppUtils {
         }
 
         return ver;
-    }
-
-
-    /**
-     * 获取发行的渠道信息
-     *
-     * @param context
-     * @return
-     */
-    public static String getChannelInfo(Context context) {
-        String appKey = getMetaData(context, "HUXIN_CHANNEL");
-
-        if (!TextUtils.isEmpty(appKey)) {
-            return appKey.replace("T", "").trim();
-        } else {
-            return "4000";   //默认渠道4000
-        }
-
-    }
-
-
-    /**
-     * 获取发行的渠道信息
-     *
-     * @param context
-     * @return
-     */
-    public static String getAppKey(Context context) {
-        return getMetaData(context, "com.youmai.huxin.apikey");
     }
 
 
@@ -420,7 +355,7 @@ public class AppUtils {
                 }
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return false;
     }
@@ -893,7 +828,7 @@ public class AppUtils {
     private static String getMD5(byte[] source) {
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
-            StringBuffer result = new StringBuffer();
+            StringBuilder result = new StringBuilder();
             for (byte b : md5.digest(source)) {
                 result.append(Integer.toHexString((b & 0xf0) >>> 4));
                 result.append(Integer.toHexString(b & 0x0f));
@@ -1195,19 +1130,6 @@ public class AppUtils {
             e.printStackTrace();
         }
         return null;
-    }
-
-
-    /**
-     * app是否有系统权限
-     *
-     * @param context
-     * @param permission
-     * @return
-     */
-    public static boolean checkPermission(Context context, String permission) {
-        return ContextCompat.checkSelfPermission(context, permission)
-                == PackageManager.PERMISSION_GRANTED;
     }
 
 

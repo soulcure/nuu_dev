@@ -14,10 +14,12 @@ import com.nuu.config.FileConfig;
 import com.nuu.http.DownloadListener;
 import com.nuu.http.IGetListener;
 import com.nuu.http.OkHttpConnector;
+import com.nuu.install.AppMuteInstall;
 import com.nuu.proto.UpdateRequest;
 import com.nuu.socket.ReceiveListener;
 import com.nuu.util.AppUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
@@ -47,6 +49,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.btn_update).setOnClickListener(this);
         findViewById(R.id.btn_info).setOnClickListener(this);
         findViewById(R.id.btn_web).setOnClickListener(this);
+        findViewById(R.id.btn_install).setOnClickListener(this);
+        findViewById(R.id.btn_pm).setOnClickListener(this);
     }
 
 
@@ -61,10 +65,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         switch (id) {
             case R.id.btn_update: {
                 String devId = Build.SERIAL;
-                String curVerCode = AppUtils.getVersion(this);
+                String curVerCode = String.valueOf(AppUtils.getVerCode(this));
                 String brand = Build.BRAND;
                 String model = Build.MODEL;
-                if (BuildConfig.DEBUG) {
+                if (BuildConfig.DEBUG || true) {
                     devId = "8a9adcd4";
                     curVerCode = "4";
                     brand = "NUU";
@@ -82,7 +86,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                             if (result && !TextUtils.isEmpty(url)) {
                                 String deviceId = Build.SERIAL;
-                                if (BuildConfig.DEBUG) {
+                                if (BuildConfig.DEBUG || true) {
                                     deviceId = "8a9adcd4";
                                 }
                                 String token = AppUtils.md5("@com.nuu@" + deviceId);
@@ -139,7 +143,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 });
                 break;
+            case R.id.btn_install:
+                installApp1();
+                break;
+            case R.id.btn_pm:
+                installApp2();
+                break;
         }
+    }
+
+
+    private void installApp1() {
+        final String filePath = FileConfig.getApkDownLoadPath();
+        String fileName = AppConfig.getDownloadApkName();
+        String path = filePath + File.separator + fileName;
+
+        //String path="/storage/emulated/0/test.apk";
+        Log.d(TAG, "install path:" + path);
+
+        AppMuteInstall.installPackage(this, path);
+    }
+
+    private void installApp2() {
+        final String filePath = FileConfig.getApkDownLoadPath();
+        String fileName = AppConfig.getDownloadApkName();
+        String path = filePath + File.separator + fileName;
+
+        //String path="/storage/emulated/0/test.apk";
+        Log.d(TAG, "install path:" + path);
+
+        AppMuteInstall.installByPm(path);
     }
 
 

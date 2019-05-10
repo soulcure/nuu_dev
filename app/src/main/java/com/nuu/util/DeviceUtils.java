@@ -69,7 +69,7 @@ public class DeviceUtils {
                 .getSystemService(WIFI_SERVICE);
         WifiInfo info = wifiMan.getConnectionInfo();
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT < 23) {
             mac = info.getMacAddress();
         }
 
@@ -85,7 +85,7 @@ public class DeviceUtils {
                 Log.e("MobileAcces", "Erreur lecture propriete Adresse MAC ");
             }
         }
-        if (isDefault(mac) && Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+        if (isDefault(mac) && Build.VERSION.SDK_INT <= 23) {
             mac = getLocalMacAddressFromIp();
         }
 
@@ -371,31 +371,6 @@ public class DeviceUtils {
         return Build.BRAND + " " + Build.MODEL;
     }
 
-
-    /**
-     * 获取SIM手机号码 （极少量 SIM 可以获取得到，取决于SIM 是否支持）
-     *
-     * @param context
-     * @return
-     */
-    public static String getPhoneNumber(Context context) {
-        String phone = null;
-        try {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-                phone = tm.getLine1Number();
-            }
-        } catch (Exception e) {
-            phone = null;
-        }
-
-        if (!TextUtils.isEmpty(phone) && phone.startsWith("+86")) {
-            phone = phone.substring(3);
-        }
-
-        return phone;
-    }
 
     public static String getIp() {
         String ip;
