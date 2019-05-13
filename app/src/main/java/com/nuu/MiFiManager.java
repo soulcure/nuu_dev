@@ -617,6 +617,7 @@ public class MiFiManager {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case HANDLER_THREAD_INIT_CONFIG_START:
+                    FileConfig.delLogFileMonthBefore();  //删除一定时间前的设备日志信息
                     break;
                 case HANDLER_REPORT_DEVICE_INFO:
                     sendDeviceInfoList();
@@ -684,7 +685,7 @@ public class MiFiManager {
                             ReportDeviceStatusInfoResp.parseFrom(body);
                     String test = ack.getDeviceId();
                     int test2 = ack.getUtc();
-                    Log.d("TcpClient", "sendDeviceInfo:" + test + "@" + test2);
+                    Log.d(TAG, "sendDeviceInfo:" + test + "@" + test2);
                 } catch (ExceptionInInitializerError e) {
                     e.printStackTrace();
                 } catch (Exception e) {
@@ -709,9 +710,9 @@ public class MiFiManager {
                     final ServerResponse.ReportDeviceStatusInfoResp ack = ServerResponse.
                             ReportDeviceStatusInfoResp.parseFrom(body);
                     reportDataList.clear();
-                    String test = ack.getDeviceId();
-                    int test2 = ack.getUtc();
-                    Log.d("TcpClient", "sendDeviceInfo:" + test + "@" + test2);
+                    String deviceId = ack.getDeviceId();
+                    int utc = ack.getUtc();
+                    Log.d(TAG, "sendDeviceInfo:" + deviceId + "@" + utc);
                 } catch (ExceptionInInitializerError e) {
                     e.printStackTrace();
                 } catch (Exception e) {

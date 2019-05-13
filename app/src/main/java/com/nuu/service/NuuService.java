@@ -33,7 +33,7 @@ import java.net.InetSocketAddress;
 
 public class NuuService extends Service {
 
-    private static final String TAG = NuuService.class.getSimpleName();
+    private static final String TAG = "TcpClient";
 
     public static final String BOOT_NUU_SERVICE = "com.nuu.service.BOOT_SERVICE"; //启动服务
     public static final String REPORT_DEVICE_AM = "com.nuu.service.REPORT_DEVICE_AM";

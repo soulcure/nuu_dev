@@ -9,11 +9,14 @@ import com.nuu.util.FileUtils;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class FileConfig {
+
+    private static final String TAG = "TcpClient";
 
     public static final String NuuPath = "/nuu";
     public static final String ApkPaths = NuuPath + "/Apk/";
@@ -101,7 +104,7 @@ public class FileConfig {
             strList.add(item.toString());
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.CHINA);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd", Locale.CHINA);
         String dateStr = sdf.format(new Date(System.currentTimeMillis()));
 
         String path = ConfigManager.instance().getCurConfig().getReportStorePath();
@@ -109,4 +112,27 @@ public class FileConfig {
         FileUtils.writeFile(filePath, strList, true);
     }
 
+
+    public static void delLogFileMonthBefore() {
+        String dir = ConfigManager.instance().getCurConfig().getReportStorePath();
+        File file = new File(dir);
+        if (file.isDirectory()) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.add(Calendar.MONTH, -1); //保留1个月
+            //calendar.add(Calendar.DATE, -3); //保留3天
+
+            Date date = calendar.getTime();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd", Locale.CHINA);
+            String dateStr = sdf.format(date);
+            String filePath = dir + "/" + filePrefix + dateStr + fileSubfix;
+
+            for (File f : file.listFiles()) {
+                if (f.isFile() && f.getAbsolutePath().compareTo(filePath) < 0) {
+                    f.delete();
+                }
+            }
+        }
+
+    }
 }

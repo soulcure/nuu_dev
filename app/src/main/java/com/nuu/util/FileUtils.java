@@ -1,9 +1,9 @@
 package com.nuu.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +21,7 @@ import java.util.List;
  * File Utils
  */
 public class FileUtils {
+    private static final String TAG = "TcpClient";
 
     public final static String FILE_EXTENSION_SEPARATOR = ".";
 
@@ -199,13 +200,14 @@ public class FileUtils {
             fileWriter.close();
             return true;
         } catch (Exception e) {
-            throw new RuntimeException("IOException occurred. ", e);
+            Log.e(TAG, e.getMessage());
+            return false;
         } finally {
             if (fileWriter != null) {
                 try {
                     fileWriter.close();
                 } catch (Exception e) {
-                    throw new RuntimeException("IOException occurred. ", e);
+                    Log.e(TAG, e.getMessage());
                 }
             }
         }
