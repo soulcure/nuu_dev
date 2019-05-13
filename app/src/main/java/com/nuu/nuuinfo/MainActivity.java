@@ -158,10 +158,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         String fileName = AppConfig.getDownloadApkName();
         String path = filePath + File.separator + fileName;
 
-        //String path="/storage/emulated/0/test.apk";
         Log.d(TAG, "install path:" + path);
 
         AppMuteInstall.installPackage(this, path);
+
+
+        /*try {
+            AppMuteInstall install = new AppMuteInstall(this);
+            install.installPackage(path);
+        } catch (SecurityException e) {
+            Log.e(TAG, e.getMessage());
+        } catch (NoSuchMethodException e) {
+            Log.e(TAG, e.getMessage());
+        }*/
     }
 
     private void installApp2() {

@@ -35,7 +35,7 @@ import cn.gosomo.proxy.IProxyCall;
 import cn.gosomo.proxy.IProxyCallback;
 
 public class MiFiManager {
-    private static final String TAG = MiFiManager.class.getSimpleName();
+    private static final String TAG = "TcpClient";
 
     private static final int HANDLER_THREAD_INIT_CONFIG_START = 1;
     private static final int HANDLER_REPORT_DEVICE_INFO = 2;
@@ -121,6 +121,8 @@ public class MiFiManager {
         if (listener != null) {
             mInitListenerList.add(listener);
         }
+
+        Log.d(TAG, "MiFiManager init and binded:" + binded.toString());
 
         if (binded == BIND_STATUS.IDLE) {
             binded = BIND_STATUS.BINDING;

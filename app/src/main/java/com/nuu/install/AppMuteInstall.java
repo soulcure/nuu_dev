@@ -82,7 +82,7 @@ public class AppMuteInstall {
     public static void installPackage(Context context, String filePath) {
         try {
             PackageManager packageManager = context.getPackageManager();
-            Class<?>[] types = new Class[]{Uri.class, android.app.PackageInstallObserver.class, int.class, String.class};
+            Class<?>[] types = new Class[]{Uri.class, IPackageInstallObserver.class, int.class, String.class};
             Method method = packageManager.getClass().getMethod("installPackage", types);
 
             File apkFile = new File(filePath);
@@ -92,11 +92,11 @@ public class AppMuteInstall {
                     new Object[]{apkUri,
                             new IPackageInstallObserver.Stub() {
                                 @Override
-                                public void packageInstalled(String pkgName, int resultCode) {
+                                public void packageInstalled(String pkgName, int resultCode) throws RemoteException {
                                     Log.d(TAG, "packageInstalled = " + pkgName + "; resultCode = " + resultCode);
                                 }
                             },
-                            2, null});
+                            INSTALL_REPLACE_EXISTING, null});
         } catch (SecurityException e) {
             Log.e(TAG, e.getMessage());
         } catch (NoSuchMethodException e) {

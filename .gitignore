@@ -13,6 +13,7 @@ bin/
 gen/
 build/
 dist/
+release/
 .gradle/
 gradle/
 
