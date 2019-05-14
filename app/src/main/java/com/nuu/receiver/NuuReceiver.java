@@ -26,9 +26,15 @@ public class NuuReceiver extends BroadcastReceiver {
         }
 
         Log.d(TAG, "NuuReceiver onReceive:" + action);
+        if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+            MiFiManager.instance().init(context);
 
-        if (action.equals(Intent.ACTION_BOOT_COMPLETED)
-                || action.equals(ConnectivityManager.CONNECTIVITY_ACTION)
+            Intent in = new Intent(context, NuuService.class);
+            in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            in.setAction(NuuService.NUU_CHECK_UPDATE);
+            context.startService(in);//启动服务
+
+        } else if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)
                 || action.equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
             MiFiManager.instance().init(context);
 

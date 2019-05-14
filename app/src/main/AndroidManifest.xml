@@ -74,6 +74,7 @@
                 <action android:name="com.nuu.service.BOOT_SERVICE" />
                 <action android:name="com.nuu.service.REPORT_DEVICE_AM" />
                 <action android:name="com.nuu.service.OBTAIN_DEVICE_AM" />
+                <action android:name="com.nuu.service.CHECK_UPDATE" />
             </intent-filter>
         </service>
 

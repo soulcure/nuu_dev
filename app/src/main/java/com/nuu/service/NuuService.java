@@ -38,6 +38,7 @@ public class NuuService extends Service {
     public static final String BOOT_NUU_SERVICE = "com.nuu.service.BOOT_SERVICE"; //启动服务
     public static final String REPORT_DEVICE_AM = "com.nuu.service.REPORT_DEVICE_AM";
     public static final String OBTAIN_DEVICE_AM = "com.nuu.service.OBTAIN_DEVICE_AM";
+    public static final String NUU_CHECK_UPDATE = "com.nuu.service.CHECK_UPDATE";
     private Context mContext;
 
     /**
@@ -291,6 +292,10 @@ public class NuuService extends Service {
                     Log.v(TAG, "obtainDeviceInfo");
                     MiFiManager.instance().obtainDeviceInfo(null);
                     mReportTaskManager.updateObtainReportTask();
+                    break;
+                case NUU_CHECK_UPDATE:
+                    Log.v(TAG, "nuu_check_update");
+                    MiFiManager.instance().nuuCheckUpdate();
                     break;
             }
         }

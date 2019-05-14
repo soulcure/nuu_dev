@@ -1,24 +1,17 @@
 package com.nuu.nuuinfo;
 
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
 import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
 import com.nuu.config.FileConfig;
-import com.nuu.http.DownloadListener;
 import com.nuu.http.IGetListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.install.AppMuteInstall;
-import com.nuu.proto.UpdateRequest;
-import com.nuu.socket.ReceiveListener;
-import com.nuu.util.AppUtils;
-import com.nuu.util.DeviceInfo;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -63,67 +56,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
-            case R.id.btn_update: {
-                String devId = DeviceInfo.getDeviceId();
-                String curVerCode = String.valueOf(AppUtils.getVerCode(this));
-                String brand = DeviceInfo.getBrand();
-                String model = DeviceInfo.getModel();
-
-                ReceiveListener callback = new ReceiveListener() {
-                    @Override
-                    public void OnRec(byte[] body) {
-                        try {
-                            final UpdateRequest.DeviceUpgradeResp ack = UpdateRequest.DeviceUpgradeResp.parseFrom(body);
-                            String newVerCode = ack.getNewVerCode();
-                            String url = ack.getUrl();
-                            boolean result = ack.getResult();
-                            Log.d(TAG, result + "@" + newVerCode + "@" + url);
-
-                            if (result && !TextUtils.isEmpty(url)) {
-                                String deviceId = DeviceInfo.getDeviceId();
-
-                                String token = AppUtils.md5("@com.nuu@" + deviceId);
-                                String reqUrl = url + "?hwid=" + deviceId + "&vercode=" + newVerCode + "&token=" + token;
-
-                                final String filePath = FileConfig.getApkDownLoadPath();
-                                String fileName = AppConfig.getDownloadApkName();
-                                OkHttpConnector.httpDownload(reqUrl, null,
-                                        filePath, fileName, new DownloadListener() {
-                                            @Override
-                                            public void onProgress(int cur, int total) {
-                                                int rate = (cur * 100) / total;
-                                                Log.d(TAG, "onProgress:" + rate + "%");
-                                            }
-
-                                            @Override
-                                            public void onFail(String err) {
-                                                Log.e(TAG, "onFail");
-                                                File file = new File(filePath);
-                                                if (file.exists()) {
-                                                    file.deleteOnExit();
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onSuccess(String path) {
-                                                Log.d(TAG, "onSuccess");
-                                            }
-                                        });
-
-                            }
-
-                        } catch (ExceptionInInitializerError e) {
-                            e.printStackTrace();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } catch (NoClassDefFoundError e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-                MiFiManager.instance().checkUpdate(devId, curVerCode, brand, model, callback);
-            }
-            break;
+            case R.id.btn_update:
+                MiFiManager.instance().checkUpdate();
+                break;
             case R.id.btn_info:
                 MiFiManager.instance().reportDeviceInfo();
                 break;

@@ -10,11 +10,15 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.protobuf.GeneratedMessageV3;
+import com.nuu.config.AppConfig;
 import com.nuu.config.FileConfig;
 import com.nuu.entity.ReportData;
+import com.nuu.http.DownloadListener;
+import com.nuu.http.OkHttpConnector;
 import com.nuu.nuuinfo.MiFiApplication;
 import com.nuu.proto.DeviceStatus;
 import com.nuu.proto.ServerResponse;
@@ -26,6 +30,7 @@ import com.nuu.socket.ReceiveListener;
 import com.nuu.util.AppUtils;
 import com.nuu.util.DeviceInfo;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +45,7 @@ public class MiFiManager {
     private static final int HANDLER_THREAD_INIT_CONFIG_START = 1;
     private static final int HANDLER_REPORT_DEVICE_INFO = 2;
     private static final int HANDLER_OBTAIN_DEVICE_INFO = 3;
+    private static final int HANDLER_NUU_CHECK_UPDATE = 4;
 
     private static MiFiManager instance;
 
@@ -631,6 +637,9 @@ public class MiFiManager {
                 case HANDLER_OBTAIN_DEVICE_INFO:
                     initDeviceInfo();
                     break;
+                case HANDLER_NUU_CHECK_UPDATE:
+                    checkUpdate();
+                    break;
                 default:
                     break;
             }
@@ -652,6 +661,10 @@ public class MiFiManager {
     public String getDeviceInfo() {
         ReportData data = new ReportData(mContext);
         return data.toJson();
+    }
+
+    public void nuuCheckUpdate() {
+        mProcessHandler.sendEmptyMessageDelayed(HANDLER_NUU_CHECK_UPDATE, 30 * 1000);
     }
 
 
@@ -729,5 +742,67 @@ public class MiFiManager {
             }
         };
         deviceStatus(reportDataList, callback);
+    }
+
+    public void checkUpdate() {
+        Log.d(TAG, "nuu info check update");
+        String devId = DeviceInfo.getDeviceId();
+        String curVerCode = String.valueOf(AppUtils.getVerCode(mContext));
+        String brand = DeviceInfo.getBrand();
+        String model = DeviceInfo.getModel();
+
+        ReceiveListener callback = new ReceiveListener() {
+            @Override
+            public void OnRec(byte[] body) {
+                try {
+                    final UpdateRequest.DeviceUpgradeResp ack = UpdateRequest.DeviceUpgradeResp.parseFrom(body);
+                    String newVerCode = ack.getNewVerCode();
+                    String url = ack.getUrl();
+                    boolean result = ack.getResult();
+                    Log.d(TAG, result + "@" + newVerCode + "@" + url);
+
+                    if (result && !TextUtils.isEmpty(url)) {
+                        String deviceId = DeviceInfo.getDeviceId();
+
+                        String token = AppUtils.md5("@com.nuu@" + deviceId);
+                        String reqUrl = url + "?hwid=" + deviceId + "&vercode=" + newVerCode + "&token=" + token;
+
+                        final String filePath = FileConfig.getApkDownLoadPath();
+                        String fileName = AppConfig.getDownloadApkName();
+                        OkHttpConnector.httpDownload(reqUrl, null,
+                                filePath, fileName, new DownloadListener() {
+                                    @Override
+                                    public void onProgress(int cur, int total) {
+                                        int rate = (cur * 100) / total;
+                                        Log.d(TAG, "onProgress:" + rate + "%");
+                                    }
+
+                                    @Override
+                                    public void onFail(String err) {
+                                        Log.e(TAG, "onFail");
+                                        File file = new File(filePath);
+                                        if (file.exists()) {
+                                            file.deleteOnExit();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onSuccess(String path) {
+                                        Log.d(TAG, "onSuccess");
+                                    }
+                                });
+
+                    }
+
+                } catch (ExceptionInInitializerError e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } catch (NoClassDefFoundError e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        checkUpdate(devId, curVerCode, brand, model, callback);
     }
 }
