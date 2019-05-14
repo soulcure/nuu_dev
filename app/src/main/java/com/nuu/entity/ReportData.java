@@ -34,10 +34,6 @@ public class ReportData {
         unixTime = DeviceInfo.getUnixTimeStamp();
         ip = DeviceInfo.getIPAddress();
 
-        if (BuildConfig.DEBUG) {
-            deviceId = "8a9adcd4";
-        }
-
         List<WifiClient> wifiApClientList = DeviceInfo.getWifiApClientList();
         hotAmount = wifiApClientList.size();
         mac = DeviceInfo.getMacAddress(wifiApClientList);

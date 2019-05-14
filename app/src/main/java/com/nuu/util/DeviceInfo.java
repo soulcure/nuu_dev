@@ -29,6 +29,7 @@ import android.telephony.TelephonyManager;
 import com.nuu.entity.BatteryInfo;
 import com.nuu.entity.ReportData;
 import com.nuu.entity.WifiClient;
+import com.nuu.nuuinfo.BuildConfig;
 import com.nuu.proto.DeviceStatus;
 
 import java.io.BufferedReader;
@@ -46,8 +47,28 @@ import java.util.regex.Pattern;
 public class DeviceInfo {
 
     public static String getDeviceId() {
+        if (BuildConfig.DEBUG || true) {
+            return "8a9adcd4";
+        }
         return Build.SERIAL;
     }
+
+
+    public static String getBrand() {
+        if (BuildConfig.DEBUG || true) {
+            return "NUU";
+        }
+        return Build.BRAND;
+    }
+
+
+    public static String getModel() {
+        if (BuildConfig.DEBUG || true) {
+            return "i1";
+        }
+        return Build.MODEL;
+    }
+
 
     public static String getDeviceSN() {
         String imei1 = SystemProperties.get("persist.telephony.imei1");

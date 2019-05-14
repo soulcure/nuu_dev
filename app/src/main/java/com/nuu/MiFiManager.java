@@ -519,11 +519,13 @@ public class MiFiManager {
     private ServiceConnection mProxyCallConn = new ServiceConnection() {
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "ServiceConnection onServiceDisconnected");
             mProxyCallService = null;
         }
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.d(TAG, "ServiceConnection onServiceConnected");
             mProxyCallService = IProxyCall.Stub.asInterface(service);
             try {
                 String packageName = mContext.getPackageName();
@@ -531,7 +533,6 @@ public class MiFiManager {
                 mProxyCallService.registerCallback(packageName, mProxyCallback);
             } catch (RemoteException e) {
                 e.printStackTrace();
-
             }
         }
     };
@@ -539,11 +540,12 @@ public class MiFiManager {
     private IProxyCallback mProxyCallback = new IProxyCallback.Stub() {
         @Override
         public void onEventSys(int board, int event, int value) {
-            Log.d(TAG, "onEventSys");
+            Log.d(TAG, "onEventSys board:" + board + "@event:" + event + "@value:" + value);
         }
 
         @Override
         public void onSimcardStateChange(int board, int slot, String imsi) throws RemoteException {
+            Log.d(TAG, "onSimcardStateChange board:" + board + "@slot:" + slot + "@imsi:" + imsi);
             if (board == 2 && slot == 0) {
                 String tempImsi = imsi == null ? "" : imsi;
                 curSim2.setImsi(tempImsi);
@@ -553,6 +555,7 @@ public class MiFiManager {
 
         @Override
         public void onLocationChange(int board, int slot, String plmn, int lac, int cid, int psc) throws RemoteException {
+            Log.d(TAG, "onLocationChange board:" + board + "@slot:" + slot + "@plmn:" + plmn + "@lac:" + lac + "@cid:" + cid + "@psc:" + psc);
             if (board == 2 && slot == 0) {
                 String tempPlmn = plmn == null ? "" : plmn;
                 curSim2.setPlmn(tempPlmn);
@@ -564,6 +567,7 @@ public class MiFiManager {
 
         @Override
         public void onServiceStateChange(int board, int slot, int serviceState, int networkType, int rssi) throws RemoteException {
+            Log.d(TAG, "onServiceStateChange board:" + board + "@slot:" + slot + "@serviceState:" + serviceState + "@networkType:" + networkType + "@rssi:" + rssi);
             if (board == 2 && slot == 0) {
                 curSim2.setSignal(rssi);
                 curSim2.setNetMode(networkType);
@@ -573,6 +577,7 @@ public class MiFiManager {
 
         @Override
         public void onDataStateChange(int board, int slot, int dataState, int networkType, int rssi) throws RemoteException {
+            Log.d(TAG, "onDataStateChange board:" + board + "@slot:" + slot + "@dataState:" + dataState + "@networkType:" + networkType + "@rssi:" + rssi);
             if (board == 2 && slot == 0) {
                 curSim2.setNetMode(networkType);
                 curSim2.setSignal(rssi);
@@ -581,6 +586,7 @@ public class MiFiManager {
 
         @Override
         public void onSignalStrengthChange(int board, int slot, int rssi) throws RemoteException {
+            Log.d(TAG, "onSignalStrengthChange board:" + board + "@slot:" + slot + "@rssi:" + rssi);
             if (board == 2 && slot == 0) {
                 curSim2.setSignal(rssi);
             }

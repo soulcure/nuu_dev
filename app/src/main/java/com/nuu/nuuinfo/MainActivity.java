@@ -18,8 +18,8 @@ import com.nuu.install.AppMuteInstall;
 import com.nuu.proto.UpdateRequest;
 import com.nuu.socket.ReceiveListener;
 import com.nuu.util.AppUtils;
+import com.nuu.util.DeviceInfo;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
@@ -64,16 +64,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         int id = v.getId();
         switch (id) {
             case R.id.btn_update: {
-                String devId = Build.SERIAL;
+                String devId = DeviceInfo.getDeviceId();
                 String curVerCode = String.valueOf(AppUtils.getVerCode(this));
-                String brand = Build.BRAND;
-                String model = Build.MODEL;
-                if (BuildConfig.DEBUG || true) {
-                    devId = "8a9adcd4";
-                    curVerCode = "4";
-                    brand = "NUU";
-                    model = "i1";
-                }
+                String brand = DeviceInfo.getBrand();
+                String model = DeviceInfo.getModel();
+
                 ReceiveListener callback = new ReceiveListener() {
                     @Override
                     public void OnRec(byte[] body) {
@@ -85,10 +80,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             Log.d(TAG, result + "@" + newVerCode + "@" + url);
 
                             if (result && !TextUtils.isEmpty(url)) {
-                                String deviceId = Build.SERIAL;
-                                if (BuildConfig.DEBUG || true) {
-                                    deviceId = "8a9adcd4";
-                                }
+                                String deviceId = DeviceInfo.getDeviceId();
+
                                 String token = AppUtils.md5("@com.nuu@" + deviceId);
                                 String reqUrl = url + "?hwid=" + deviceId + "&vercode=" + newVerCode + "&token=" + token;
 
