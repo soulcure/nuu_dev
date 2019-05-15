@@ -1,5 +1,6 @@
 package com.nuu.nuuinfo;
 
+import android.content.ContentValues;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -9,9 +10,16 @@ import android.view.View;
 import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
 import com.nuu.config.FileConfig;
+import com.nuu.entity.DetailRsp;
+import com.nuu.entity.PackageRsp;
+import com.nuu.entity.SettingRsp;
 import com.nuu.http.IGetListener;
+import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.install.AppMuteInstall;
+import com.nuu.util.GsonUtil;
+import com.nuu.util.ShellUtils;
+import com.nuu.view.WaveLoadingView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -23,6 +31,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static final int CHARGER_COMPLIED = 202;
 
     private NormalHandler mHandler;
+
+    private WaveLoadingView waveLoadingView;
 
 
     @Override
@@ -39,11 +49,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initView() {
+        waveLoadingView = (WaveLoadingView) findViewById(R.id.waveLoadingView);
+
+
+
         findViewById(R.id.btn_update).setOnClickListener(this);
         findViewById(R.id.btn_info).setOnClickListener(this);
         findViewById(R.id.btn_web).setOnClickListener(this);
         findViewById(R.id.btn_install).setOnClickListener(this);
         findViewById(R.id.btn_pm).setOnClickListener(this);
+        findViewById(R.id.btn_reboot).setOnClickListener(this);
+        findViewById(R.id.btn_test).setOnClickListener(this);
     }
 
 
@@ -77,6 +93,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.btn_pm:
                 installApp2();
                 break;
+            case R.id.btn_reboot:
+                ShellUtils.execCmd("reboot", false);
+                break;
+            case R.id.btn_test:
+                //reqStatus();
+                //reqDetailToday();
+                //reqDetailPeriod();
+                reqPurchasedPackage();
+                break;
+
         }
     }
 
@@ -112,6 +138,90 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         AppMuteInstall.installByPm(path);
     }
 
+
+    private void reqStatus() {
+        String url = AppConfig.getHost();
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "query_device_status");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                SettingRsp rsp = GsonUtil.parse(response, SettingRsp.class);
+            }
+        });
+
+    }
+
+
+    private void reqDetailToday() {
+        String url = AppConfig.getHost();
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "query_device_package_info");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                DetailRsp rsp = GsonUtil.parse(response, DetailRsp.class);
+            }
+        });
+
+    }
+
+
+    private void reqDetailPeriod() {
+        String url = AppConfig.getHost();
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "query_used_package");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+        params.put("begin_date", "20190510");
+        params.put("end_date", "20190515");
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                //DetailRsp rsp = GsonUtil.parse(response, DetailRsp.class);
+            }
+        });
+
+    }
+
+
+    private void reqPurchasedPackage() {
+        String url = AppConfig.getHost();
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "query_package");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                PackageRsp rsp = GsonUtil.parse(response, PackageRsp.class);
+                waveLoadingView.setCenterTitle(rsp.percentStr());
+                waveLoadingView.setProgressValue(rsp.percent());
+            }
+        });
+
+    }
 
     @Override
     protected void onDestroy() {

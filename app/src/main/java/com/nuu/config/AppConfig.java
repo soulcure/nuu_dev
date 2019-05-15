@@ -1,5 +1,6 @@
 package com.nuu.config;
 
+import android.content.ContentValues;
 import android.os.Environment;
 
 import com.nuu.nuuinfo.BuildConfig;
@@ -16,12 +17,31 @@ public class AppConfig {
     public static final String SHARED_PREFERENCES = "sdk_app";
 
 
+    //private static final String HOST = "http://119.23.74.49:80/";//开发服务器
+    private static final String HOST = "http://47.91.250.107:80/";//测试服务器
+
     public static String getIp() {//配置默认ip
         return "119.23.74.49";
     }
 
     public static int getPort() {//配置默认端口
         return 18990;
+    }
+
+
+    public static String getHost() {
+        return HOST + "api/public_intf";
+    }
+
+
+    public static ContentValues getParam(String apiName) {
+        ContentValues params = new ContentValues();
+        params.put("itf_name", apiName);  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+        return params;
     }
 
     /**
