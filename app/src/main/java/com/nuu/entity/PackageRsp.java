@@ -56,8 +56,8 @@ public class PackageRsp {
     }
 
 
-    public long data() {
-        long data = 0;
+    public int data() {
+        int data = 0;
         if (packageX != null && packageX.size() > 0) {
             for (PackageBean item : packageX) {
                 if (item.getStatus() == 1) {
@@ -68,8 +68,8 @@ public class PackageRsp {
         return data;
     }
 
-    public long dataUsed() {
-        long dataUsed = 0;
+    public int dataUsed() {
+        int dataUsed = 0;
         if (packageX != null && packageX.size() > 0) {
             for (PackageBean item : packageX) {
                 if (item.getStatus() == 1) {
@@ -91,7 +91,6 @@ public class PackageRsp {
     public String percentStr() {
         int data = 0;
         int dataUsed = 0;
-        StringBuffer sb = new StringBuffer();
 
         if (packageX != null && packageX.size() > 0) {
             for (PackageBean item : packageX) {
@@ -106,10 +105,7 @@ public class PackageRsp {
         if (data > 0 && dataUsed > 0) {
             double d = dataUsed * 100.0f / data;
             DecimalFormat df = new DecimalFormat("0.00");
-            //return "已用" + df.format(d) + "%";"%"
-            sb.append("已用").append(df.format(d)).append("%").append('\n');
-            sb.append("剩余:").append(AppUtils.bytes2mb(data - dataUsed));
-            return sb.toString();
+            return df.format(d) + "%";
         }
 
         return "0%";

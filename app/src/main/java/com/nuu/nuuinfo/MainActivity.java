@@ -10,6 +10,7 @@ import android.view.View;
 import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
 import com.nuu.config.FileConfig;
+import com.nuu.entity.CurUsingPackageRsp;
 import com.nuu.entity.DetailRsp;
 import com.nuu.entity.PackageRsp;
 import com.nuu.entity.SettingRsp;
@@ -50,7 +51,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void initView() {
         waveLoadingView = (WaveLoadingView) findViewById(R.id.waveLoadingView);
-
 
 
         findViewById(R.id.btn_update).setOnClickListener(this);
@@ -100,7 +100,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //reqStatus();
                 //reqDetailToday();
                 //reqDetailPeriod();
-                reqPurchasedPackage();
+                //reqPurchasedPackage();
+                //reqBuyPackage();
+                reqCurUsingPackage();
                 break;
 
         }
@@ -222,6 +224,62 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
 
     }
+
+
+    private void reqBuyPackage() {
+        String url = AppConfig.getHost();
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "query_package");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+        params.put("mcclist", "460,260");
+        params.put("tz", "8");  // time zone
+        params.put("start", "2019-07-05 12:00:00");  //  start time
+        params.put("end", "2019-07-08 23:59:59");
+        params.put("high", "1024");
+        params.put("slow", "-1");
+        params.put("slowspeed", "256");
+        params.put("price", "500");
+        params.put("currency_type", "2");
+        params.put("priority", "1");
+        params.put("user", "user");
+        params.put("daily_plan", "0");
+        params.put("day", 3);
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                //PackageRsp rsp = GsonUtil.parse(response, PackageRsp.class);
+                //waveLoadingView.setCenterTitle(rsp.percentStr());
+                //waveLoadingView.setProgressValue(rsp.percent());
+            }
+        });
+
+    }
+
+
+    private void reqCurUsingPackage() {
+        String url = AppConfig.getHost();
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "query_using_package");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                CurUsingPackageRsp rsp = GsonUtil.parse(response, CurUsingPackageRsp.class);
+            }
+        });
+
+    }
+
 
     @Override
     protected void onDestroy() {
