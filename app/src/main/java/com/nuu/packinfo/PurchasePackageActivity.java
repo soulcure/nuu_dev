@@ -1,6 +1,5 @@
 package com.nuu.packinfo;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +23,6 @@ public class PurchasePackageActivity extends BaseActivity implements View.OnClic
     private LinearLayout mEmptyView;
     private EmptyRecyclerViewDataObserver mEmpty = new EmptyRecyclerViewDataObserver();
 
-    private RecyclerView mRecyclerView;
     private PurchasePackageAdapter mAdapter;
 
     @Override
@@ -32,7 +30,6 @@ public class PurchasePackageActivity extends BaseActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.package_purchase_info);
         initView();
-        reqData();
     }
 
 
@@ -57,24 +54,20 @@ public class PurchasePackageActivity extends BaseActivity implements View.OnClic
 
         mEmptyView = (LinearLayout) findViewById(R.id.message_empty_view);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
 
         List<PackageRsp.PackageBean> list = getIntent().getParcelableArrayListExtra(PACK_LIST);
 
         mAdapter = new PurchasePackageAdapter(this, list);
         mAdapter.registerAdapterDataObserver(mEmpty);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
     }
 
-
-    private void reqData() {
-        //showProgressDialog();
-    }
 
     private class EmptyRecyclerViewDataObserver extends RecyclerView.AdapterDataObserver {
         @Override

@@ -13,6 +13,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,6 +29,7 @@ import com.nuu.packinfo.PurchasePackageActivity;
 import com.nuu.util.AppUtils;
 import com.nuu.util.DeviceInfo;
 import com.nuu.util.GsonUtil;
+import com.nuu.util.ShellUtils;
 import com.nuu.view.WaveLoadingView;
 
 import java.util.ArrayList;
@@ -156,6 +158,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             onSettingWifi((SettingWifiViewHolder) holder, position);
         } else if (holder instanceof RebootViewHolder) { //重启设备
             onReboot((RebootViewHolder) holder, position);
+        } else if (holder instanceof ShutdownViewHolder) { //重启设备
+            shutDown((ShutdownViewHolder) holder, position);
         }
 
     }
@@ -269,8 +273,45 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private void onReboot(final RebootViewHolder holder, final int position) {
+        Button btn_reboot = holder.btn_reboot;
+        btn_reboot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("重启设备？");
 
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ShellUtils.execCmd("reboot", false);
+                    }
+                });
+                builder.setNegativeButton("取消", null);
+                builder.create().show();
+            }
+        });
     }
+
+    private void shutDown(final ShutdownViewHolder holder, final int position) {
+        Button btn_shutdown = holder.btn_shutdown;
+        btn_shutdown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("关闭设备？");
+
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ShellUtils.execCmd("reboot -p", false);
+                    }
+                });
+                builder.setNegativeButton("取消", null);
+                builder.create().show();
+            }
+        });
+    }
+
 
     // 重写的自定义ViewHolder
     static class PackageUsedViewHolder extends RecyclerView.ViewHolder {
@@ -313,20 +354,20 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     static class RebootViewHolder extends RecyclerView.ViewHolder {
-        ImageView mImageView;
+        Button btn_reboot;
 
         RebootViewHolder(View v) {
             super(v);
-            mImageView = (ImageView) v.findViewById(R.id.pic);
+            btn_reboot = (Button) v.findViewById(R.id.btn_reboot);
         }
     }
 
     static class ShutdownViewHolder extends RecyclerView.ViewHolder {
-        ImageView mImageView;
+        Button btn_shutdown;
 
         ShutdownViewHolder(View v) {
             super(v);
-            mImageView = (ImageView) v.findViewById(R.id.pic);
+            btn_shutdown = (Button) v.findViewById(R.id.btn_shutdown);
         }
     }
 
