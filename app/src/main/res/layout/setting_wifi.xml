@@ -16,16 +16,16 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="15dp">
+        android:padding="10dp">
 
 
         <LinearLayout
             android:id="@+id/linear_name"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="15dp">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -37,8 +37,7 @@
             <TextView
                 android:id="@+id/tv_wifi_name"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="nuu4362656" />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -46,10 +45,11 @@
         <LinearLayout
             android:id="@+id/linear_password"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="15dp">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -58,14 +58,11 @@
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/tv_wifi_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:enabled="false"
-                android:inputType="textPassword"
-                android:text="nuu4362656" />
+                android:textColor="@android:color/darker_gray" />
 
         </LinearLayout>
 

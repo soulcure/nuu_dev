@@ -1,19 +1,21 @@
 package com.nuu.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
-import com.nuu.util.AppUtils;
 
 import java.text.DecimalFormat;
-import java.util.List;
+import java.util.ArrayList;
 
-public class PackageRsp {
+public class PackageRsp implements Parcelable {
 
     private String itf_name;
     private String trans_serial;
     private int err_code;
     private String err_desc;
     @SerializedName("package")
-    private List<PackageBean> packageX;
+    private ArrayList<PackageBean> packageX;
 
     public String getItf_name() {
         return itf_name;
@@ -47,11 +49,11 @@ public class PackageRsp {
         this.err_desc = err_desc;
     }
 
-    public List<PackageBean> getPackageX() {
+    public ArrayList<PackageBean> getPackageX() {
         return packageX;
     }
 
-    public void setPackageX(List<PackageBean> packageX) {
+    public void setPackageX(ArrayList<PackageBean> packageX) {
         this.packageX = packageX;
     }
 
@@ -111,7 +113,7 @@ public class PackageRsp {
         return "0%";
     }
 
-    public static class PackageBean {
+    public static class PackageBean implements Parcelable {
 
         private int package_id;
         private String package_name;
@@ -194,5 +196,88 @@ public class PackageRsp {
         public void setStatus(int status) {
             this.status = status;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(this.package_id);
+            dest.writeString(this.package_name);
+            dest.writeInt(this.device_package_id);
+            dest.writeString(this.begin_date);
+            dest.writeString(this.end_date);
+            dest.writeString(this.order_time);
+            dest.writeInt(this.data);
+            dest.writeInt(this.data_used);
+            dest.writeInt(this.status);
+        }
+
+        public PackageBean() {
+        }
+
+        protected PackageBean(Parcel in) {
+            this.package_id = in.readInt();
+            this.package_name = in.readString();
+            this.device_package_id = in.readInt();
+            this.begin_date = in.readString();
+            this.end_date = in.readString();
+            this.order_time = in.readString();
+            this.data = in.readInt();
+            this.data_used = in.readInt();
+            this.status = in.readInt();
+        }
+
+        public static final Creator<PackageBean> CREATOR = new Creator<PackageBean>() {
+            @Override
+            public PackageBean createFromParcel(Parcel source) {
+                return new PackageBean(source);
+            }
+
+            @Override
+            public PackageBean[] newArray(int size) {
+                return new PackageBean[size];
+            }
+        };
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.itf_name);
+        dest.writeString(this.trans_serial);
+        dest.writeInt(this.err_code);
+        dest.writeString(this.err_desc);
+        dest.writeList(this.packageX);
+    }
+
+    public PackageRsp() {
+    }
+
+    protected PackageRsp(Parcel in) {
+        this.itf_name = in.readString();
+        this.trans_serial = in.readString();
+        this.err_code = in.readInt();
+        this.err_desc = in.readString();
+        this.packageX = new ArrayList<PackageBean>();
+        in.readList(this.packageX, PackageBean.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<PackageRsp> CREATOR = new Parcelable.Creator<PackageRsp>() {
+        @Override
+        public PackageRsp createFromParcel(Parcel source) {
+            return new PackageRsp(source);
+        }
+
+        @Override
+        public PackageRsp[] newArray(int size) {
+            return new PackageRsp[size];
+        }
+    };
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -576,4 +577,39 @@ public class DeviceInfo {
         return build.build();
     }
 
+
+    public static void setWifiAp(Context context, String ssid, String password) {
+        try {
+            Context app = context.getApplicationContext();
+            WifiManager wifiManager = (WifiManager) app.getSystemService(Context.WIFI_SERVICE);
+            java.lang.reflect.Method getConfigMethod = wifiManager.getClass().getMethod("getWifiApConfiguration");
+            WifiConfiguration wifiConfig = (WifiConfiguration) getConfigMethod.invoke(wifiManager);
+
+            if (ssid != null) {
+                String realSsid = ssid.trim();
+                if (!realSsid.isEmpty()) {
+                    wifiConfig.SSID = realSsid;
+                }
+            }
+            if (password != null) {
+                String realPwd = password.trim();
+                if (!realPwd.isEmpty() && realPwd.length() >= 8) {
+                    wifiConfig.preSharedKey = realPwd;
+                }
+            }
+//            wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA2_PSK);//WPA2_PSK====4
+            wifiConfig.allowedKeyManagement.set(4);
+            wifiConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+
+            java.lang.reflect.Method setConfigMethod = wifiManager.getClass().getMethod("setWifiApConfiguration", WifiConfiguration.class);
+            setConfigMethod.invoke(wifiManager, wifiConfig);
+
+            java.lang.reflect.Method setWifiApEnabledMethod = wifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
+            setWifiApEnabledMethod.invoke(wifiManager, wifiConfig, false);
+            setWifiApEnabledMethod.invoke(wifiManager, wifiConfig, true);
+//            wifiManager.setWifiApEnabled(wifiManager, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -38,14 +38,13 @@
     <application
         android:name=".MiFiApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
         <activity
             android:name=".CardActivity"
-            android:excludeFromRecents="true"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -64,6 +63,10 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
+
+
+        <activity android:name="com.nuu.packinfo.PurchasePackageActivity" />
+
 
         <service
             android:name="com.nuu.service.NuuService"

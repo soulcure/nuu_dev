@@ -1,10 +1,15 @@
 package com.nuu.nuuinfo;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +18,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nuu.config.AppConfig;
 import com.nuu.entity.CardItem;
 import com.nuu.entity.PackageRsp;
+import com.nuu.entity.SettingSsidPwRsp;
+import com.nuu.http.IPostListener;
+import com.nuu.http.OkHttpConnector;
+import com.nuu.packinfo.PurchasePackageActivity;
 import com.nuu.util.AppUtils;
+import com.nuu.util.DeviceInfo;
+import com.nuu.util.GsonUtil;
 import com.nuu.view.WaveLoadingView;
 
 import java.util.ArrayList;
@@ -156,8 +168,18 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView tv_used = holder.tv_used;
         TextView tv_total = holder.tv_total;
 
-        PackageRsp rsp = item.getPackageRsp();
+        final PackageRsp rsp = item.getPackageRsp();
         if (rsp != null) {
+            holder.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, PurchasePackageActivity.class);
+                    intent.putParcelableArrayListExtra(PurchasePackageActivity.PACK_LIST, rsp.getPackageX());
+                    mContext.startActivity(intent);
+                }
+            });
+
+
             waveLoadingView.setCenterTitle(rsp.percentStr());
             waveLoadingView.setProgressValue(rsp.percent());
 
@@ -181,7 +203,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final TextView tv_wifi_name = holder.tv_wifi_name;
 
         LinearLayout linear_password = holder.linear_password;
-        final EditText tv_wifi_password = holder.tv_wifi_password;
+        final TextView tv_wifi_password = holder.tv_wifi_password;
+        tv_wifi_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+        getWifiAp(mContext, tv_wifi_name, tv_wifi_password);
 
         linear_name.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,7 +214,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 final EditText et = new EditText(mContext);
                 et.setInputType(InputType.TYPE_CLASS_TEXT);
 
-                et.setText("colin");
+                et.setText(tv_wifi_name.getText().toString());
 
                 et.setSelection(et.getText().toString().length());//将光标移至文字末尾
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -202,6 +227,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     public void onClick(DialogInterface dialog, int which) {
                         String name = et.getText().toString();
                         tv_wifi_name.setText(name);
+
+                        reqSetSsidAndPassword(name, tv_wifi_password.getText().toString());
                     }
                 });
                 builder.setNegativeButton("取消", null);
@@ -216,7 +243,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 final EditText et = new EditText(mContext);
                 et.setInputType(InputType.TYPE_CLASS_TEXT);
 
-                et.setText("colin");
+                et.setText(tv_wifi_password.getText().toString());
 
                 et.setSelection(et.getText().toString().length());//将光标移至文字末尾
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -227,8 +254,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String name = et.getText().toString();
-                        tv_wifi_password.setText(name);
+                        String pw = et.getText().toString();
+                        tv_wifi_password.setText(pw);
+
+                        reqSetSsidAndPassword(tv_wifi_name.getText().toString(), pw);
                     }
                 });
                 builder.setNegativeButton("取消", null);
@@ -245,12 +274,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // 重写的自定义ViewHolder
     static class PackageUsedViewHolder extends RecyclerView.ViewHolder {
+        View view;
         WaveLoadingView waveLoadingView;
         TextView tv_used;
         TextView tv_total;
 
         PackageUsedViewHolder(View v) {
             super(v);
+            view = v;
             waveLoadingView = (WaveLoadingView) v.findViewById(R.id.waveLoadingView);
             tv_used = (TextView) v.findViewById(R.id.tv_used);
             tv_total = (TextView) v.findViewById(R.id.tv_total);
@@ -270,14 +301,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         LinearLayout linear_name;
         TextView tv_wifi_name;
         LinearLayout linear_password;
-        EditText tv_wifi_password;
+        TextView tv_wifi_password;
 
         SettingWifiViewHolder(View v) {
             super(v);
             linear_name = (LinearLayout) v.findViewById(R.id.linear_name);
             tv_wifi_name = (TextView) v.findViewById(R.id.tv_wifi_name);
             linear_password = (LinearLayout) v.findViewById(R.id.linear_password);
-            tv_wifi_password = (EditText) v.findViewById(R.id.tv_wifi_password);
+            tv_wifi_password = (TextView) v.findViewById(R.id.tv_wifi_password);
         }
     }
 
@@ -296,6 +327,56 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ShutdownViewHolder(View v) {
             super(v);
             mImageView = (ImageView) v.findViewById(R.id.pic);
+        }
+    }
+
+
+    private void reqSetSsidAndPassword(final String ssid, final String password) {
+        String url = AppConfig.getHost();
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "device_wifi_setup");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+
+        params.put("ssid", ssid);
+        params.put("wifi_password", password);
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                SettingSsidPwRsp rsp = GsonUtil.parse(response, SettingSsidPwRsp.class);
+                if (rsp != null && rsp.getErr_code() == 0) {
+                    DeviceInfo.setWifiAp(mContext, ssid, password);
+                }
+
+            }
+        });
+
+    }
+
+
+    private static void getWifiAp(Context context, TextView tvSsid, TextView tvPw) {
+        try {
+            Context app = context.getApplicationContext();
+            WifiManager wifiManager = (WifiManager) app.getSystemService(Context.WIFI_SERVICE);
+            java.lang.reflect.Method getConfigMethod = wifiManager.getClass().getMethod("getWifiApConfiguration");
+            WifiConfiguration wifiConfig = (WifiConfiguration) getConfigMethod.invoke(wifiManager);
+
+            String ssid = wifiConfig.SSID;
+            String realPwd = wifiConfig.preSharedKey;
+
+            if (tvSsid != null) {
+                tvSsid.setText(ssid);
+            }
+            if (tvPw != null) {
+                tvPw.setText(realPwd);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

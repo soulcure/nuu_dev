@@ -46,6 +46,9 @@ public class CardActivity extends BaseActivity {
     }
 
 
+    /**
+     * 查询购买的流量包
+     */
     private void reqPurchasedPackage() {
         String url = AppConfig.getHost();
 
