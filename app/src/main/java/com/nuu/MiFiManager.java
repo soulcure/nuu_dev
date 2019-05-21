@@ -459,9 +459,9 @@ public class MiFiManager {
                 b.setImsi(sim2Bean.getImsi());
                 b.setLac(sim2Bean.getLac());
                 try {
-                    int plmn = Integer.parseInt(sim2Bean.getPlmn());
-                    b.setPlmn(plmn);
+                    b.setPlmn(Integer.parseInt(sim2Bean.getPlmn()));
                 } catch (NumberFormatException e) {
+                    b.setPlmn(0);
                     e.printStackTrace();
                 }
                 b.setPsc(sim2Bean.getPsc());
