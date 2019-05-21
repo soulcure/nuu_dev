@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nuu.config.AppConfig;
 import com.nuu.entity.CardItem;
@@ -391,6 +393,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 SettingSsidPwRsp rsp = GsonUtil.parse(response, SettingSsidPwRsp.class);
                 if (rsp != null && rsp.getErr_code() == 0) {
                     DeviceInfo.setWifiAp(mContext, ssid, password);
+                } else if (rsp != null && !TextUtils.isEmpty(rsp.getErr_desc())) {
+                    Toast.makeText(mContext, rsp.getErr_desc(), Toast.LENGTH_SHORT).show();
                 }
 
             }
