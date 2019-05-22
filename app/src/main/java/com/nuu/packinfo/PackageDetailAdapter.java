@@ -1,6 +1,7 @@
 package com.nuu.packinfo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.nuu.entity.PackageDetailByCountryRsp;
-import com.nuu.entity.PackageRsp;
 import com.nuu.nuuinfo.R;
 import com.nuu.util.AppUtils;
 
@@ -49,7 +49,15 @@ public class PackageDetailAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         final PackageDetailByCountryRsp.PackageBean item = mList.get(position);
-
+        View view = viewHolder.itemView;
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, BuyPackageActivity.class);
+                intent.putExtra(BuyPackageActivity.PACKAGE_ID, item.getPackage_id());
+                mContext.startActivity(intent);
+            }
+        });
         TextView tv_name = ((TextViewHolder) viewHolder).tv_name;
         TextView tv_currency = ((TextViewHolder) viewHolder).tv_currency;
         TextView tv_price = ((TextViewHolder) viewHolder).tv_price;
@@ -83,7 +91,6 @@ public class PackageDetailAdapter extends RecyclerView.Adapter<RecyclerView.View
 
 
     private class TextViewHolder extends RecyclerView.ViewHolder {
-
         TextView tv_name;
         TextView tv_currency;
         TextView tv_price;

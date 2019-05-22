@@ -7,5 +7,10 @@
         <item>Hongkong</item>
     </string-array>
 
+    <string-array name="valid_type">
+        <item>一起生效</item>
+        <item>逐个生效</item>
+    </string-array>
+
 
 </resources>
