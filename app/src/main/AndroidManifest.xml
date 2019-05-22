@@ -65,9 +65,9 @@
         </activity>
 
 
-        <activity android:name="com.nuu.packinfo.PurchasePackageActivity" />
-        <activity android:name="com.nuu.packinfo.PackageDetailByCountryActivity" />
-        <activity android:name="com.nuu.packinfo.BuyPackageActivity" />
+        <activity android:name="com.nuu.pack.PurchasePackageActivity" />
+        <activity android:name="com.nuu.pack.PackageDetailByCountryActivity" />
+        <activity android:name="com.nuu.pack.BuyPackageActivity" />
 
 
         <service

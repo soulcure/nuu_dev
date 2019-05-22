@@ -1,4 +1,4 @@
-package com.nuu.packinfo;
+package com.nuu.pack;
 
 import android.content.ContentValues;
 import android.os.Bundle;
@@ -12,9 +12,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.nuu.config.AppConfig;
-import com.nuu.entity.CurUsingPackageRsp;
 import com.nuu.entity.PackageDetailByCountryRsp;
-import com.nuu.entity.PackageRsp;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.nuuinfo.BaseActivity;

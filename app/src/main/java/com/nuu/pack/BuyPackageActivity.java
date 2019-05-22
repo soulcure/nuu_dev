@@ -1,35 +1,27 @@
-package com.nuu.packinfo;
+package com.nuu.pack;
 
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nuu.config.AppConfig;
 import com.nuu.entity.DevicesStatusRsp;
-import com.nuu.entity.PackageDetailByCountryRsp;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.nuuinfo.BaseActivity;
-import com.nuu.nuuinfo.MainActivity;
 import com.nuu.nuuinfo.R;
 import com.nuu.util.GsonUtil;
-import com.nuu.util.TimeUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 

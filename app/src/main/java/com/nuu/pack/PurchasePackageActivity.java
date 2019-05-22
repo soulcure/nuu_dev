@@ -1,4 +1,4 @@
-package com.nuu.packinfo;
+package com.nuu.pack;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;

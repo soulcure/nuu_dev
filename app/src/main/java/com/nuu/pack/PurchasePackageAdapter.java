@@ -1,4 +1,4 @@
-package com.nuu.packinfo;
+package com.nuu.pack;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
