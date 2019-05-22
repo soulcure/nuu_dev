@@ -13,7 +13,7 @@ import com.nuu.config.FileConfig;
 import com.nuu.entity.CurUsingPackageRsp;
 import com.nuu.entity.DetailRsp;
 import com.nuu.entity.PackageRsp;
-import com.nuu.entity.SettingRsp;
+import com.nuu.entity.DevicesStatusRsp;
 import com.nuu.http.IGetListener;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
@@ -141,7 +141,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    private void reqStatus() {
+    private void reqDevicesStatus() {
         String url = AppConfig.getHost();
 
         ContentValues params = new ContentValues();
@@ -154,7 +154,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         OkHttpConnector.httpPost(url, params, new IPostListener() {
             @Override
             public void httpReqResult(String response) {
-                SettingRsp rsp = GsonUtil.parse(response, SettingRsp.class);
+                DevicesStatusRsp rsp = GsonUtil.parse(response, DevicesStatusRsp.class);
             }
         });
 

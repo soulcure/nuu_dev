@@ -1,6 +1,6 @@
 package com.nuu.entity;
 
-public class SettingRsp {
+public class DevicesStatusRsp {
 
     /**
      * itf_name : query_device_status_resp

@@ -7,6 +7,7 @@ public class CardItem {
     private int totalData;
     private String expireTime;
     private PackageRsp packageRsp;
+    private DevicesStatusRsp devicesStatusRsp;
 
     public CardItem(String itfName) {
         this.itfName = itfName;
@@ -59,5 +60,13 @@ public class CardItem {
 
     public void setPackageRsp(PackageRsp packageRsp) {
         this.packageRsp = packageRsp;
+    }
+
+    public DevicesStatusRsp getDevicesStatusRsp() {
+        return devicesStatusRsp;
+    }
+
+    public void setDevicesStatusRsp(DevicesStatusRsp devicesStatusRsp) {
+        this.devicesStatusRsp = devicesStatusRsp;
     }
 }

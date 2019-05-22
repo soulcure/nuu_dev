@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
 import com.nuu.config.AppConfig;
+import com.nuu.entity.DevicesStatusRsp;
 import com.nuu.entity.PackageRsp;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
@@ -43,6 +44,7 @@ public class CardActivity extends BaseActivity {
 
     private void initData() {
         reqPurchasedPackage();
+        reqDevicesStatus();
     }
 
 
@@ -71,4 +73,30 @@ public class CardActivity extends BaseActivity {
         });
 
     }
+
+
+    private void reqDevicesStatus() {
+        String url = AppConfig.getHost();
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "query_device_status");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                DevicesStatusRsp rsp = GsonUtil.parse(response, DevicesStatusRsp.class);
+                if (rsp != null && rsp.getErr_code() == 0) {
+                    mAdapter.setDevicesStatus(rsp);
+                }
+
+            }
+        });
+
+    }
+
+
 }

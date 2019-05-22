@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.nuu.config.AppConfig;
 import com.nuu.entity.CardItem;
+import com.nuu.entity.DevicesStatusRsp;
 import com.nuu.entity.PackageRsp;
 import com.nuu.entity.SettingSsidPwRsp;
 import com.nuu.http.IPostListener;
@@ -32,20 +33,25 @@ import com.nuu.util.AppUtils;
 import com.nuu.util.DeviceInfo;
 import com.nuu.util.GsonUtil;
 import com.nuu.util.ShellUtils;
+import com.nuu.util.TimeUtils;
 import com.nuu.view.WaveLoadingView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int PACKAGE_USED = 1;  //流量使用情况
-    private static final int PACKAGE_TYPE = 2; //流量套餐类型
+    private static final int DEVICES_STATUS = 2; //设备当前状态
     private static final int SETTING_WIFI = 3; //设置wifi账号密码
     private static final int REBOOT_DEVICES = 4; //重启设备
     private static final int SHUTDOWN_DEVICES = 5; //关闭设备
 
     private static final String STR_PACKAGE_USED = "query_using_package_resp";  //流量使用情况
-    private static final String STR_PACKAGE_TYPE = "query_package_resp"; //流量套餐类型
+    private static final String STR_DEVICES_STATUS = "query_device_status_resp"; //设备当前状态查询
     private static final String STR_SETTING_WIFI = "set_device_change_resp"; //设置wifi账号密码
     private static final String STR_REBOOT_DEVICES = "reboot_device_resp"; //重启设备
     private static final String STR_SHUTDOWN_DEVICES = "shutdown_device_resp"; //关闭设备
@@ -59,7 +65,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         mList = new ArrayList<>();
 
         CardItem used = new CardItem(STR_PACKAGE_USED);
-        CardItem packageType = new CardItem(STR_PACKAGE_TYPE);
+        CardItem packageType = new CardItem(STR_DEVICES_STATUS);
         CardItem settingWifi = new CardItem(STR_SETTING_WIFI);
         CardItem reboot = new CardItem(STR_REBOOT_DEVICES);
         CardItem shutdown = new CardItem(STR_SHUTDOWN_DEVICES);
@@ -82,6 +88,16 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
+    public void setDevicesStatus(DevicesStatusRsp rsp) {
+        for (CardItem item : mList) {
+            if (item.getItfName().equals(STR_DEVICES_STATUS)) {
+                item.setDevicesStatusRsp(rsp);
+                break;
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         // 返回数据总数
@@ -97,8 +113,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case STR_PACKAGE_USED:
                 type = PACKAGE_USED;
                 break;
-            case STR_PACKAGE_TYPE:
-                type = PACKAGE_TYPE;
+            case STR_DEVICES_STATUS:
+                type = DEVICES_STATUS;
                 break;
             case STR_SETTING_WIFI:
                 type = SETTING_WIFI;
@@ -127,9 +143,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 view = inflater.inflate(R.layout.package_used, parent, false);
                 holder = new PackageUsedViewHolder(view);
                 break;
-            case PACKAGE_TYPE:
-                view = inflater.inflate(R.layout.package_purchased, parent, false);
-                holder = new PackageTypeViewHolder(view);
+            case DEVICES_STATUS:
+                view = inflater.inflate(R.layout.devices_stauts, parent, false);
+                holder = new DevicesStatusViewHolder(view);
                 break;
             case SETTING_WIFI:
                 view = inflater.inflate(R.layout.setting_wifi, parent, false);
@@ -154,8 +170,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         // 给ViewHolder设置元素
         if (holder instanceof PackageUsedViewHolder) { //流量使用情况
             onPackageUsed((PackageUsedViewHolder) holder, position);
-        } else if (holder instanceof PackageTypeViewHolder) {  //套餐包类型
-            onPackageType((PackageTypeViewHolder) holder, position);
+        } else if (holder instanceof DevicesStatusViewHolder) {  //套餐包类型
+            onDevicesStatus((DevicesStatusViewHolder) holder, position);
         } else if (holder instanceof SettingWifiViewHolder) {  //设备WIFI账号密码
             onSettingWifi((SettingWifiViewHolder) holder, position);
         } else if (holder instanceof RebootViewHolder) { //重启设备
@@ -198,7 +214,37 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
-    private void onPackageType(final PackageTypeViewHolder holder, final int position) {
+    private void onDevicesStatus(final DevicesStatusViewHolder holder, final int position) {
+        CardItem item = mList.get(position);
+        DevicesStatusRsp statusRsp = item.getDevicesStatusRsp();
+
+        ImageView img_status = holder.img_status;
+        TextView tv_last_time = holder.tv_last_time;
+        TextView tv_location = holder.tv_location;
+
+        if (statusRsp != null) {
+            String status = statusRsp.getStatus();
+            if (!TextUtils.isEmpty(status) && status.equals("enable")) {
+                img_status.setImageResource(R.drawable.status_enable);
+            } else {
+                img_status.setImageResource(R.drawable.status_disable);
+            }
+
+            String lastTime = statusRsp.getLast_heartbeat();
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+                Calendar calendar = TimeUtils.parseDate(lastTime, sdf);
+                String newTime = TimeUtils.DEFAULT_DATE_FORMAT.format(calendar.getTime());
+                tv_last_time.setText(newTime);
+            } catch (ParseException e) {
+                tv_last_time.setText(lastTime);
+            }
+
+
+            String location = statusRsp.getLocation();
+            tv_location.setText(location);
+        }
+
 
     }
 
@@ -331,12 +377,16 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    static class PackageTypeViewHolder extends RecyclerView.ViewHolder {
-        ImageView mImageView;
+    static class DevicesStatusViewHolder extends RecyclerView.ViewHolder {
+        ImageView img_status;
+        TextView tv_last_time;
+        TextView tv_location;
 
-        PackageTypeViewHolder(View v) {
+        DevicesStatusViewHolder(View v) {
             super(v);
-            mImageView = (ImageView) v.findViewById(R.id.pic);
+            img_status = (ImageView) v.findViewById(R.id.img_status);
+            tv_last_time = (TextView) v.findViewById(R.id.tv_last_time);
+            tv_location = (TextView) v.findViewById(R.id.tv_location);
         }
     }
 
