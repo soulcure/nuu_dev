@@ -9,8 +9,6 @@ import java.io.File;
 
 public class AppConfig {
 
-    public static final int SEND_BUFFER_SIZE = 1024; //1KB
-
     /**
      * pref文件名定义
      */

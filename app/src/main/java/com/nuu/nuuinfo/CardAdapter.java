@@ -28,6 +28,7 @@ import com.nuu.entity.PackageRsp;
 import com.nuu.entity.SettingSsidPwRsp;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
+import com.nuu.packinfo.PackageDetailByCountryActivity;
 import com.nuu.packinfo.PurchasePackageActivity;
 import com.nuu.util.AppUtils;
 import com.nuu.util.DeviceInfo;
@@ -223,6 +224,15 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView tv_location = holder.tv_location;
 
         if (statusRsp != null) {
+            holder.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, PackageDetailByCountryActivity.class);
+                    mContext.startActivity(intent);
+                }
+            });
+
+
             String status = statusRsp.getStatus();
             if (!TextUtils.isEmpty(status) && status.equals("enable")) {
                 img_status.setImageResource(R.drawable.status_enable);
@@ -378,12 +388,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     static class DevicesStatusViewHolder extends RecyclerView.ViewHolder {
+        View view;
         ImageView img_status;
         TextView tv_last_time;
         TextView tv_location;
 
         DevicesStatusViewHolder(View v) {
             super(v);
+            view = v;
             img_status = (ImageView) v.findViewById(R.id.img_status);
             tv_last_time = (TextView) v.findViewById(R.id.tv_last_time);
             tv_location = (TextView) v.findViewById(R.id.tv_location);

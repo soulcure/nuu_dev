@@ -4,7 +4,6 @@ import android.util.Log;
 
 
 import com.nuu.nuuinfo.BuildConfig;
-import com.nuu.config.AppConfig;
 import com.nuu.util.HexUtil;
 
 import java.nio.ByteBuffer;
@@ -87,7 +86,7 @@ public abstract class PduUtil {
 
 
     public ByteBuffer serializePdu(PduBase req) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(AppConfig.SEND_BUFFER_SIZE);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(PduBase.PDU_HEADER_LENGTH + req.length);
         byteBuffer.order(ByteOrder.BIG_ENDIAN);
         byteBuffer.putShort(req.msgType);
         byteBuffer.putShort(req.length);
