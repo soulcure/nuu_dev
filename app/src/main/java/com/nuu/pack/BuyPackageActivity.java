@@ -3,17 +3,22 @@ package com.nuu.pack;
 import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nuu.config.AppConfig;
-import com.nuu.entity.DevicesStatusRsp;
+import com.nuu.entity.BuyPackageRsp;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.nuuinfo.BaseActivity;
@@ -36,6 +41,8 @@ public class BuyPackageActivity extends BaseActivity implements View.OnClickList
     private Button btn_data;
     private Button btn_commit;
 
+    private int valid_type;
+    private LinearLayout linear_type;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,6 +79,23 @@ public class BuyPackageActivity extends BaseActivity implements View.OnClickList
             calendar.add(Calendar.YEAR, 1);
             datePicker.setMaxDate(calendar.getTimeInMillis());//设置日期的上限日期
             dialog.show();
+        } else if (id == R.id.btn_commit) {
+            int packageId = getIntent().getIntExtra(PACKAGE_ID, 0);
+            String beginData = btn_data.getText().toString();
+            String total = et_num.getText().toString();
+            int num;
+            try {
+                num = Integer.parseInt(total);
+            } catch (NumberFormatException e) {
+                num = 0;
+                e.printStackTrace();
+            }
+
+            if (packageId != 0) {
+                reqBuyPackage(packageId, beginData, num, valid_type);
+            } else {
+                Toast.makeText(mContext, "package id error", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -87,7 +111,41 @@ public class BuyPackageActivity extends BaseActivity implements View.OnClickList
         img_right.setVisibility(View.INVISIBLE);
 
         et_num = (EditText) findViewById(R.id.et_num);
+        et_num.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String total = s.toString();
+                int num;
+                try {
+                    num = Integer.parseInt(total);
+                } catch (NumberFormatException e) {
+                    num = 0;
+                    e.printStackTrace();
+                }
+
+                if (num == 0) {
+                    linear_type.setVisibility(View.INVISIBLE);
+                    btn_commit.setEnabled(false);
+                } else if (num == 1) {
+                    linear_type.setVisibility(View.INVISIBLE);
+                    btn_commit.setEnabled(true);
+                } else if (num > 1) {
+                    linear_type.setVisibility(View.VISIBLE);
+                    btn_commit.setEnabled(true);
+                }
+
+            }
+        });
         btn_data = (Button) findViewById(R.id.btn_data);
         btn_data.setOnClickListener(this);
 
@@ -95,14 +153,13 @@ public class BuyPackageActivity extends BaseActivity implements View.OnClickList
         btn_commit.setOnClickListener(this);
 
 
+        linear_type = (LinearLayout) findViewById(R.id.linear_type);
         spinner = (Spinner) findViewById(R.id.spinner);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String[] countries = mContext.getResources().getStringArray(R.array.country);
-                if (countries.length > position) {
-                }
+                valid_type = position;
             }
 
             @Override
@@ -126,12 +183,18 @@ public class BuyPackageActivity extends BaseActivity implements View.OnClickList
         params.put("begin_date", beginData);
         params.put("total_num", total_num);
         params.put("valid_type", valid_type);
-
+        showProgressDialog();
 
         OkHttpConnector.httpPost(url, params, new IPostListener() {
             @Override
             public void httpReqResult(String response) {
-                DevicesStatusRsp rsp = GsonUtil.parse(response, DevicesStatusRsp.class);
+                BuyPackageRsp rsp = GsonUtil.parse(response, BuyPackageRsp.class);
+                if (rsp != null && rsp.getErr_code() == 0) {
+                    Toast.makeText(mContext, "buy package success", Toast.LENGTH_SHORT).show();
+                } else if (rsp != null && !TextUtils.isEmpty(rsp.getErr_desc())) {
+                    Toast.makeText(mContext, rsp.getErr_desc(), Toast.LENGTH_SHORT).show();
+                }
+                dismissProgressDialog();
             }
         });
 
