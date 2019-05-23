@@ -1,63 +1,52 @@
 package com.nuu.user;
 
-import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
-import android.widget.DatePicker;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nuu.config.AppConfig;
-import com.nuu.data.UsedDataAdapter;
 import com.nuu.entity.DetailRsp;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.nuuinfo.BaseActivity;
 import com.nuu.nuuinfo.R;
-import com.nuu.util.AppUtils;
 import com.nuu.util.GsonUtil;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 
 
 public class UserInfoSettingActivity extends BaseActivity implements View.OnClickListener {
 
     public static final String TAG = UserInfoSettingActivity.class.getSimpleName();
 
-    private LinearLayout mEmptyView;
-    private EmptyRecyclerViewDataObserver mEmpty = new EmptyRecyclerViewDataObserver();
+    private EditText et_email;
+    private EditText et_name;
+    private RadioButton rb_male;
+    private RadioButton rb_female;
+    private Spinner sp_age;
+    private Spinner sp_country;
+    private EditText et_mobile;
+    private Spinner sp_im;
+    private EditText et_im;
 
-    private UsedDataAdapter mAdapter;
+    private int gender = 1;//[1:Male 2:Female]
+    private String age;
+    private String nationality;
+    private String im_type;
 
-
-    private Button btn_today;
-    private Button btn_begin_data;
-    private Button btn_end_data;
-    private Button btn_query;
-
-
-    private TextView tv_date;
-    private TextView tv_used;
-    private TextView tv_total;
-
-    private RecyclerView recyclerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.userinfo_setting_activity);
         initView();
-
-        reqDetailToday();
     }
 
 
@@ -66,60 +55,8 @@ public class UserInfoSettingActivity extends BaseActivity implements View.OnClic
         int id = v.getId();
         if (id == R.id.tv_back) {
             onBackPressed();
-        } else if (id == R.id.btn_begin_data) {
-            Calendar calendar = Calendar.getInstance();
-            DatePickerDialog.OnDateSetListener callBack = new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    Calendar c = Calendar.getInstance();
-                    c.set(year, monthOfYear, dayOfMonth);
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                    String data = sdf.format(c.getTime());
-                    btn_begin_data.setText(data);
-                }
-            };
-            DatePickerDialog dialog = new DatePickerDialog(mContext, callBack,
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH));
-            DatePicker datePicker = dialog.getDatePicker();
-            datePicker.setMaxDate(calendar.getTimeInMillis());
-
-            calendar.add(Calendar.YEAR, -1);
-            datePicker.setMinDate(calendar.getTimeInMillis());//设置日期的上限日期
-            dialog.show();
-        } else if (id == R.id.btn_end_data) {
-            Calendar calendar = Calendar.getInstance();
-            DatePickerDialog.OnDateSetListener callBack = new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    Calendar c = Calendar.getInstance();
-                    c.set(year, monthOfYear, dayOfMonth);
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                    String data = sdf.format(c.getTime());
-                    btn_end_data.setText(data);
-                }
-            };
-            DatePickerDialog dialog = new DatePickerDialog(mContext, callBack,
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH));
-            DatePicker datePicker = dialog.getDatePicker();
-            datePicker.setMaxDate(calendar.getTimeInMillis());
-
-            calendar.add(Calendar.YEAR, -1);
-            datePicker.setMinDate(calendar.getTimeInMillis());//设置日期的上限日期
-            dialog.show();
-        } else if (id == R.id.btn_query) {
-            String beginDate = btn_begin_data.getText().toString();
-            String endDate = btn_end_data.getText().toString();
-            if (!TextUtils.isEmpty(beginDate)
-                    && !TextUtils.isEmpty(endDate)
-                    && beginDate.compareTo(endDate) < 0) {
-                reqDetailPeriod(beginDate, endDate);
-            }
-        } else if (id == R.id.btn_today) {
-            reqDetailToday();
+        } else if (id == R.id.img_right) {
+            reqSettingUserInfo();
         }
     }
 
@@ -134,41 +71,81 @@ public class UserInfoSettingActivity extends BaseActivity implements View.OnClic
         ImageView img_right = (ImageView) findViewById(R.id.img_right);
         img_right.setOnClickListener(this);
 
+        et_email = (EditText) findViewById(R.id.et_email);
+        et_name = (EditText) findViewById(R.id.et_name);
 
-    }
+        rb_male = (RadioButton) findViewById(R.id.rb_male);
+        rb_female = (RadioButton) findViewById(R.id.rb_female);
 
-
-    private class EmptyRecyclerViewDataObserver extends RecyclerView.AdapterDataObserver {
-        @Override
-        public void onChanged() {
-            checkIfEmpty();
-        }
-
-        @Override
-        public void onItemRangeInserted(int positionStart, int itemCount) {
-            checkIfEmpty();
-        }
-
-        @Override
-        public void onItemRangeRemoved(int positionStart, int itemCount) {
-            checkIfEmpty();
-        }
-    }
-
-    private void checkIfEmpty() {
-        if (mAdapter != null) {
-            int count = mAdapter.getItemCount();
-            //正常状态
-            if (count == 0) {
-                mEmptyView.setVisibility(View.VISIBLE);
-            } else {
-                mEmptyView.setVisibility(View.GONE);
+        sp_age = (Spinner) findViewById(R.id.sp_age);
+        sp_age.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String[] countries = mContext.getResources().getStringArray(R.array.age_range);
+                if (countries.length > position) {
+                    age = countries[position];
+                }
             }
-        }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        sp_country = (Spinner) findViewById(R.id.sp_country);
+        sp_country.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String[] countries = mContext.getResources().getStringArray(R.array.country);
+                if (countries.length > position) {
+                    nationality = countries[position];
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        et_mobile = (EditText) findViewById(R.id.et_mobile);
+
+        sp_im = (Spinner) findViewById(R.id.sp_im);
+        sp_im.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String[] countries = mContext.getResources().getStringArray(R.array.im_type);
+                if (countries.length > position) {
+                    im_type = countries[position];
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+        et_im = (EditText) findViewById(R.id.et_im);
+
+        RadioGroup rg_gender = (RadioGroup) findViewById(R.id.rg_gender);
+        rg_gender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.rb_male) {
+                    gender = 1;
+                } else if (checkedId == R.id.rb_female) {
+                    gender = 2;
+                }
+            }
+        });
+
     }
 
 
-    private void reqDetailToday() {
+    private void reqSettingUserInfo() {
         String url = AppConfig.getHost();
 
         ContentValues params = new ContentValues();
@@ -178,6 +155,14 @@ public class UserInfoSettingActivity extends BaseActivity implements View.OnClic
         params.put("auth_code", "abcd456");
         params.put("device_sn", "354243074362656");
 
+        params.put("email", et_email.getText().toString());
+        params.put("name", et_name.getText().toString());
+        params.put("sex", gender);
+        params.put("age", age);
+        params.put("nationality", nationality);
+        params.put("mobile_nbr", et_mobile.getText().toString());
+        params.put("im_type", im_type);
+        params.put("im", et_im.getText().toString());
 
         OkHttpConnector.httpPost(url, params, new IPostListener() {
             @Override
