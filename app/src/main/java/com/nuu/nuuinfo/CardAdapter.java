@@ -48,12 +48,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int PACKAGE_USED = 1;  //流量使用情况
     private static final int DEVICES_STATUS = 2; //设备当前状态
     private static final int SETTING_WIFI = 3; //设置wifi账号密码
-    private static final int REBOOT_DEVICES = 4; //重启设备
-    private static final int SHUTDOWN_DEVICES = 5; //关闭设备
+    private static final int SETTING_USER = 4; //设置设备用户信息
+    private static final int REBOOT_DEVICES = 5; //重启设备
+    private static final int SHUTDOWN_DEVICES = 6; //关闭设备
 
     private static final String STR_PACKAGE_USED = "query_using_package_resp";  //流量使用情况
     private static final String STR_DEVICES_STATUS = "query_device_status_resp"; //设备当前状态查询
     private static final String STR_SETTING_WIFI = "set_device_change_resp"; //设置wifi账号密码
+    private static final String STR_SETTING_USER = "device_customer_register"; //设置设备用户信息
     private static final String STR_REBOOT_DEVICES = "reboot_device_resp"; //重启设备
     private static final String STR_SHUTDOWN_DEVICES = "shutdown_device_resp"; //关闭设备
 
@@ -68,12 +70,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         CardItem used = new CardItem(STR_PACKAGE_USED);
         CardItem packageType = new CardItem(STR_DEVICES_STATUS);
         CardItem settingWifi = new CardItem(STR_SETTING_WIFI);
+        CardItem settingUser = new CardItem(STR_SETTING_USER);
         CardItem reboot = new CardItem(STR_REBOOT_DEVICES);
         CardItem shutdown = new CardItem(STR_SHUTDOWN_DEVICES);
 
         mList.add(used);
         mList.add(packageType);
         mList.add(settingWifi);
+        mList.add(settingUser);
         mList.add(reboot);
         mList.add(shutdown);
     }
@@ -120,6 +124,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case STR_SETTING_WIFI:
                 type = SETTING_WIFI;
                 break;
+            case STR_SETTING_USER:
+                type = SETTING_USER;
+                break;
             case STR_REBOOT_DEVICES:
                 type = REBOOT_DEVICES;
                 break;
@@ -152,6 +159,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 view = inflater.inflate(R.layout.setting_wifi, parent, false);
                 holder = new SettingWifiViewHolder(view);
                 break;
+            case SETTING_USER:
+                view = inflater.inflate(R.layout.setting_user, parent, false);
+                holder = new SettingUserViewHolder(view);
+                break;
             case REBOOT_DEVICES:
                 view = inflater.inflate(R.layout.reboot_devices, parent, false);
                 holder = new RebootViewHolder(view);
@@ -175,6 +186,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             onDevicesStatus((DevicesStatusViewHolder) holder, position);
         } else if (holder instanceof SettingWifiViewHolder) {  //设备WIFI账号密码
             onSettingWifi((SettingWifiViewHolder) holder, position);
+        } else if (holder instanceof SettingUserViewHolder) {  //设备用户信息
+            onSettingUser((SettingUserViewHolder) holder, position);
         } else if (holder instanceof RebootViewHolder) { //重启设备
             onReboot((RebootViewHolder) holder, position);
         } else if (holder instanceof ShutdownViewHolder) { //重启设备
@@ -330,6 +343,19 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
+
+    private void onSettingUser(final SettingUserViewHolder holder, final int position) {
+        CardItem item = mList.get(position);
+
+        LinearLayout linear_name = holder.linear_name;
+        final TextView tv_wifi_name = holder.tv_wifi_name;
+
+        LinearLayout linear_password = holder.linear_password;
+        final TextView tv_wifi_password = holder.tv_wifi_password;
+        tv_wifi_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+    }
+
+
     private void onReboot(final RebootViewHolder holder, final int position) {
         Button btn_reboot = holder.btn_reboot;
         btn_reboot.setOnClickListener(new View.OnClickListener() {
@@ -409,6 +435,22 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView tv_wifi_password;
 
         SettingWifiViewHolder(View v) {
+            super(v);
+            linear_name = (LinearLayout) v.findViewById(R.id.linear_name);
+            tv_wifi_name = (TextView) v.findViewById(R.id.tv_wifi_name);
+            linear_password = (LinearLayout) v.findViewById(R.id.linear_password);
+            tv_wifi_password = (TextView) v.findViewById(R.id.tv_wifi_password);
+        }
+    }
+
+
+    static class SettingUserViewHolder extends RecyclerView.ViewHolder {
+        LinearLayout linear_name;
+        TextView tv_wifi_name;
+        LinearLayout linear_password;
+        TextView tv_wifi_password;
+
+        SettingUserViewHolder(View v) {
             super(v);
             linear_name = (LinearLayout) v.findViewById(R.id.linear_name);
             tv_wifi_name = (TextView) v.findViewById(R.id.tv_wifi_name);
