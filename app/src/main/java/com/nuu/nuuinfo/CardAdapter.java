@@ -200,14 +200,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private void onPackageUsed(final PackageUsedViewHolder holder, final int position) {
         CardItem item = mList.get(position);
-
+        View view = holder.itemView;
         WaveLoadingView waveLoadingView = holder.waveLoadingView;
         TextView tv_used = holder.tv_used;
         TextView tv_total = holder.tv_total;
 
         final PackageRsp rsp = item.getPackageRsp();
         if (rsp != null) {
-            holder.view.setOnClickListener(new View.OnClickListener() {
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, PurchasePackageActivity.class);
@@ -233,12 +233,13 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         CardItem item = mList.get(position);
         DevicesStatusRsp statusRsp = item.getDevicesStatusRsp();
 
+        View view = holder.itemView;
         ImageView img_status = holder.img_status;
         TextView tv_last_time = holder.tv_last_time;
         TextView tv_location = holder.tv_location;
 
         if (statusRsp != null) {
-            holder.view.setOnClickListener(new View.OnClickListener() {
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, PackageDetailByCountryActivity.class);
@@ -465,14 +466,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // 重写的自定义ViewHolder
     static class PackageUsedViewHolder extends RecyclerView.ViewHolder {
-        View view;
         WaveLoadingView waveLoadingView;
         TextView tv_used;
         TextView tv_total;
 
         PackageUsedViewHolder(View v) {
             super(v);
-            view = v;
             waveLoadingView = (WaveLoadingView) v.findViewById(R.id.waveLoadingView);
             tv_used = (TextView) v.findViewById(R.id.tv_used);
             tv_total = (TextView) v.findViewById(R.id.tv_total);
@@ -480,14 +479,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     static class DevicesStatusViewHolder extends RecyclerView.ViewHolder {
-        View view;
         ImageView img_status;
         TextView tv_last_time;
         TextView tv_location;
 
         DevicesStatusViewHolder(View v) {
             super(v);
-            view = v;
             img_status = (ImageView) v.findViewById(R.id.img_status);
             tv_last_time = (TextView) v.findViewById(R.id.tv_last_time);
             tv_location = (TextView) v.findViewById(R.id.tv_location);
