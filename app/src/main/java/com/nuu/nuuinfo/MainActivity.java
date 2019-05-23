@@ -161,47 +161,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    private void reqDetailToday() {
-        String url = AppConfig.getHost();
 
-        ContentValues params = new ContentValues();
-        params.put("itf_name", "query_device_package_info");  //API name
-        params.put("trans_serial", "1234cde");  //API name
-        params.put("login", "tuser");
-        params.put("auth_code", "abcd456");
-        params.put("device_sn", "354243074362656");
-
-
-        OkHttpConnector.httpPost(url, params, new IPostListener() {
-            @Override
-            public void httpReqResult(String response) {
-                DetailRsp rsp = GsonUtil.parse(response, DetailRsp.class);
-            }
-        });
-
-    }
-
-
-    private void reqDetailPeriod() {
-        String url = AppConfig.getHost();
-
-        ContentValues params = new ContentValues();
-        params.put("itf_name", "query_used_package");  //API name
-        params.put("trans_serial", "1234cde");  //API name
-        params.put("login", "tuser");
-        params.put("auth_code", "abcd456");
-        params.put("device_sn", "354243074362656");
-        params.put("begin_date", "20190510");
-        params.put("end_date", "20190515");
-
-        OkHttpConnector.httpPost(url, params, new IPostListener() {
-            @Override
-            public void httpReqResult(String response) {
-                //DetailRsp rsp = GsonUtil.parse(response, DetailRsp.class);
-            }
-        });
-
-    }
 
 
     private void reqPurchasedPackage() {

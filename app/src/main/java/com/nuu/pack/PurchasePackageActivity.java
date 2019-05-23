@@ -1,5 +1,6 @@
 package com.nuu.pack;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nuu.data.UsedDataTodayActivity;
 import com.nuu.entity.PackageRsp;
 import com.nuu.nuuinfo.BaseActivity;
 import com.nuu.nuuinfo.R;
@@ -38,6 +40,9 @@ public class PurchasePackageActivity extends BaseActivity implements View.OnClic
         int id = v.getId();
         if (id == R.id.tv_back) {
             onBackPressed();
+        } else if (id == R.id.img_right) {
+            Intent intent = new Intent(this, UsedDataTodayActivity.class);
+            startActivity(intent);
         }
     }
 
@@ -50,7 +55,7 @@ public class PurchasePackageActivity extends BaseActivity implements View.OnClic
         tv_title.setText("data info");
 
         ImageView img_right = (ImageView) findViewById(R.id.img_right);
-        img_right.setVisibility(View.INVISIBLE);
+        img_right.setOnClickListener(this);
 
         mEmptyView = (LinearLayout) findViewById(R.id.message_empty_view);
 
