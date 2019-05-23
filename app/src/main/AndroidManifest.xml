@@ -70,6 +70,7 @@
         <activity android:name="com.nuu.pack.BuyPackageActivity" />
 
         <activity android:name="com.nuu.data.UsedDataTodayActivity" />
+        <activity android:name="com.nuu.user.UserInfoSettingActivity" />
 
 
         <service

@@ -30,6 +30,7 @@ import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.pack.PackageDetailByCountryActivity;
 import com.nuu.pack.PurchasePackageActivity;
+import com.nuu.user.UserInfoSettingActivity;
 import com.nuu.util.AppUtils;
 import com.nuu.util.DeviceInfo;
 import com.nuu.util.GsonUtil;
@@ -347,12 +348,77 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void onSettingUser(final SettingUserViewHolder holder, final int position) {
         CardItem item = mList.get(position);
 
-        LinearLayout linear_name = holder.linear_name;
-        final TextView tv_wifi_name = holder.tv_wifi_name;
+        View view = holder.itemView;
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, UserInfoSettingActivity.class);
+                mContext.startActivity(intent);
+            }
+        });
 
-        LinearLayout linear_password = holder.linear_password;
-        final TextView tv_wifi_password = holder.tv_wifi_password;
-        tv_wifi_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        LinearLayout linear_user = holder.linear_user;
+        final TextView tv_user = holder.tv_user;
+
+        LinearLayout linear_owner = holder.linear_owner;
+        final TextView tv_owner = holder.tv_owner;
+
+        linear_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText et = new EditText(mContext);
+                et.setInputType(InputType.TYPE_CLASS_TEXT);
+
+                et.setText(tv_user.getText().toString());
+
+                et.setSelection(et.getText().toString().length());//将光标移至文字末尾
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("Device User");
+                int space = mContext.getResources().getDimensionPixelOffset(R.dimen.edit_view_space);
+                builder.setView(et, space, 0, space, 0);
+
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String user = et.getText().toString();
+                        tv_user.setText(user);
+                        reqDevicesUser(user);
+                    }
+                });
+                builder.setNegativeButton("取消", null);
+                builder.create().show();
+            }
+        });
+
+
+        linear_owner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText et = new EditText(mContext);
+                et.setInputType(InputType.TYPE_CLASS_TEXT);
+
+                et.setText(tv_owner.getText().toString());
+
+                et.setSelection(et.getText().toString().length());//将光标移至文字末尾
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("Device Owner");
+                int space = mContext.getResources().getDimensionPixelOffset(R.dimen.edit_view_space);
+                builder.setView(et, space, 0, space, 0);
+
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String owner = et.getText().toString();
+                        tv_owner.setText(owner);
+                        reqDevicesOwner(owner);
+
+                    }
+                });
+                builder.setNegativeButton("取消", null);
+                builder.create().show();
+            }
+        });
+
     }
 
 
@@ -445,17 +511,18 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     static class SettingUserViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout linear_name;
-        TextView tv_wifi_name;
-        LinearLayout linear_password;
-        TextView tv_wifi_password;
+
+        LinearLayout linear_user;
+        TextView tv_user;
+        LinearLayout linear_owner;
+        TextView tv_owner;
 
         SettingUserViewHolder(View v) {
             super(v);
-            linear_name = (LinearLayout) v.findViewById(R.id.linear_name);
-            tv_wifi_name = (TextView) v.findViewById(R.id.tv_wifi_name);
-            linear_password = (LinearLayout) v.findViewById(R.id.linear_password);
-            tv_wifi_password = (TextView) v.findViewById(R.id.tv_wifi_password);
+            linear_user = (LinearLayout) v.findViewById(R.id.linear_user);
+            tv_user = (TextView) v.findViewById(R.id.tv_user);
+            linear_owner = (LinearLayout) v.findViewById(R.id.linear_owner);
+            tv_owner = (TextView) v.findViewById(R.id.tv_owner);
         }
     }
 
@@ -527,5 +594,47 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void reqDevicesUser(String user) {
+        String url = AppConfig.getHost();
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "set_device_user");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+        params.put("user_name", user);
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                DevicesStatusRsp rsp = GsonUtil.parse(response, DevicesStatusRsp.class);
+            }
+        });
+
+    }
+
+
+    private void reqDevicesOwner(String owner) {
+        String url = AppConfig.getHost();
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "set_device_user");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+        params.put("owner_name", owner);
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                DevicesStatusRsp rsp = GsonUtil.parse(response, DevicesStatusRsp.class);
+            }
+        });
+
     }
 }

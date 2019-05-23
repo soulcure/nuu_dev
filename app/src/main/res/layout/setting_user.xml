@@ -20,7 +20,7 @@
 
 
         <LinearLayout
-            android:id="@+id/linear_name"
+            android:id="@+id/linear_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
@@ -30,12 +30,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/hotspot_name"
+                android:text="@string/Set_user"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/tv_wifi_name"
+                android:id="@+id/tv_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -43,7 +43,7 @@
 
 
         <LinearLayout
-            android:id="@+id/linear_password"
+            android:id="@+id/linear_owner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -54,12 +54,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/hotspot_password"
+                android:text="@string/Set_owner"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/tv_wifi_password"
+                android:id="@+id/tv_owner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/darker_gray" />

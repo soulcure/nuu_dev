@@ -12,5 +12,22 @@
         <item>逐个生效</item>
     </string-array>
 
+    <string-array name="age_range">
+        <item>20以下</item>
+        <item>20&#8211;25</item>
+        <item>25&#8211;30</item>
+        <item>30&#8211;35</item>
+        <item>35&#8211;40</item>
+        <item>40&#8211;45</item>
+        <item>45&#8211;50</item>
+        <item>50以上</item>
+    </string-array>
 
+
+    <string-array name="im_type">
+        <item>we chat</item>
+        <item>what is app</item>
+        <item>Line</item>
+        <item>face book</item>
+    </string-array>
 </resources>

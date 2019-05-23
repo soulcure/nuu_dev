@@ -12,4 +12,7 @@
     <string name="hotspot_name">Hotspot name</string>
     <string name="hotspot_password">Hotspot password</string>
 
+    <string name="Set_user">Set User</string>
+    <string name="Set_owner">Set Owner</string>
+
 </resources>
