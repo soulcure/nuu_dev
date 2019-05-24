@@ -20,7 +20,6 @@ import android.telephony.CellInfoCdma;
 import android.telephony.CellInfoGsm;
 import android.telephony.CellInfoLte;
 import android.telephony.CellInfoWcdma;
-import android.telephony.CellLocation;
 import android.telephony.CellSignalStrengthCdma;
 import android.telephony.CellSignalStrengthGsm;
 import android.telephony.CellSignalStrengthLte;
@@ -291,12 +290,11 @@ public class DeviceInfo {
             List<CellInfo> cellInfoList = tm.getAllCellInfo();
             String plmn = tm.getNetworkOperator();//默认plmn
             String imsi = tm.getSubscriberId();//默认imsi
-
-            if (imsi == null) {
-                imsi = "";
-            }
             if (plmn == null) {
                 plmn = "";
+            }
+            if (imsi == null) {
+                imsi = "";
             }
 
             sim1.setPlmn(plmn);
@@ -307,90 +305,98 @@ public class DeviceInfo {
             for (CellInfo cellInfo : cellInfoList) {
                 //GSM手机信息
                 if (cellInfo instanceof CellInfoGsm) {
-                    CellSignalStrengthGsm cellSignalStrength = ((CellInfoGsm) cellInfo).getCellSignalStrength();
-                    int asuLevel = cellSignalStrength.getAsuLevel();
-                    int dbm = cellSignalStrength.getDbm();
-                    int level = cellSignalStrength.getLevel();
+                    if (cellInfo.isRegistered()) {
+                        CellSignalStrengthGsm cellSignalStrength = ((CellInfoGsm) cellInfo).getCellSignalStrength();
+                        int asuLevel = cellSignalStrength.getAsuLevel();
+                        int dbm = cellSignalStrength.getDbm();
+                        int level = cellSignalStrength.getLevel();
 
-                    CellInfoGsm cgsm = (CellInfoGsm) cellInfo;
-                    CellIdentityGsm cellIdentity = cgsm.getCellIdentity();
-                    int cid = cellIdentity.getCid();
-                    int lac = cellIdentity.getLac();
-                    int mcc = cellIdentity.getMcc();
-                    int mnc = cellIdentity.getMnc();
+                        CellInfoGsm cgsm = (CellInfoGsm) cellInfo;
+                        CellIdentityGsm cellIdentity = cgsm.getCellIdentity();
+                        int cid = cellIdentity.getCid();
+                        int lac = cellIdentity.getLac();
+                        int mcc = cellIdentity.getMcc();
+                        int mnc = cellIdentity.getMnc();
 
-                    sim1.setLac(lac);
-                    sim1.setCi(cid);
-                    sim1.setSignal(dbm);
-                    sim1.setPsc(0);
+                        sim1.setLac(lac);
+                        sim1.setCi(cid);
+                        sim1.setSignal(dbm);
+                        sim1.setPsc(0);
+                        break;
+                    }
 
-                    return sim1;
                 }
                 //小区LTE
-                if (cellInfo instanceof CellInfoLte) {
-                    CellSignalStrengthLte cellSignalStrength = ((CellInfoLte) cellInfo).getCellSignalStrength();
-                    int dbm = cellSignalStrength.getDbm();
-                    int asuLevel = cellSignalStrength.getAsuLevel();
-                    int timingAdvance = cellSignalStrength.getTimingAdvance();
-                    int level = cellSignalStrength.getLevel();
+                else if (cellInfo instanceof CellInfoLte) {
+                    if (cellInfo.isRegistered()) {
+                        CellSignalStrengthLte cellSignalStrength = ((CellInfoLte) cellInfo).getCellSignalStrength();
+                        int dbm = cellSignalStrength.getDbm();
+                        int asuLevel = cellSignalStrength.getAsuLevel();
+                        int timingAdvance = cellSignalStrength.getTimingAdvance();
+                        int level = cellSignalStrength.getLevel();
 
-                    CellIdentityLte cellIdentity = ((CellInfoLte) cellInfo).getCellIdentity();
-                    int mcc = cellIdentity.getMcc();
-                    int mnc = cellIdentity.getMnc();
-                    int ci = cellIdentity.getCi();
-                    int pci = cellIdentity.getPci();
-                    int tac = cellIdentity.getTac();
+                        CellIdentityLte cellIdentity = ((CellInfoLte) cellInfo).getCellIdentity();
+                        int mcc = cellIdentity.getMcc();
+                        int mnc = cellIdentity.getMnc();
+                        int ci = cellIdentity.getCi();
+                        int pci = cellIdentity.getPci();
+                        int tac = cellIdentity.getTac();
 
-                    sim1.setCi(ci);
-                    sim1.setLac(pci);
-                    sim1.setSignal(dbm);
-                    sim1.setPsc(tac);
-                    return sim1;
+                        sim1.setCi(ci);
+                        sim1.setLac(pci);
+                        sim1.setSignal(dbm);
+                        sim1.setPsc(tac);
+                        break;
+                    }
                 }
                 //CDMA手机信息
-                if (cellInfo instanceof CellInfoCdma) {
-                    CellSignalStrengthCdma cellSignalStrength = ((CellInfoCdma) cellInfo).getCellSignalStrength();
-                    int asuLevel = cellSignalStrength.getAsuLevel();
-                    int cdmaDbm = cellSignalStrength.getCdmaDbm();
-                    int cdmaEcio = cellSignalStrength.getCdmaEcio();
-                    int cdmaLevel = cellSignalStrength.getCdmaLevel();
-                    int dbm = cellSignalStrength.getDbm();
-                    int evdoDbm = cellSignalStrength.getEvdoDbm();
-                    int evdoEcio = cellSignalStrength.getEvdoEcio();
-                    int evdoLevel = cellSignalStrength.getEvdoLevel();
-                    int evdoSnr = cellSignalStrength.getEvdoSnr();
-                    int level = cellSignalStrength.getLevel();
-                    CellIdentityCdma cellIdentity = ((CellInfoCdma) cellInfo).getCellIdentity();
-                    int basestationId = cellIdentity.getBasestationId();
-                    int latitude = cellIdentity.getLatitude();
-                    int longitude = cellIdentity.getLongitude();
-                    int networkId = cellIdentity.getNetworkId();
-                    int systemId = cellIdentity.getSystemId();
+                else if (cellInfo instanceof CellInfoCdma) {
+                    if (cellInfo.isRegistered()) {
+                        CellSignalStrengthCdma cellSignalStrength = ((CellInfoCdma) cellInfo).getCellSignalStrength();
+                        int asuLevel = cellSignalStrength.getAsuLevel();
+                        int cdmaDbm = cellSignalStrength.getCdmaDbm();
+                        int cdmaEcio = cellSignalStrength.getCdmaEcio();
+                        int cdmaLevel = cellSignalStrength.getCdmaLevel();
+                        int dbm = cellSignalStrength.getDbm();
+                        int evdoDbm = cellSignalStrength.getEvdoDbm();
+                        int evdoEcio = cellSignalStrength.getEvdoEcio();
+                        int evdoLevel = cellSignalStrength.getEvdoLevel();
+                        int evdoSnr = cellSignalStrength.getEvdoSnr();
+                        int level = cellSignalStrength.getLevel();
+                        CellIdentityCdma cellIdentity = ((CellInfoCdma) cellInfo).getCellIdentity();
+                        int basestationId = cellIdentity.getBasestationId();
+                        int latitude = cellIdentity.getLatitude();
+                        int longitude = cellIdentity.getLongitude();
+                        int networkId = cellIdentity.getNetworkId();
+                        int systemId = cellIdentity.getSystemId();
 
-                    sim1.setCi(basestationId);
-                    sim1.setLac(networkId);
-                    sim1.setSignal(dbm);
-                    sim1.setPsc(systemId);
+                        sim1.setCi(basestationId);
+                        sim1.setLac(networkId);
+                        sim1.setSignal(dbm);
+                        sim1.setPsc(systemId);
+                        break;
+                    }
 
-                    return sim1;
                 }
                 //WCDMA手机信息
-                if (cellInfo instanceof CellInfoWcdma) {
-                    CellSignalStrengthWcdma cellSignalStrength = ((CellInfoWcdma) cellInfo).getCellSignalStrength();
-                    int asuLevel = cellSignalStrength.getAsuLevel();
-                    int dbm = cellSignalStrength.getDbm();
-                    int level = cellSignalStrength.getLevel();
-                    CellIdentityWcdma cellIdentity = ((CellInfoWcdma) cellInfo).getCellIdentity();
-                    int cid = cellIdentity.getCid();
-                    int lac = cellIdentity.getLac();
-                    int mcc = cellIdentity.getMcc();
-                    int psc = cellIdentity.getPsc();
+                else if (cellInfo instanceof CellInfoWcdma) {
+                    if (cellInfo.isRegistered()) {
+                        CellSignalStrengthWcdma cellSignalStrength = ((CellInfoWcdma) cellInfo).getCellSignalStrength();
+                        int asuLevel = cellSignalStrength.getAsuLevel();
+                        int dbm = cellSignalStrength.getDbm();
+                        int level = cellSignalStrength.getLevel();
+                        CellIdentityWcdma cellIdentity = ((CellInfoWcdma) cellInfo).getCellIdentity();
+                        int cid = cellIdentity.getCid();
+                        int lac = cellIdentity.getLac();
+                        int mcc = cellIdentity.getMcc();
+                        int psc = cellIdentity.getPsc();
 
-                    sim1.setCi(cid);
-                    sim1.setLac(lac);
-                    sim1.setSignal(dbm);
-                    sim1.setPsc(psc);
-                    return sim1;
+                        sim1.setCi(cid);
+                        sim1.setLac(lac);
+                        sim1.setSignal(dbm);
+                        sim1.setPsc(psc);
+                        break;
+                    }
                 }
             }
 
@@ -401,178 +407,26 @@ public class DeviceInfo {
     }
 
     public static DeviceStatus.SimCardSlot getProtoSim1(Context context) {
-        TelephonyManager tm = (TelephonyManager) context.getApplicationContext()
-                .getSystemService(Context.TELEPHONY_SERVICE);
         DeviceStatus.SimCardSlot.Builder build = DeviceStatus.SimCardSlot.newBuilder();
 
-        try {
-            //返回设备的当前位置
-            List<CellInfo> cellInfoList = tm.getAllCellInfo();
-            //Returns the numeric name (MCC+MNC) of current registered operator.
-            String plmn = tm.getNetworkOperator();//默认plmn
-            String imsi = tm.getSubscriberId();//默认imsi
-            if (imsi == null) {
-                imsi = "";
-            }
-            if (plmn == null) {
-                plmn = "";
-            }
-            int plmnInt = 0;
+        ReportData.Sim1Bean bean = getSim1(context);
+        if (bean != null) {
+            build.setImsi(bean.getImsi());
+            int plmnInt;
             try {
-                plmnInt = Integer.valueOf(plmn);
+                plmnInt = Integer.valueOf(bean.getPlmn());
             } catch (Exception e) {
                 plmnInt = 0;
             }
 
-            build.setImsi(imsi);
             build.setPlmn(plmnInt);
-            int networkType = tm.getNetworkType();
+            build.setMode(DeviceStatus.NetworkMode.forNumber(bean.getNetMode()));//network type
 
-            DeviceStatus.NetworkMode networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_UNKNOWN;
+            build.setLac(bean.getLac());
+            build.setCi(bean.getCi());
 
-            switch (networkType) {
-                case TelephonyManager.NETWORK_TYPE_UNKNOWN:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_UNKNOWN;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_GPRS:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_GPRS;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_EDGE:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_EDGE;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_UMTS:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_UMTS;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_CDMA:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_CDMA;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_EVDO_0;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_EVDO_A:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_EVDO_A;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_1xRTT:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_1xRTT;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_HSDPA:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_HSDPA;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_HSUPA:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_HSUPA;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_HSPA:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_HSPA;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_IDEN:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_IDEN;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_EVDO_B:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_EVDO_B;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_LTE:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_LTE;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_EHRPD:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_EHRPD;
-                    break;
-                case TelephonyManager.NETWORK_TYPE_HSPAP:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_HSPAP;
-                    break;
-                case 19:
-                    networkMode = DeviceStatus.NetworkMode.NETWORK_TYPE_LTE_CA;
-                    break;
-            }
-            build.setMode(networkMode);//network type
-
-            for (CellInfo cellInfo : cellInfoList) {
-                //GSM手机信息
-                if (cellInfo instanceof CellInfoGsm) {
-                    CellSignalStrengthGsm cellSignalStrength = ((CellInfoGsm) cellInfo).getCellSignalStrength();
-                    int asuLevel = cellSignalStrength.getAsuLevel();
-                    int dbm = cellSignalStrength.getDbm();
-                    int level = cellSignalStrength.getLevel();
-
-                    CellInfoGsm cgsm = (CellInfoGsm) cellInfo;
-                    CellIdentityGsm cellIdentity = cgsm.getCellIdentity();
-                    int cid = cellIdentity.getCid();
-                    int lac = cellIdentity.getLac();
-                    int mcc = cellIdentity.getMcc();
-                    int mnc = cellIdentity.getMnc();
-
-                    build.setLac(lac);
-                    build.setCi(cid);
-
-                    build.setSignal(dbm);
-                    build.setPsc(0);
-                }
-                //小区LTE
-                if (cellInfo instanceof CellInfoLte) {
-                    CellSignalStrengthLte cellSignalStrength = ((CellInfoLte) cellInfo).getCellSignalStrength();
-                    int dbm = cellSignalStrength.getDbm();
-                    int asuLevel = cellSignalStrength.getAsuLevel();
-                    int timingAdvance = cellSignalStrength.getTimingAdvance();
-                    int level = cellSignalStrength.getLevel();
-
-                    CellIdentityLte cellIdentity = ((CellInfoLte) cellInfo).getCellIdentity();
-                    int mcc = cellIdentity.getMcc();
-                    int mnc = cellIdentity.getMnc();
-                    int ci = cellIdentity.getCi();
-                    int pci = cellIdentity.getPci();
-                    int tac = cellIdentity.getTac();
-
-                    build.setCi(ci);
-                    build.setLac(pci);
-                    build.setSignal(dbm);
-                    build.setPsc(tac);
-                }
-                //CDMA手机信息
-                if (cellInfo instanceof CellInfoCdma) {
-                    CellSignalStrengthCdma cellSignalStrength = ((CellInfoCdma) cellInfo).getCellSignalStrength();
-                    int asuLevel = cellSignalStrength.getAsuLevel();
-                    int cdmaDbm = cellSignalStrength.getCdmaDbm();
-                    int cdmaEcio = cellSignalStrength.getCdmaEcio();
-                    int cdmaLevel = cellSignalStrength.getCdmaLevel();
-                    int dbm = cellSignalStrength.getDbm();
-                    int evdoDbm = cellSignalStrength.getEvdoDbm();
-                    int evdoEcio = cellSignalStrength.getEvdoEcio();
-                    int evdoLevel = cellSignalStrength.getEvdoLevel();
-                    int evdoSnr = cellSignalStrength.getEvdoSnr();
-                    int level = cellSignalStrength.getLevel();
-                    CellIdentityCdma cellIdentity = ((CellInfoCdma) cellInfo).getCellIdentity();
-                    int basestationId = cellIdentity.getBasestationId();
-                    int latitude = cellIdentity.getLatitude();
-                    int longitude = cellIdentity.getLongitude();
-                    int networkId = cellIdentity.getNetworkId();
-                    int systemId = cellIdentity.getSystemId();
-
-                    build.setCi(basestationId);
-                    build.setLac(networkId);
-                    build.setSignal(dbm);
-                    //build.setNetMode(ReportData.NetworkMode.CDMA);
-                    build.setPsc(systemId);
-                }
-                //WCDMA手机信息
-                if (cellInfo instanceof CellInfoWcdma) {
-                    CellSignalStrengthWcdma cellSignalStrength = ((CellInfoWcdma) cellInfo).getCellSignalStrength();
-                    int asuLevel = cellSignalStrength.getAsuLevel();
-                    int dbm = cellSignalStrength.getDbm();
-                    int level = cellSignalStrength.getLevel();
-                    CellIdentityWcdma cellIdentity = ((CellInfoWcdma) cellInfo).getCellIdentity();
-                    int cid = cellIdentity.getCid();
-                    int lac = cellIdentity.getLac();
-                    int mcc = cellIdentity.getMcc();
-                    int psc = cellIdentity.getPsc();
-
-                    build.setCi(cid);
-                    build.setLac(lac);
-                    build.setSignal(dbm);
-                    //build.setNetMode(ReportData.NetworkMode.WCDMA);
-                    build.setPsc(psc);
-                }
-            }
-        } catch (SecurityException e) {
-            e.printStackTrace();
+            build.setSignal(bean.getSignal());
+            build.setPsc(bean.getPsc());
         }
         return build.build();
     }
