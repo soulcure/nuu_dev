@@ -47,15 +47,15 @@ import java.util.regex.Pattern;
 public class DeviceInfo {
 
     public static String getDeviceId() {
-        if (BuildConfig.DEBUG || true) {
-            return "8a9adcd4";
+        if (BuildConfig.DEBUG) {
+            return "21079a2d";
         }
         return Build.SERIAL;
     }
 
 
     public static String getBrand() {
-        if (BuildConfig.DEBUG || true) {
+        if (BuildConfig.DEBUG) {
             return "NUU";
         }
         return Build.BRAND;
@@ -63,7 +63,7 @@ public class DeviceInfo {
 
 
     public static String getModel() {
-        if (BuildConfig.DEBUG || true) {
+        if (BuildConfig.DEBUG) {
             return "i1";
         }
         return Build.MODEL;
