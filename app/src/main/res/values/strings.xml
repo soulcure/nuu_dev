@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">NuuInfo</string>
 
-    <string name="used">used:</string>
-    <string name="total">total:</string>
+    <string name="used">Data Used:</string>
+    <string name="total">Data Total:</string>
 
     <string name="data_surplus">data surplus:%1$s</string>
     <string name="start_time">start time:%1$s</string>

@@ -14,7 +14,6 @@ import com.nuu.util.GsonUtil;
 
 
 public class CardActivity extends BaseActivity {
-    private RecyclerView mRecyclerView;
     private CardAdapter mAdapter;
 
     @Override
@@ -28,17 +27,17 @@ public class CardActivity extends BaseActivity {
 
     private void initView() {
         // 获取RecyclerView
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         // 设置LinearLayoutManager
-        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, RecyclerView.VERTICAL));
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, RecyclerView.VERTICAL));
         // 设置ItemAnimator
-        //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        //recyclerView.setItemAnimator(new DefaultItemAnimator());
         // 设置固定大小
-        //mRecyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
         // 初始化自定义的适配器
         mAdapter = new CardAdapter(this);
         // 为mRecyclerView设置适配器
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
     }
 
 

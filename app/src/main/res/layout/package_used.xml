@@ -24,11 +24,11 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             app:wlv_borderColor="@color/colorAccent"
-            app:wlv_borderWidth="2dp"
+            app:wlv_borderWidth="1dp"
             app:wlv_progressValue="40"
             app:wlv_round_rectangle="true"
             app:wlv_shapeType="rectangle"
-            app:wlv_titleCenter="40%"
+            app:wlv_titleCenter="100%"
             app:wlv_titleCenterColor="@android:color/holo_blue_dark"
             app:wlv_titleCenterSize="16sp"
             app:wlv_titleCenterStrokeColor="@android:color/holo_blue_dark"
@@ -40,40 +40,42 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/used"
+                android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tv_used"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:textColor="@android:color/black" />
+                android:layout_marginLeft="5dp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/total"
+                android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tv_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:textColor="@android:color/black" />
+                android:layout_marginLeft="5dp" />
 
         </LinearLayout>
 
