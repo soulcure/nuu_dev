@@ -6,6 +6,8 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import com.nuu.MiFiManager;
+import com.nuu.config.AppConfig;
+import com.nuu.http.OkHttpConnector;
 import com.nuu.util.ShellUtils;
 
 import java.io.IOException;
@@ -68,6 +70,7 @@ public class SimpleServer extends NanoHTTPD {
         router.put("/reboot", "/reboot");
         router.put("/setWifiAp", "/setWifiAp");
         router.put("/setWifiApPrimary", "/setWifiApPrimary");
+        router.put("/transfer", "/transfer");
     }
 
     @Override
@@ -126,6 +129,32 @@ public class SimpleServer extends NanoHTTPD {
                     }
                 }.start();
                 return newFixedLengthResponse("---setWifiApPrimary--");
+            case "/transfer":
+                Method method = session.getMethod();
+
+
+                String url = AppConfig.getHost();
+                if (Method.GET.equals(method)) {
+                    // or you can access the GET request's parameters
+                    Map<String, String> getParam = session.getParms();
+                    String response = OkHttpConnector.httpGet(url, null, getParam);
+                    return newFixedLengthResponse(response);
+                } else if (Method.POST.equals(method) || Method.PUT.equals(method)) {
+                    Map<String, String> files = new HashMap<>();
+                    try {
+                        session.parseBody(files);
+                    } catch (IOException ioe) {
+                        return newFixedLengthResponse("Internal Error IO Exception: " + ioe.getMessage());
+                    } catch (ResponseException re) {
+                        return newFixedLengthResponse(re.getStatus(), MIME_PLAINTEXT, re.getMessage());
+                    }
+
+                    Map<String, String> postParam = session.getParms();
+                    String body = session.getQueryParameterString();  // get the POST body
+                    // or you can access the POST request's parameters
+                    String response = OkHttpConnector.httpPost(url, null, postParam, body);
+                    return newFixedLengthResponse(response);
+                }
 
 
         }

@@ -79,11 +79,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 MiFiManager.instance().reportDeviceInfo();
                 break;
             case R.id.btn_web:
-                String url = "http://localhost:8088/info";
-                OkHttpConnector.httpGet(url, new IGetListener() {
+                String url = "http://localhost:8088/transfer";
+
+                ContentValues params = new ContentValues();
+                params.put("itf_name", "query_package");  //API name
+                params.put("trans_serial", "1234cde");  //API name
+                params.put("login", "tuser");
+                params.put("auth_code", "abcd456");
+                params.put("device_sn", "354243074362656");
+
+                OkHttpConnector.httpPost(url, params, new IPostListener() {
                     @Override
                     public void httpReqResult(String response) {
-                        Log.d("TcpClient", response);
+                        Log.d("TcpClient", "transfer:" + response);
+                    }
+                });
+
+                OkHttpConnector.httpGet(url, params, new IGetListener() {
+                    @Override
+                    public void httpReqResult(String response) {
+                        Log.d("TcpClient", "transfer:" + response);
                     }
                 });
                 break;

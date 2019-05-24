@@ -171,13 +171,13 @@ public class ReportData {
     }
 
     public static class Sim1Bean {
-        private String imsi = "";
-        private String plmn = "";
-        private int signal;
-        private int lac;
-        private int ci;
-        private int psc;
-        private int netMode;
+        private String imsi = ""; //sim卡ID
+        private String plmn = "";//国家营运商编码
+        private int signal;  //the signal strength as dBm
+        private int lac;  //16-bit Location Area Code
+        private int ci; //Either 16-bit GSM Cell Identity described 基站编号
+        private int psc; ////16位跟踪区域代码 16-bit Tracking Area Code, Integer.MAX_VALUE if unknown
+        private int netMode;  //网络类型
 
         public String getImsi() {
             return imsi;

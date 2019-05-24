@@ -767,4 +767,128 @@ public class OkHttpConnector {
 
         return sb.toString();
     }
+
+
+    /**
+     * 组装参数
+     *
+     * @param params
+     * @param isEncoder
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    private static String getParams(Map<String, String> params, boolean isEncoder) throws UnsupportedEncodingException {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String key = entry.getKey(); // name
+            String value = entry.getValue(); // value
+            if (first) {
+                first = false;
+                //sb.append("?");
+            } else {
+                sb.append("&");
+            }
+
+            if (isEncoder) {
+                sb.append(URLEncoder.encode(key, "UTF-8"));
+            } else {
+                sb.append(key);
+            }
+
+            sb.append("=");
+
+            if (isEncoder) {
+                sb.append(URLEncoder.encode(value, "UTF-8"));
+            } else {
+                sb.append(value);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public static String httpPost(String url, Map<String, String> headers,
+                                  Map<String, String> params,
+                                  String postBoby) {
+        if (TextUtils.isEmpty(url)) {
+            throw new IllegalArgumentException("url is null");
+        }
+        RequestBody body;
+        if (params != null && params.size() > 0) {
+            FormBody.Builder builder = new FormBody.Builder();
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                String key = entry.getKey(); // name
+                String value = entry.getValue(); // value
+                builder.add(key, value);
+            }
+            body = builder.build();
+        } else if (!TextUtils.isEmpty(postBoby)) {
+            body = RequestBody.create(JSON, postBoby);
+        } else {
+            body = RequestBody.create(null, "");
+        }
+
+        Request.Builder builder = new Request.Builder();
+        if (headers != null && headers.size() > 0) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                String key = entry.getKey(); // name
+                String value = entry.getValue(); // value
+                Log.v(TAG, "okhttp Header:" + key + "=" + value);
+                builder.addHeader(key, value);
+            }
+        }
+
+        Log.v(TAG, "okhttp post url:" + url);
+        Request request = builder.url(url).post(body).build();
+        try {
+            okhttp3.Response response = client.newCall(request).execute();
+            if (response.isSuccessful() && response.body() != null) {
+                return response.body().string();
+            } else {
+                return response.toString();
+            }
+
+        } catch (IOException e) {
+            return e.toString();
+        }
+
+    }
+
+    public static String httpGet(String url, Map<String, String> headers,
+                                 Map<String, String> params) {
+        if (TextUtils.isEmpty(url)) {
+            throw new IllegalArgumentException("url is null");
+        }
+        try {
+            if (params != null && params.size() > 0) {
+                url = url + "?" + getParams(params, true);
+            }
+
+            Request.Builder builder = new Request.Builder();
+            if (headers != null && headers.size() > 0) {
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    String key = entry.getKey(); // name
+                    String value = entry.getValue(); // value
+                    Log.v(TAG, "okhttp Header:" + key + "=" + value);
+                    builder.addHeader(key, value);
+                }
+            }
+
+            Log.v(TAG, "okhttp get url:" + url);
+
+            Request request = builder.url(url).build();
+
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful() && response.body() != null) {
+                return response.body().string();
+            } else {
+                return response.toString();
+            }
+        } catch (IOException e) {
+            return e.toString();
+        }
+
+    }
 }
