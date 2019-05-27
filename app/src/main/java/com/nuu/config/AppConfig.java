@@ -31,6 +31,10 @@ public class AppConfig {
         return HOST + "api/public_intf";
     }
 
+    public String getRouter() {
+        return "/transfer";
+    }
+
 
     public static ContentValues getParam(String apiName) {
         ContentValues params = new ContentValues();

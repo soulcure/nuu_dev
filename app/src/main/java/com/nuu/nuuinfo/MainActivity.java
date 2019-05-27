@@ -14,7 +14,6 @@ import com.nuu.entity.CurUsingPackageRsp;
 import com.nuu.entity.DetailRsp;
 import com.nuu.entity.PackageRsp;
 import com.nuu.entity.DevicesStatusRsp;
-import com.nuu.http.IGetListener;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.install.AppMuteInstall;
@@ -79,28 +78,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 MiFiManager.instance().reportDeviceInfo();
                 break;
             case R.id.btn_web:
-                String url = "http://localhost:8088/transfer";
-
-                ContentValues params = new ContentValues();
-                params.put("itf_name", "query_package");  //API name
-                params.put("trans_serial", "1234cde");  //API name
-                params.put("login", "tuser");
-                params.put("auth_code", "abcd456");
-                params.put("device_sn", "354243074362656");
-
-                OkHttpConnector.httpPost(url, params, new IPostListener() {
-                    @Override
-                    public void httpReqResult(String response) {
-                        Log.d("TcpClient", "transfer:" + response);
-                    }
-                });
-
-                OkHttpConnector.httpGet(url, params, new IGetListener() {
-                    @Override
-                    public void httpReqResult(String response) {
-                        Log.d("TcpClient", "transfer:" + response);
-                    }
-                });
+                webTest1();
+                webTest2();
+                webTest3();
+                webTest4();
                 break;
             case R.id.btn_install:
                 installApp1();
@@ -123,6 +104,92 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+
+    private void webTest1() {
+        String url = "http://localhost:8088/transfer";
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "query_package");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                Log.d("TcpClient", "webTest1 transfer:" + response);
+            }
+        });
+    }
+
+
+    private void webTest2() {
+        String url = "http://localhost:8088/transfer";
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "query_device_status");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                DevicesStatusRsp rsp = GsonUtil.parse(response, DevicesStatusRsp.class);
+                if (rsp != null && rsp.getErr_code() == 0) {
+                    Log.d("TcpClient", "webTest2 transfer:" + response);
+                }
+
+            }
+        });
+    }
+
+    private void webTest3() {
+        String url = "http://localhost:8088/transfer";
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "query_device_package_info");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                DetailRsp rsp = GsonUtil.parse(response, DetailRsp.class);
+                if (rsp != null && rsp.getErr_code() == 0) {
+                    Log.d("TcpClient", "webTest3 transfer:" + response);
+                }
+            }
+        });
+    }
+
+
+    private void webTest4() {
+        String url = "http://localhost:8088/transfer";
+
+        ContentValues params = new ContentValues();
+        params.put("itf_name", "query_device_package_info");  //API name
+        params.put("trans_serial", "1234cde");  //API name
+        params.put("login", "tuser");
+        params.put("auth_code", "abcd456");
+        params.put("device_sn", "354243074362656");
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                DetailRsp rsp = GsonUtil.parse(response, DetailRsp.class);
+                if (rsp != null && rsp.getErr_code() == 0) {
+                    Log.d("TcpClient", "webTest4 transfer:" + response);
+                }
+            }
+        });
+
+    }
 
     private void installApp1() {
         final String filePath = FileConfig.getApkDownLoadPath();

@@ -8,6 +8,7 @@ import android.util.Log;
 import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
 import com.nuu.http.OkHttpConnector;
+import com.nuu.report.ConfigManager;
 import com.nuu.util.ShellUtils;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class SimpleServer extends NanoHTTPD {
     public static final String TAG = SimpleServer.class.getSimpleName();
     private static final String REQUEST_ROOT = "/";
     private static final Map<String, String> router = new HashMap<>();
-    private int serverPort = 0;
+    private int serverPort;
     private Context mContext;
 
     public SimpleServer(Context context, int port) {
@@ -64,6 +65,7 @@ public class SimpleServer extends NanoHTTPD {
     }
 
     private void registRouter() {
+        String routerStr = ConfigManager.instance().getCurConfig().getRouter();
         router.put("/info", "/info");
         router.put("/index", "/index");
         router.put("/shutdown", "/shutdown");
@@ -71,6 +73,7 @@ public class SimpleServer extends NanoHTTPD {
         router.put("/setWifiAp", "/setWifiAp");
         router.put("/setWifiApPrimary", "/setWifiApPrimary");
         router.put("/transfer", "/transfer");
+        router.put(routerStr, routerStr);
     }
 
     @Override
@@ -83,80 +86,80 @@ public class SimpleServer extends NanoHTTPD {
         if (!router.containsKey(uri)) {
             return response404(session, uri);
         }
-        switch (uri) {
-            case "/info":
-                return getCurInfo();
-            case "/index":
-                return newFixedLengthResponse("========/index=======");
-            case "/shutdown":
-                String shutdownStr = shutdownDevice();
-                return newFixedLengthResponse(shutdownStr);
-            case "/reboot":
-                String rebootStr = rebootDevice();
-                return newFixedLengthResponse(rebootStr);
-            case "/setWifiAp":
-                Map<String, String> parms = session.getParms();
-                final String ssid = parms.get("ssid");
-                final String password = parms.get("password");
+        Log.d(TAG, "NanoHTTPD serve uri:" + uri);
 
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        setWifiAp(ssid, password);
-                    }
-                }.start();
-                return newFixedLengthResponse("---setWifiAp--");
+        String routerStr = ConfigManager.instance().getCurConfig().getRouter();
+        Log.d(TAG, "NanoHTTPD serve routerStr:" + routerStr);
 
-            case "/setWifiApPrimary":
-                Map<String, String> params = session.getParms();
-                final String ssidp = params.get("ssid");
-                final String passwordp = params.get("password");
+        if (uri.equals("/info")) {
+            return getCurInfo();
+        } else if (uri.equals("/index")) {
+            return newFixedLengthResponse("========/index=======");
+        } else if (uri.equals("/shutdown")) {
+            String shutdownStr = shutdownDevice();
+            return newFixedLengthResponse(shutdownStr);
+        } else if (uri.equals("/reboot")) {
+            String rebootStr = rebootDevice();
+            return newFixedLengthResponse(rebootStr);
+        } else if (uri.equals("/setWifiAp")) {
+            Map<String, String> parms = session.getParms();
+            final String ssid = parms.get("ssid");
+            final String password = parms.get("password");
 
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        setWifiAp(ssidp, passwordp);
-                    }
-                }.start();
-                return newFixedLengthResponse("---setWifiApPrimary--");
-            case "/transfer":
-                Method method = session.getMethod();
-
-
-                String url = AppConfig.getHost();
-                if (Method.GET.equals(method)) {
-                    // or you can access the GET request's parameters
-                    Map<String, String> getParam = session.getParms();
-                    String response = OkHttpConnector.httpGet(url, null, getParam);
-                    return newFixedLengthResponse(response);
-                } else if (Method.POST.equals(method) || Method.PUT.equals(method)) {
-                    Map<String, String> files = new HashMap<>();
+            new Thread() {
+                @Override
+                public void run() {
                     try {
-                        session.parseBody(files);
-                    } catch (IOException ioe) {
-                        return newFixedLengthResponse("Internal Error IO Exception: " + ioe.getMessage());
-                    } catch (ResponseException re) {
-                        return newFixedLengthResponse(re.getStatus(), MIME_PLAINTEXT, re.getMessage());
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
+                    setWifiAp(ssid, password);
+                }
+            }.start();
+            return newFixedLengthResponse("---setWifiAp--");
+        } else if (uri.equals("/setWifiApPrimary")) {
+            Map<String, String> params = session.getParms();
+            final String ssidp = params.get("ssid");
+            final String passwordp = params.get("password");
 
-                    Map<String, String> postParam = session.getParms();
-                    String body = session.getQueryParameterString();  // get the POST body
-                    // or you can access the POST request's parameters
-                    String response = OkHttpConnector.httpPost(url, null, postParam, body);
-                    return newFixedLengthResponse(response);
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    setWifiAp(ssidp, passwordp);
+                }
+            }.start();
+            return newFixedLengthResponse("---setWifiApPrimary--");
+        } else if (uri.equals(routerStr)) {
+            String url = AppConfig.getHost();
+
+            Method method = session.getMethod();
+            if (Method.GET.equals(method)) {
+                // or you can access the GET request's parameters
+                Map<String, String> getParam = session.getParms();
+                String response = OkHttpConnector.httpGet(url, null, getParam);
+                return newFixedLengthResponse(response);
+            } else if (Method.POST.equals(method) || Method.PUT.equals(method)) {
+                Map<String, String> files = new HashMap<>();
+                try {
+                    session.parseBody(files);
+                } catch (IOException ioe) {
+                    return newFixedLengthResponse("Internal Error IO Exception: " + ioe.getMessage());
+                } catch (ResponseException re) {
+                    return newFixedLengthResponse(re.getStatus(), MIME_PLAINTEXT, re.getMessage());
                 }
 
-
+                Map<String, String> postParam = session.getParms();
+                String body = session.getQueryParameterString();  // get the POST body
+                // or you can access the POST request's parameters
+                String response = OkHttpConnector.httpPost(url, null, postParam, body);
+                return newFixedLengthResponse(response);
+            }
         }
 
         return newFixedLengthResponse("=======default========");
