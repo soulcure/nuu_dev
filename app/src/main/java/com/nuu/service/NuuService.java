@@ -202,7 +202,8 @@ public class NuuService extends Service {
         mContext = getApplicationContext();//this
         mClient = new TcpClient(this);
 
-        SimpleServer simpleServer = new SimpleServer(this, 8088);//开启服务器
+        //SimpleServer simpleServer = new SimpleServer(this, "0.0.0.0", 80);//开启web服务器
+        SimpleServer simpleServer = new SimpleServer(this, 8080);//开启服务器
         simpleServer.startServer();
 
         HandlerThread thread = new HandlerThread("IntentService");
