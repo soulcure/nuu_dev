@@ -30,6 +30,7 @@ import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.pack.PackageDetailByCountryActivity;
 import com.nuu.pack.PurchasePackageActivity;
+import com.nuu.setting.NetSettingActivity;
 import com.nuu.user.UserInfoSettingActivity;
 import com.nuu.util.AppUtils;
 import com.nuu.util.DeviceInfo;
@@ -52,6 +53,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int SETTING_USER = 4; //设置设备用户信息
     private static final int REBOOT_DEVICES = 5; //重启设备
     private static final int SHUTDOWN_DEVICES = 6; //关闭设备
+    private static final int NET_SETTING = 7; //网络设置
+    private static final int WEB_APP = 8; //web 设置
 
     private static final String STR_PACKAGE_USED = "query_using_package_resp";  //流量使用情况
     private static final String STR_DEVICES_STATUS = "query_device_status_resp"; //设备当前状态查询
@@ -59,6 +62,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String STR_SETTING_USER = "device_customer_register"; //设置设备用户信息
     private static final String STR_REBOOT_DEVICES = "reboot_device_resp"; //重启设备
     private static final String STR_SHUTDOWN_DEVICES = "shutdown_device_resp"; //关闭设备
+    private static final String STR_NET_SETTING = "net_setting"; //网络设置
+    private static final String STR_WEB_APP = "web_app"; //web 设置
 
 
     private Context mContext;
@@ -74,6 +79,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         CardItem settingUser = new CardItem(STR_SETTING_USER);
         CardItem reboot = new CardItem(STR_REBOOT_DEVICES);
         CardItem shutdown = new CardItem(STR_SHUTDOWN_DEVICES);
+        CardItem netSetting = new CardItem(STR_NET_SETTING);
+        CardItem webSetting = new CardItem(STR_WEB_APP);
 
         mList.add(used);
         mList.add(packageType);
@@ -81,6 +88,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         mList.add(settingUser);
         mList.add(reboot);
         mList.add(shutdown);
+        mList.add(netSetting);
+        mList.add(webSetting);
     }
 
     public void setPackageUsed(PackageRsp rsp) {
@@ -134,6 +143,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case STR_SHUTDOWN_DEVICES:
                 type = SHUTDOWN_DEVICES;
                 break;
+            case STR_NET_SETTING:
+                type = NET_SETTING;
+                break;
+            case STR_WEB_APP:
+                type = WEB_APP;
+                break;
             default:
                 type = -1;
                 break;
@@ -172,6 +187,14 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 view = inflater.inflate(R.layout.shutdown_devices, parent, false);
                 holder = new ShutdownViewHolder(view);
                 break;
+            case NET_SETTING:
+                view = inflater.inflate(R.layout.setting_net, parent, false);
+                holder = new NetSettingViewHolder(view);
+                break;
+            case WEB_APP:
+                view = inflater.inflate(R.layout.web_app, parent, false);
+                holder = new WebAppViewHolder(view);
+                break;
             default:
                 break;
         }
@@ -193,7 +216,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             onReboot((RebootViewHolder) holder, position);
         } else if (holder instanceof ShutdownViewHolder) { //重启设备
             shutDown((ShutdownViewHolder) holder, position);
+        } else if (holder instanceof NetSettingViewHolder) { //重启设备
+            netSetting((NetSettingViewHolder) holder, position);
+        } else if (holder instanceof WebAppViewHolder) { //重启设备
+            webApp((WebAppViewHolder) holder, position);
         }
+
 
     }
 
@@ -464,6 +492,32 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
+    private void netSetting(final NetSettingViewHolder holder, final int position) {
+        Button btn_net_setting = holder.btn_net_setting;
+        btn_net_setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, NetSettingActivity.class);
+                mContext.startActivity(intent);
+            }
+        });
+    }
+
+
+    private void webApp(final WebAppViewHolder holder, final int position) {
+        Button btn_web_app = holder.btn_web_app;
+        btn_web_app.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, WebViewActivity.class);
+                intent.putExtra(WebViewActivity.INTENT_TITLE, "title");
+                intent.putExtra(WebViewActivity.INTENT_URL, "http://localhost:8088");
+                mContext.startActivity(intent);
+            }
+        });
+    }
+
+
     // 重写的自定义ViewHolder
     static class PackageUsedViewHolder extends RecyclerView.ViewHolder {
         WaveLoadingView waveLoadingView;
@@ -538,6 +592,26 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ShutdownViewHolder(View v) {
             super(v);
             btn_shutdown = (Button) v.findViewById(R.id.btn_shutdown);
+        }
+    }
+
+
+    static class NetSettingViewHolder extends RecyclerView.ViewHolder {
+        Button btn_net_setting;
+
+        NetSettingViewHolder(View v) {
+            super(v);
+            btn_net_setting = (Button) v.findViewById(R.id.btn_net_setting);
+        }
+    }
+
+
+    static class WebAppViewHolder extends RecyclerView.ViewHolder {
+        Button btn_web_app;
+
+        WebAppViewHolder(View v) {
+            super(v);
+            btn_web_app = (Button) v.findViewById(R.id.btn_web_app);
         }
     }
 
