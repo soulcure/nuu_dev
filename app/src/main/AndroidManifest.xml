@@ -72,6 +72,8 @@
         <activity android:name="com.nuu.data.UsedDataTodayActivity" />
         <activity android:name="com.nuu.user.UserInfoSettingActivity" />
 
+        <activity android:name=".WebViewActivity" />
+
 
         <service
             android:name="com.nuu.service.NuuService"

@@ -1,6 +1,7 @@
 package com.nuu.nuuinfo;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -78,10 +79,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 MiFiManager.instance().reportDeviceInfo();
                 break;
             case R.id.btn_web:
-                webTest1();
-                webTest2();
-                webTest3();
-                webTest4();
+                webTest0();
+
+                //webTest1();
+                //webTest2();
+                //webTest3();
+                //webTest4();
                 break;
             case R.id.btn_install:
                 installApp1();
@@ -102,6 +105,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
         }
+    }
+
+    private void webTest0() {
+        Intent intent = new Intent(this, WebViewActivity.class);
+        intent.putExtra(WebViewActivity.INTENT_TITLE, "title");
+        //intent.putExtra(WebViewActivity.INTENT_URL, "http://192.168.43.1:9088");
+        intent.putExtra(WebViewActivity.INTENT_URL, "http://localhost:8088");
+        startActivity(intent);
     }
 
 
@@ -241,9 +252,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
 
     }
-
-
-
 
 
     private void reqPurchasedPackage() {

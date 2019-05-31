@@ -8,6 +8,7 @@ import com.nuu.config.AppConfig;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.report.ConfigManager;
 import com.nuu.util.DeviceInfo;
+import com.nuu.util.DeviceUtils;
 import com.nuu.util.ShellUtils;
 
 import java.io.IOException;
@@ -27,14 +28,11 @@ public class SimpleServer extends NanoHTTPD {
     public SimpleServer(Context context, int port) {
         super(port);
         this.mContext = context;
-        Log.d(TAG, "listener to http://localhost:" + port);
+
+        String ip = DeviceUtils.getLocalIpAddress(true);
+        Log.d(TAG, "NanoHTTPD listener to " + ip + ":" + port);
     }
 
-    public SimpleServer(Context context, String hostname, int port) {
-        super(hostname, port);
-        this.mContext = context;
-        Log.d(TAG, "listener to " + hostname + ":" + port);
-    }
 
     public void startServer() {
         try {
