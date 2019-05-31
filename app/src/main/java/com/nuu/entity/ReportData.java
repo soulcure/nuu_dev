@@ -2,6 +2,7 @@ package com.nuu.entity;
 
 import android.content.Context;
 
+import com.nuu.MiFiManager;
 import com.nuu.nuuinfo.BuildConfig;
 import com.nuu.util.DeviceInfo;
 import com.nuu.util.GsonUtil;
@@ -10,21 +11,20 @@ import com.nuu.util.TimeUtils;
 import java.util.List;
 
 public class ReportData {
-
-    private String deviceSN;
-    private String deviceId;
-    private int unixTime;
-    private String ip;
-    private String mac;
-    private Sim1Bean sim1;
-    private Sim2Bean sim2;
-    private int pow;
-    private int charge;
-    private int netStatus;
-    private int hotPoint;
-    private int adb;
-    private int hotAmount;
-    private String speedState;
+    private String deviceSN;  //persist.telephony.imei1
+    private String deviceId;  //Build.SERIAL
+    private int unixTime;  //unix时间戳 单位秒
+    private String ip;    //真实IP地址
+    private String mac;   //mac地址
+    private Sim1Bean sim1;  //卡1信息
+    private Sim2Bean sim2; //卡2信息
+    private int pow;   //电量
+    private int charge;  //1 isCharging; 0 not charge
+    private int netStatus; //网络状态  1 isAvailable；0 noAvailable
+    private int hotPoint;  //热点开关 状态 1开启; 0 关闭
+    private int adb;  //ADB开关 状态 1开启; 0 关闭
+    private int hotAmount;  //热点连接数量
+    private String speedState;  //网络速度
     private int netBrock;
 
 
@@ -47,7 +47,7 @@ public class ReportData {
         netBrock = 0;
 
         sim1 = DeviceInfo.getSim1(context);
-        sim2 = new ReportData.Sim2Bean();
+        sim2 = MiFiManager.instance().getCurSim2();
     }
 
     public String getDeviceSN() {
@@ -237,13 +237,13 @@ public class ReportData {
     }
 
     public static class Sim2Bean {
-        private String imsi = "";
-        private String plmn = "";
-        private int signal;
-        private int lac;
-        private int ci;
-        private int psc;
-        private int netMode;
+        private String imsi = ""; //sim卡ID
+        private String plmn = "";//国家营运商编码
+        private int signal;  //the signal strength as dBm
+        private int lac;  //16-bit Location Area Code
+        private int ci; //Either 16-bit GSM Cell Identity described 基站编号
+        private int psc; ////16位跟踪区域代码 16-bit Tracking Area Code, Integer.MAX_VALUE if unknown
+        private int netMode;  //网络类型
 
         public String getImsi() {
             return imsi;

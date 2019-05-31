@@ -1,8 +1,8 @@
 package com.nuu.entity;
 
 public class BatteryInfo {
-    private int pow=0;
-    private int charge=0;
+    private int pow = 0;
+    private int charge = 0;  //1 isCharging; 0 not charge
 
     public int getPow() {
         return pow;

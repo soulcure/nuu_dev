@@ -515,6 +515,11 @@ public class MiFiManager {
     private final static String PROXY_SERVICE = "cn.gosomo.proxy.ProxyService";
     private final static String PROXY_SERVICE_PACKAGE = "cn.gosomo.proxy";
 
+
+    public ReportData.Sim2Bean getCurSim2() {
+        return curSim2;
+    }
+
     private void bindProxyService() {
         Intent intent = new Intent(PROXY_SERVICE);
         intent.setClassName(PROXY_SERVICE_PACKAGE, PROXY_SERVICE);
