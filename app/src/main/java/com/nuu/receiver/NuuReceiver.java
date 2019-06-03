@@ -35,8 +35,7 @@ public class NuuReceiver extends BroadcastReceiver {
             in.setAction(NuuService.NUU_CHECK_UPDATE);
             context.startService(in);//启动服务
 
-        } else if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)
-                || action.equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
+        } else if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
             if (AppUtils.isNetworkConnected(context)) {
                 MiFiManager.instance().init(context);
 
