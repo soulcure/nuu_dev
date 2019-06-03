@@ -70,7 +70,7 @@ public class ReportTaskManager {
 
     public void cleanObtainReportTask() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {// 4.4及以上
-            am.cancel(sendPendingIntent);
+            am.cancel(obtainPendingIntent);
         }
     }
 }
