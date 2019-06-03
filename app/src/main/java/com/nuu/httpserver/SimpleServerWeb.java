@@ -20,12 +20,12 @@ import java.util.Map;
 import fi.iki.elonen.NanoHTTPD;
 
 
-public class SimpleServer extends NanoHTTPD {
+public class SimpleServerWeb extends NanoHTTPD {
 
     public static final String TAG = SimpleServer.class.getSimpleName();
     private Context mContext;
 
-    public SimpleServer(Context context, int port) {
+    public SimpleServerWeb(Context context, int port) {
         super(port);
         this.mContext = context;
 

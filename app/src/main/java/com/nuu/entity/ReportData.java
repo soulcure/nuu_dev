@@ -305,7 +305,7 @@ public class ReportData {
 
     @Override
     public String toString() {
-        return TimeUtils.getTime(System.currentTimeMillis()) + "   " + GsonUtil.format(this);
+        return GsonUtil.format(this);
     }
 
     public String toJson() {

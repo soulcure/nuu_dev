@@ -726,7 +726,7 @@ public class MiFiManager {
     }
 
     private void sendDeviceInfoList() {
-        FileConfig.writeFile(reportDataList);
+        FileConfig.writeFile(mContext, reportDataList);
         ReceiveListener callback = new ReceiveListener() {
             @Override
             public void OnRec(byte[] body) {

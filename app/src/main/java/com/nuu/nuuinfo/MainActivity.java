@@ -76,6 +76,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 MiFiManager.instance().checkUpdate();
                 break;
             case R.id.btn_info:
+                MiFiManager.instance().obtainDeviceInfo(null);
                 MiFiManager.instance().reportDeviceInfo();
                 break;
             case R.id.btn_web:

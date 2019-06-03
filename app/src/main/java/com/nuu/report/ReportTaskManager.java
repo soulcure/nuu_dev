@@ -52,10 +52,25 @@ public class ReportTaskManager {
         }
     }
 
+
+    public void cleanSendReportTask() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {// 4.4及以上
+            am.cancel(sendPendingIntent);
+        }
+    }
+
+
     public void updateObtainReportTask() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {// 4.4及以上
             am.setExact(AlarmManager.RTC_WAKEUP,
                     System.currentTimeMillis() + obtainPeriod, obtainPendingIntent);
+        }
+    }
+
+
+    public void cleanObtainReportTask() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {// 4.4及以上
+            am.cancel(sendPendingIntent);
         }
     }
 }

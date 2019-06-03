@@ -1,10 +1,13 @@
 package com.nuu.config;
 
+import android.content.Context;
 import android.os.Environment;
 
 import com.nuu.entity.ReportData;
 import com.nuu.report.ConfigManager;
+import com.nuu.util.AppUtils;
 import com.nuu.util.FileUtils;
+import com.nuu.util.TimeUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -41,6 +44,15 @@ public class FileConfig {
         return false;
     }
 
+
+    public static String getNuuPath() {
+        String path = Environment.getExternalStorageDirectory().getPath() + NuuPath;
+        File fileDir = new File(path);
+        if (!fileDir.exists()) {
+            fileDir.mkdirs();
+        }
+        return fileDir.getAbsolutePath();
+    }
 
     public static String getFileDownLoadPath() {
         String path = Environment.getExternalStorageDirectory().getPath() + FilePaths;
@@ -93,12 +105,15 @@ public class FileConfig {
     }
 
 
-    public static void writeFile(List<ReportData> list) {
+    public static void writeFile(Context context, List<ReportData> list) {
         if (list == null || list.size() == 0) {
             return;
         }
 
         List<String> strList = new ArrayList<>();
+        String time = TimeUtils.getTime(System.currentTimeMillis())
+                + "    Network Connect:" + AppUtils.isNetworkConnected(context);
+        strList.add(time);
 
         for (ReportData item : list) {
             strList.add(item.toString());
@@ -108,6 +123,14 @@ public class FileConfig {
         String dateStr = sdf.format(new Date(System.currentTimeMillis()));
 
         String path = ConfigManager.instance().getCurConfig().getReportStorePath();
+        File fileDir = new File(path);
+        if (!fileDir.exists()) {
+            boolean isCreate = fileDir.mkdirs();
+            if (!isCreate) {
+                path = getNuuPath();
+            }
+        }
+
         String filePath = path + "/" + filePrefix + dateStr + fileSubfix;
         FileUtils.writeFile(filePath, strList, true);
     }

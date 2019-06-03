@@ -20,6 +20,7 @@ import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
 import com.nuu.entity.ReportConfig;
 import com.nuu.httpserver.SimpleServer;
+import com.nuu.httpserver.SimpleServerWeb;
 import com.nuu.report.ConfigFileObserver;
 import com.nuu.report.ConfigManager;
 import com.nuu.report.ReportTaskManager;
@@ -150,23 +151,25 @@ public class NuuService extends Service {
 
 
     /**
-     * wifi监测广播.
+     * 网络已经连接.
      */
     private class NetWorkChangeReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
-                if (AppUtils.isWifi(context)) {
-                    /*Message msg0 = mServiceHandler.obtainMessage(HX_ALL_CONFIG);
-                    mServiceHandler.sendMessageDelayed(msg0, 1000 * 60);
+                if (AppUtils.isNetworkConnected(context)) {
+                    MiFiManager.instance().obtainDeviceInfo(null);
+                    mReportTaskManager.updateObtainReportTask();
 
-                    Message msg1 = mServiceHandler.obtainMessage(HX_ALL_SHOW);
-                    mServiceHandler.sendMessageDelayed(msg1, 1000 * 60 * 2);
+                    MiFiManager.instance().reportDeviceInfo();
+                    mReportTaskManager.updateSendReportTask();
+                } else {
+                    MiFiManager.instance().obtainDeviceInfo(null);
+                    mReportTaskManager.cleanObtainReportTask();
 
-                    Message msg2 = mServiceHandler.obtainMessage(HX_ALL_CONT);
-                    mServiceHandler.sendMessageDelayed(msg2, 1000 * 60 * 3);*/
-
+                    MiFiManager.instance().reportDeviceInfo();
+                    mReportTaskManager.cleanSendReportTask();
                 }
             }
         }
@@ -204,6 +207,9 @@ public class NuuService extends Service {
 
         SimpleServer simpleServer = new SimpleServer(this, 8088);//开启服务器
         simpleServer.startServer();
+
+        SimpleServerWeb simpleServer2 = new SimpleServerWeb(this, 8089);//开启服务器
+        simpleServer2.startServer();
 
         HandlerThread thread = new HandlerThread("IntentService");
         thread.start();
