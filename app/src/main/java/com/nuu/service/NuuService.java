@@ -159,12 +159,14 @@ public class NuuService extends Service {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                 if (AppUtils.isNetworkConnected(context)) {
+                    Log.d(TAG, "NetWork Network connected");
                     MiFiManager.instance().obtainDeviceInfo(null);
                     mReportTaskManager.updateObtainReportTask();
 
                     MiFiManager.instance().reportDeviceInfo();
                     mReportTaskManager.updateSendReportTask();
                 } else {
+                    Log.d(TAG, "NetWork Network disconnected");
                     MiFiManager.instance().obtainDeviceInfo(null);
                     mReportTaskManager.cleanObtainReportTask();
 
@@ -292,12 +294,16 @@ public class NuuService extends Service {
                 case REPORT_DEVICE_AM:
                     Log.v(TAG, "reportDeviceInfo");
                     MiFiManager.instance().reportDeviceInfo();
-                    mReportTaskManager.updateSendReportTask();
+                    if (AppUtils.isNetworkConnected(mContext)) {
+                        mReportTaskManager.updateSendReportTask();
+                    }
                     break;
                 case OBTAIN_DEVICE_AM:
                     Log.v(TAG, "obtainDeviceInfo");
                     MiFiManager.instance().obtainDeviceInfo(null);
-                    mReportTaskManager.updateObtainReportTask();
+                    if (AppUtils.isNetworkConnected(mContext)) {
+                        mReportTaskManager.updateObtainReportTask();
+                    }
                     break;
                 case NUU_CHECK_UPDATE:
                     Log.v(TAG, "nuu_check_update");

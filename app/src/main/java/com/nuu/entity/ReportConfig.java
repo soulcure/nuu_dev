@@ -18,7 +18,8 @@ public class ReportConfig {
     private String sendToIp;
     private int port;
     private int reportStoreKeepDays;
-    private String router;
+    private String routerHost;
+    private String routerPath;
 
     public String getReportStorePath() {
         return reportStorePath;
@@ -68,11 +69,19 @@ public class ReportConfig {
         this.reportStoreKeepDays = reportStoreKeepDays;
     }
 
-    public String getRouter() {
-        return router;
+    public String getRouterHost() {
+        return routerHost;
     }
 
-    public void setRouter(String router) {
-        this.router = router;
+    public void setRouterHost(String routerHost) {
+        this.routerHost = routerHost;
+    }
+
+    public String getRouterPath() {
+        return routerPath;
+    }
+
+    public void setRouterPath(String routerPath) {
+        this.routerPath = routerPath;
     }
 }

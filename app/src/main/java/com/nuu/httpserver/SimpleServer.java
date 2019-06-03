@@ -1,6 +1,7 @@
 package com.nuu.httpserver;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.nuu.MiFiManager;
@@ -49,8 +50,6 @@ public class SimpleServer extends NanoHTTPD {
         Log.d(TAG, "NanoHTTPD serve uri:" + uri);
 
         try {
-            String routerStr = ConfigManager.instance().getCurConfig().getRouter();
-            Log.d(TAG, "NanoHTTPD serve routerStr:" + routerStr);
 
             if (uri.equals("/info")) {   //begin for api
                 return getCurInfo();
@@ -74,13 +73,35 @@ public class SimpleServer extends NanoHTTPD {
                 DeviceInfo.setWifiAp(mContext, ssid, password);
 
                 return newFixedLengthResponse("---setWifiApPrimary--");
-            } else if (uri.equals(routerStr)) {
-                String url = AppConfig.getHost();
+            } else if (uri.equals("/transfer")) {
 
                 Method method = session.getMethod();
                 if (Method.GET.equals(method)) {
                     // or you can access the GET request's parameters
                     Map<String, String> getParam = session.getParms();
+                    String host = getParam.get("host");
+                    String path = getParam.get("url");
+                    getParam.remove("host");
+                    getParam.remove("url");
+
+                    if (TextUtils.isEmpty(host)) {
+                        host = ConfigManager.instance().getCurConfig().getRouterHost();
+                    }
+
+                    if (TextUtils.isEmpty(host)) {
+                        host = AppConfig.getRouterHost();
+                    }
+
+                    if (TextUtils.isEmpty(path)) {
+                        path = ConfigManager.instance().getCurConfig().getRouterPath();
+                    }
+
+                    if (TextUtils.isEmpty(path)) {
+                        path = AppConfig.getRouterPath();
+                    }
+
+                    String url = host + path;
+
                     String response = OkHttpConnector.httpGet(url, null, getParam);
                     return newFixedLengthResponse(response);
                 } else if (Method.POST.equals(method) || Method.PUT.equals(method)) {
@@ -94,6 +115,29 @@ public class SimpleServer extends NanoHTTPD {
                     }
 
                     Map<String, String> postParam = session.getParms();
+                    String host = postParam.get("host");
+                    String path = postParam.get("url");
+                    postParam.remove("host");
+                    postParam.remove("url");
+                    if (TextUtils.isEmpty(host)) {
+                        host = ConfigManager.instance().getCurConfig().getRouterHost();
+                    }
+
+                    if (TextUtils.isEmpty(host)) {
+                        host = AppConfig.getRouterHost();
+                    }
+
+                    if (TextUtils.isEmpty(path)) {
+                        path = ConfigManager.instance().getCurConfig().getRouterPath();
+                    }
+
+                    if (TextUtils.isEmpty(path)) {
+                        path = AppConfig.getRouterPath();
+                    }
+
+
+                    String url = host + path;
+
                     String body = session.getQueryParameterString();  // get the POST body
                     // or you can access the POST request's parameters
                     String response = OkHttpConnector.httpPost(url, null, postParam, body);

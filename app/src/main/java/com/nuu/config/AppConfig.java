@@ -31,10 +31,14 @@ public class AppConfig {
         return HOST + "api/public_intf";
     }
 
-    public String getRouter() {
-        return "/transfer";
+    public static String getRouterHost() {
+        return "http://47.91.250.107:80";
     }
 
+
+    public static String getRouterPath() {
+        return "/api/public_intf";
+    }
 
     public static ContentValues getParam(String apiName) {
         ContentValues params = new ContentValues();

@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.nuu.MiFiManager;
 import com.nuu.service.NuuService;
+import com.nuu.util.AppUtils;
 
 
 public class NuuReceiver extends BroadcastReceiver {
@@ -36,12 +37,14 @@ public class NuuReceiver extends BroadcastReceiver {
 
         } else if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)
                 || action.equals(TelephonyManager.ACTION_PHONE_STATE_CHANGED)) {
-            MiFiManager.instance().init(context);
+            if (AppUtils.isNetworkConnected(context)) {
+                MiFiManager.instance().init(context);
 
-            Intent in = new Intent(context, NuuService.class);
-            in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            in.setAction(NuuService.BOOT_NUU_SERVICE);
-            context.startService(in);//启动服务
+                Intent in = new Intent(context, NuuService.class);
+                in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                in.setAction(NuuService.BOOT_NUU_SERVICE);
+                context.startService(in);//启动服务
+            }
 
         } else if (action.equals(Intent.ACTION_PACKAGE_REPLACED)) {
             try {

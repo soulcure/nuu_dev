@@ -675,18 +675,35 @@ public class MiFiManager {
 
     public void obtainDeviceInfo(OnDeviceInfo callback) {
         this.mOnDeviceInfo = callback;
-        mProcessHandler.sendEmptyMessage(HANDLER_OBTAIN_DEVICE_INFO);
+
+        if (!mProcessHandler.hasMessages(HANDLER_OBTAIN_DEVICE_INFO)) {
+            mProcessHandler.sendEmptyMessage(HANDLER_OBTAIN_DEVICE_INFO);
+        }
     }
 
 
     public void reportDeviceInfo() {
-        mProcessHandler.sendEmptyMessage(HANDLER_REPORT_DEVICE_INFO);
+        if (!mProcessHandler.hasMessages(HANDLER_REPORT_DEVICE_INFO)) {
+            mProcessHandler.sendEmptyMessage(HANDLER_REPORT_DEVICE_INFO);
+        }
     }
 
 
     private void initDeviceInfo() {
         ReportData data = new ReportData(mContext);
-        reportDataList.add(data);
+
+        boolean isAdd = true;
+        for (ReportData item : reportDataList) {
+            if (item.equals(data)) {
+                isAdd = false;
+                break;
+            }
+        }
+        if (isAdd) {
+            Log.d(TAG, "reportDataList add :" + data.getUnixTime());
+            reportDataList.add(data);
+        }
+
 
         if (mOnDeviceInfo != null) {
             mOnDeviceInfo.onSuccess(data.toString());

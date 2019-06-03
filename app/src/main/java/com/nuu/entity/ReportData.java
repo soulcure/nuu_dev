@@ -3,10 +3,9 @@ package com.nuu.entity;
 import android.content.Context;
 
 import com.nuu.MiFiManager;
-import com.nuu.nuuinfo.BuildConfig;
+import com.nuu.util.AppUtils;
 import com.nuu.util.DeviceInfo;
 import com.nuu.util.GsonUtil;
-import com.nuu.util.TimeUtils;
 
 import java.util.List;
 
@@ -44,7 +43,12 @@ public class ReportData {
         hotPoint = DeviceInfo.getHotPointState(context);
         adb = DeviceInfo.getAdbStatus(context);
         netStatus = DeviceInfo.getNetStatus(context);
-        netBrock = 0;
+
+        if (AppUtils.isNetworkConnected(context)) {
+            netBrock = 1;
+        } else {
+            netBrock = 0;
+        }
 
         sim1 = DeviceInfo.getSim1(context);
         sim2 = MiFiManager.instance().getCurSim2();
@@ -302,6 +306,14 @@ public class ReportData {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ReportData) {
+            return unixTime == ((ReportData) o).unixTime;
+        } else {
+            return false;
+        }
+    }
 
     @Override
     public String toString() {
