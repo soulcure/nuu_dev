@@ -1,6 +1,7 @@
 package com.nuu.httpserver;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.nuu.MiFiManager;
@@ -80,6 +81,24 @@ public class SimpleServerWeb extends NanoHTTPD {
                     Map<String, String> getParam = session.getParms();
                     String host = getParam.get("host");
                     String path = getParam.get("url");
+                    getParam.remove("host");
+                    getParam.remove("url");
+
+                    if (TextUtils.isEmpty(host)) {
+                        host = ConfigManager.instance().getCurConfig().getRouterHost();
+                    }
+
+                    if (TextUtils.isEmpty(host)) {
+                        host = AppConfig.getRouterHost();
+                    }
+
+                    if (TextUtils.isEmpty(path)) {
+                        path = ConfigManager.instance().getCurConfig().getRouterPath();
+                    }
+
+                    if (TextUtils.isEmpty(path)) {
+                        path = AppConfig.getRouterPath();
+                    }
 
                     String url = host + path;
 
@@ -98,6 +117,24 @@ public class SimpleServerWeb extends NanoHTTPD {
                     Map<String, String> postParam = session.getParms();
                     String host = postParam.get("host");
                     String path = postParam.get("url");
+                    postParam.remove("host");
+                    postParam.remove("url");
+                    if (TextUtils.isEmpty(host)) {
+                        host = ConfigManager.instance().getCurConfig().getRouterHost();
+                    }
+
+                    if (TextUtils.isEmpty(host)) {
+                        host = AppConfig.getRouterHost();
+                    }
+
+                    if (TextUtils.isEmpty(path)) {
+                        path = ConfigManager.instance().getCurConfig().getRouterPath();
+                    }
+
+                    if (TextUtils.isEmpty(path)) {
+                        path = AppConfig.getRouterPath();
+                    }
+
 
                     String url = host + path;
 
