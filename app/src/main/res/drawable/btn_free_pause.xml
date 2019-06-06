@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- pressed -->
+    <item android:drawable="@mipmap/btn_free_pause_press" android:state_pressed="true" />
+    <!-- hovered -->
+    <item android:drawable="@mipmap/btn_free_pause_press" android:state_hovered="true" />
+    <!-- default -->
+    <item android:drawable="@mipmap/btn_free_pause_normal" />
+
+</selector>

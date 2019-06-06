@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- pressed -->
+    <item android:drawable="@mipmap/btn_free_seek_focus" android:state_pressed="true" />
+    <!-- focused -->
+    <item android:drawable="@mipmap/btn_free_seek_focus" android:state_focused="true" />
+    <!-- hovered -->
+    <item android:drawable="@mipmap/btn_free_seek_focus" android:state_hovered="true" />
+    <!-- default -->
+    <item android:drawable="@mipmap/btn_free_seek_normal" />
+
+
+</selector>

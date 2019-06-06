@@ -15,6 +15,7 @@ import com.nuu.entity.CurUsingPackageRsp;
 import com.nuu.entity.DetailRsp;
 import com.nuu.entity.PackageRsp;
 import com.nuu.entity.DevicesStatusRsp;
+import com.nuu.http.IGetListener;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.install.AppMuteInstall;
@@ -80,12 +81,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 MiFiManager.instance().reportDeviceInfo();
                 break;
             case R.id.btn_web:
-                webTest0();
+                //webTest0();
 
                 //webTest1();
                 //webTest2();
                 //webTest3();
-                //webTest4();
+                webTest4();
+                webTest5();
                 break;
             case R.id.btn_install:
                 installApp1();
@@ -201,6 +203,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
 
     }
+
+
+    private void webTest5() {
+        String url = "http://localhost:8088/transfer";
+        //String url = "http://192.168.43.1:8088/transfer";
+
+        OkHttpConnector.httpGet(url, new IGetListener() {
+            @Override
+            public void httpReqResult(String response) {
+                Log.d("TcpClient", "webTest5 transfer:" + response);
+            }
+        });
+    }
+
 
     private void installApp1() {
         final String filePath = FileConfig.getApkDownLoadPath();

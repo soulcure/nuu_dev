@@ -42,35 +42,16 @@ public class CardActivity extends BaseActivity {
 
 
     private void initData() {
-        reqPurchasedPackage();
-        reqDevicesStatus();
-    }
-
-
-    /**
-     * 查询购买的流量包
-     */
-    private void reqPurchasedPackage() {
-        String url = AppConfig.getHost();
-
-        ContentValues params = new ContentValues();
-        params.put("itf_name", "query_package");  //API name
-        params.put("trans_serial", "1234cde");  //API name
-        params.put("login", "tuser");
-        params.put("auth_code", "abcd456");
-        params.put("device_sn", "354243074362656");
-
-        OkHttpConnector.httpPost(url, params, new IPostListener() {
+        app.reqPurchasedPackage(new IPostListener() {
             @Override
             public void httpReqResult(String response) {
                 PackageRsp rsp = GsonUtil.parse(response, PackageRsp.class);
                 if (rsp != null && rsp.getErr_code() == 0) {
                     mAdapter.setPackageUsed(rsp);
                 }
-
             }
         });
-
+        reqDevicesStatus();
     }
 
 

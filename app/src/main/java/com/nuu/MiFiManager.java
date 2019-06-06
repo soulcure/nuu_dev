@@ -1,5 +1,6 @@
 package com.nuu;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +39,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.gosomo.proxy.IProxyCall;
 import cn.gosomo.proxy.IProxyCallback;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class MiFiManager {
     private static final String TAG = "TcpClient";
@@ -136,7 +138,12 @@ public class MiFiManager {
 
             initHandler();
 
-            mProcessHandler.sendEmptyMessage(HANDLER_THREAD_INIT_CONFIG_START);
+            String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            if (EasyPermissions.hasPermissions(mContext, perms)) {
+                // Already have permission, do the thing
+                mProcessHandler.sendEmptyMessage(HANDLER_THREAD_INIT_CONFIG_START);
+            }
+
 
         } else if (binded == BIND_STATUS.BINDING) {
 

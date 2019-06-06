@@ -8,6 +8,7 @@ import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.report.ConfigManager;
+import com.nuu.util.AppUtils;
 import com.nuu.util.DeviceInfo;
 import com.nuu.util.DeviceUtils;
 import com.nuu.util.ShellUtils;
@@ -77,75 +78,128 @@ public class SimpleServerWeb extends NanoHTTPD {
 
                 Method method = session.getMethod();
                 if (Method.GET.equals(method)) {
-                    // or you can access the GET request's parameters
-                    Map<String, String> getParam = session.getParms();
-                    String host = getParam.get("host");
-                    String path = getParam.get("url");
-                    getParam.remove("host");
-                    getParam.remove("url");
+                    try {
+                        // or you can access the GET request's parameters
 
-                    if (TextUtils.isEmpty(host)) {
-                        host = ConfigManager.instance().getCurConfig().getRouterHost();
+                        Map<String, String> getParam = session.getParms();
+                        String host = getParam.get("host");
+                        String path = getParam.get("url");
+                        getParam.remove("host");
+                        getParam.remove("url");
+
+                        getParam.put("hwid", DeviceInfo.getDeviceId());
+                        getParam.put("device_sn", DeviceInfo.getDeviceSN());
+
+                        if (TextUtils.isEmpty(host)) {
+                            host = ConfigManager.instance().getCurConfig().getRouterHost();
+                        }
+
+                        if (TextUtils.isEmpty(host)) {
+                            host = AppConfig.getRouterHost();
+                        }
+
+                        if (TextUtils.isEmpty(path)) {
+                            path = ConfigManager.instance().getCurConfig().getRouterPath();
+                        }
+
+                        if (TextUtils.isEmpty(path)) {
+                            path = AppConfig.getRouterPath();
+                        }
+
+                        String url = host + path;
+
+                        okhttp3.Response response = OkHttpConnector.httpGet1(url, null, getParam);
+                        if (response != null) {
+                            String json;
+                            if (response.isSuccessful()) {
+                                json = response.body().string();
+                            } else {
+                                json = response.toString();
+                            }
+                            int code = response.code();
+                            Response.Status status = Response.Status.lookup(code);
+
+                            Response res = newFixedLengthResponse(status, "application/json", json);
+                            res.addHeader("Access-Control-Allow-Origin", "*");
+                            return res;
+                        }
+
+                    } catch (IOException e) {
+                        return newFixedLengthResponse("Internal Error IO Exception: " + e.getMessage());
+                    } catch (NullPointerException e) {
+                        return newFixedLengthResponse("Internal  NullPointerException: " + e.getMessage());
+                    } catch (Exception e) {
+                        return newFixedLengthResponse("Internal  Exception: " + e.getMessage());
                     }
 
-                    if (TextUtils.isEmpty(host)) {
-                        host = AppConfig.getRouterHost();
-                    }
-
-                    if (TextUtils.isEmpty(path)) {
-                        path = ConfigManager.instance().getCurConfig().getRouterPath();
-                    }
-
-                    if (TextUtils.isEmpty(path)) {
-                        path = AppConfig.getRouterPath();
-                    }
-
-                    String url = host + path;
-
-                    String response = OkHttpConnector.httpGet(url, null, getParam);
-                    return newFixedLengthResponse(response);
                 } else if (Method.POST.equals(method) || Method.PUT.equals(method)) {
                     Map<String, String> files = new HashMap<>();
                     try {
                         session.parseBody(files);
-                    } catch (IOException ioe) {
-                        return newFixedLengthResponse("Internal Error IO Exception: " + ioe.getMessage());
-                    } catch (ResponseException re) {
-                        return newFixedLengthResponse(re.getStatus(), MIME_PLAINTEXT, re.getMessage());
+
+                        Map<String, String> postParam = session.getParms();
+                        String host = postParam.get("host");
+                        String path = postParam.get("url");
+                        postParam.remove("host");
+                        postParam.remove("url");
+
+                        String deviceId = DeviceInfo.getDeviceId();
+                        String token = AppUtils.md5("@com.nuu@" + deviceId);
+
+                        Log.d(TAG,"token: "+token);
+
+                        postParam.put("token", token);
+                        postParam.put("hwid", deviceId);
+                        postParam.put("device_sn", DeviceInfo.getDeviceSN());
+
+                        if (TextUtils.isEmpty(host)) {
+                            host = ConfigManager.instance().getCurConfig().getRouterHost();
+                        }
+
+                        if (TextUtils.isEmpty(host)) {
+                            host = AppConfig.getRouterHost();
+                        }
+
+                        if (TextUtils.isEmpty(path)) {
+                            path = ConfigManager.instance().getCurConfig().getRouterPath();
+                        }
+
+                        if (TextUtils.isEmpty(path)) {
+                            path = AppConfig.getRouterPath();
+                        }
+
+
+                        String url = host + path;
+
+                        String body = session.getQueryParameterString();  // get the POST body
+                        // or you can access the POST request's parameters
+                        okhttp3.Response response = OkHttpConnector.httpPost1(url, null, postParam, body);
+
+                        if (response != null) {
+                            String json;
+                            if (response.isSuccessful()) {
+                                json = response.body().string();
+                            } else {
+                                json = response.toString();
+                            }
+
+                            int code = response.code();
+                            Response.Status status = Response.Status.lookup(code);
+
+                            Response res = newFixedLengthResponse(status, "application/json", json);
+                            res.addHeader("Access-Control-Allow-Origin", "*");
+                            return res;
+                        }
+
+                    } catch (IOException e) {
+                        return newFixedLengthResponse("Internal Error IO Exception: " + e.getMessage());
+                    } catch (ResponseException e) {
+                        return newFixedLengthResponse(e.getStatus(), MIME_PLAINTEXT, e.getMessage());
+                    } catch (NullPointerException e) {
+                        return newFixedLengthResponse("Internal  NullPointerException: " + e.getMessage());
+                    } catch (Exception e) {
+                        return newFixedLengthResponse("Internal  Exception: " + e.getMessage());
                     }
-
-                    Map<String, String> postParam = session.getParms();
-                    String host = postParam.get("host");
-                    String path = postParam.get("url");
-                    postParam.remove("host");
-                    postParam.remove("url");
-                    if (TextUtils.isEmpty(host)) {
-                        host = ConfigManager.instance().getCurConfig().getRouterHost();
-                    }
-
-                    if (TextUtils.isEmpty(host)) {
-                        host = AppConfig.getRouterHost();
-                    }
-
-                    if (TextUtils.isEmpty(path)) {
-                        path = ConfigManager.instance().getCurConfig().getRouterPath();
-                    }
-
-                    if (TextUtils.isEmpty(path)) {
-                        path = AppConfig.getRouterPath();
-                    }
-
-
-                    String url = host + path;
-
-                    String body = session.getQueryParameterString();  // get the POST body
-                    // or you can access the POST request's parameters
-                    String response = OkHttpConnector.httpPost(url, null, postParam, body);
-
-                    Response res = newFixedLengthResponse(Response.Status.OK, "application/json", response);
-                    res.addHeader("Access-Control-Allow-Origin", "*");
-                    return res;
-
                 }
             }
 

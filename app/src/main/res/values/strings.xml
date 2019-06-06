@@ -16,14 +16,73 @@
     <string name="Set_owner">Set Owner</string>
 
 
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Konnect</string>
+    <string name="nav_header_subtitle">mifi@konnect.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="title_settings">Settings</string>
+
+
+    <!--Main Activity -->
+    <string name="menu_home">Home</string>
+    <string name="menu_news">News</string>
+    <string name="menu_tutorial">Tutorial</string>
+    <string name="menu_buy">Buy Package</string>
+    <string name="menu_package">My Package</string>
+    <string name="menu_device">My Device</string>
+    <string name="menu_login">Login</string>
+    <string name="menu_contact">Contact Us</string>
+
+    <string name="divide_title">Device Information</string>
+
+    <string name="exit_toast">please click back again to exit!</string>
+
+    <!--base permission fragment -->
+    <string name="no_permissions">Unauthorized APP required permissions</string>
+    <string name="wait">Requesting please wait &#8230;&#8230;&#8230;</string>
+
+    <!--home fragment-->
+    <string name="power_level">Power Level</string>
+    <string name="today_used">Today Usage</string>
+    <string name="net_status">Network Status</string>
+    <string name="net_connect">Device:%1$d Connected</string>
+
+    <!--news fragment-->
+    <string name="news_empty">No latest news</string>
+
+    <!--login fragment-->
+    <string name="prompt_email">Email address or Username</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">Login</string>
     <string name="action_sign_in_short">Sign in</string>
+    <string name="action_register">Register</string>
+
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+
+    <!--buy package fragment-->
+    <string name="buy_package_title">To top up your device,please input your device SN or scan the QR code printed on the back of the device to explore available packages.</string>
+    <string name="input_device">Input Your Device SN</string>
+    <string name="or">Or</string>
+    <string name="scan_qr">Scan Your QR code</string>
+    <string name="need_camera_permissions">Need to use camera permissions</string>
+
+    <!--contact us fragment-->
+    <string name="contact">Contact</string>
+    <string name="email_address">konnect-cs@nuumobile.com</string>
+    <string name="correspondence">Correspondence address</string>
+    <string name="company_address">16F,CE0 Tower,77 Wing Hong St.Kwoloon,HongKong</string>
+
+
+    <!--devices fragment-->
+    <string name="devices_empty">No devices</string>
+    <string name="connect_devices">Connected Device(s)</string>
+
+    <!--my package fragment-->
+    <string name="no_record">No records found</string>
 
 </resources>

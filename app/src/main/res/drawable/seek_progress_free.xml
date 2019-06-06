@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--seekbar 背景-->
+    <item
+        android:id="@android:id/background"
+        android:drawable="@mipmap/seek_bg" />
+    <!--seekbar 缓冲进度条-->
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape>
+                <solid android:color="@android:color/holo_orange_light" />
+            </shape>
+        </clip>
+    </item>
+    <!--seekbar 播放进度条-->
+    <item android:id="@android:id/progress">
+        <scale
+            android:drawable="@mipmap/seek_bar"
+            android:scaleWidth="100%" />
+    </item>
+
+
+</layer-list>

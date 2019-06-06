@@ -29,7 +29,7 @@ import com.nuu.entity.SettingSsidPwRsp;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.pack.PackageDetailByCountryActivity;
-import com.nuu.pack.PurchasePackageActivity;
+import com.nuu.my.PurchasePackageActivity;
 import com.nuu.setting.NetSettingActivity;
 import com.nuu.user.UserInfoSettingActivity;
 import com.nuu.util.AppUtils;
@@ -278,9 +278,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             String status = statusRsp.getStatus();
             if (!TextUtils.isEmpty(status) && status.equals("enable")) {
-                img_status.setImageResource(R.drawable.status_enable);
+                img_status.setImageResource(R.mipmap.status_enable);
             } else {
-                img_status.setImageResource(R.drawable.status_disable);
+                img_status.setImageResource(R.mipmap.status_disable);
             }
 
             String lastTime = statusRsp.getLast_heartbeat();

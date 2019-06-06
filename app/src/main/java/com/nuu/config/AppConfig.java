@@ -37,7 +37,7 @@ public class AppConfig {
 
 
     public static String getRouterPath() {
-        return "/api/public_intf";
+        return "/api/v1/api_device";
     }
 
     public static ContentValues getParam(String apiName) {
