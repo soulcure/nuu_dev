@@ -55,6 +55,8 @@ public class TutorialAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         final Video item = mList.get(position);
+        View view = viewHolder.itemView;
+
         TextView tv_title = ((TextViewHolder) viewHolder).tv_title;
         ImageView img_video = ((TextViewHolder) viewHolder).img_video;
         ImageView img_play = ((TextViewHolder) viewHolder).img_play;
@@ -73,7 +75,7 @@ public class TutorialAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .override(width, height))
                 .into(img_video);
 
-        img_play.setOnClickListener(new View.OnClickListener() {
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, VideoPlayerActivity.class);
