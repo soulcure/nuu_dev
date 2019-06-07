@@ -65,8 +65,9 @@ public class TutorialAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         final String path = "android.resource://" + mContext.getPackageName() + "/" + item.getResId();
 
-        int width = ScreenUtils.getWidthPixels(mContext);
-        int height = mContext.getResources().getDimensionPixelOffset(R.dimen.video_width);
+        int padding_width = mContext.getResources().getDimensionPixelOffset(R.dimen.video_padding_width);
+        int width = ScreenUtils.getWidthPixels(mContext) - padding_width * 2;
+        int height = width * 640 / 360;
         Glide.with(mContext)
                 .load(Uri.parse(path))
                 .thumbnail(0.5f)

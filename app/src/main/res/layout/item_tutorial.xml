@@ -1,33 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/video_width">
-
-    <ImageView
-        android:id="@+id/img_video"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/img_video"
-        android:padding="5dp"
-        android:textColor="@android:color/white"
-        android:textSize="18sp" />
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="20dp"
+        android:textSize="20sp" />
 
-
-    <ImageView
-        android:id="@+id/img_play"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:padding="5dp"
-        android:src="@drawable/ic_play" />
+        android:paddingLeft="@dimen/video_padding_width"
+        android:paddingRight="@dimen/video_padding_width">
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/img_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <ImageView
+            android:id="@+id/img_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="5dp"
+            android:src="@drawable/ic_play" />
+
+    </RelativeLayout>
+</LinearLayout>
+
+
 
 
 

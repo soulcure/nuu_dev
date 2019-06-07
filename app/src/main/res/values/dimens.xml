@@ -8,7 +8,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <!-- TutorialFragment -->
-    <dimen name="video_width">300dp</dimen>
+    <dimen name="video_padding_width">20dp</dimen>
 
     <!-- LoginFragment -->
     <dimen name="activity_horizontal_margin">30dp</dimen>
