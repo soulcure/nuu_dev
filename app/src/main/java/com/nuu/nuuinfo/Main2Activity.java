@@ -1,5 +1,6 @@
 package com.nuu.nuuinfo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,7 +12,6 @@ import android.view.MenuItem;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.TextView;
@@ -23,10 +23,11 @@ import com.nuu.devices.DevicesFragment;
 import com.nuu.home.HomeFragment;
 import com.nuu.login.LoginFragment;
 import com.nuu.my.MyPackageFragment;
+import com.nuu.my.PurchasePackageActivity;
 import com.nuu.news.NewsFragment;
 import com.nuu.tutorial.TutorialFragment;
 
-public class Main2Activity extends AppCompatActivity
+public class Main2Activity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FragmentManager fragmentManager;
@@ -102,6 +103,12 @@ public class Main2Activity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            if (fragmentManager.findFragmentByTag(BuyPackageFragment.TAG) != null) {
+                Intent intent = new Intent(mContext, PurchasePackageActivity.class);
+                intent.putParcelableArrayListExtra(PurchasePackageActivity.PACK_LIST, null);
+                mContext.startActivity(intent);
+            }
+
             return true;
         }
 
@@ -119,7 +126,7 @@ public class Main2Activity extends AppCompatActivity
             // Handle the camera action
             tv_title.setText(R.string.menu_home);
             menu.findItem(R.id.action_settings).setVisible(true);
-            menu.findItem(R.id.action_settings).setIcon(R.mipmap.ic_buy);
+            menu.findItem(R.id.action_settings).setIcon(R.drawable.ic_buy);
 
             skipToFragment(HomeFragment.TAG, null);
         } else if (id == R.id.nav_news) {
@@ -135,7 +142,8 @@ public class Main2Activity extends AppCompatActivity
         } else if (id == R.id.nav_buy) {
             tv_title.setText(R.string.menu_tutorial);
 
-            menu.findItem(R.id.action_settings).setVisible(false);
+            menu.findItem(R.id.action_settings).setVisible(true);
+            menu.findItem(R.id.action_settings).setIcon(R.drawable.ic_history);
 
             skipToFragment(BuyPackageFragment.TAG, null);
         } else if (id == R.id.nav_package) {
