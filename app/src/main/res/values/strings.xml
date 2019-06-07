@@ -81,8 +81,16 @@
     <!--devices fragment-->
     <string name="devices_empty">No devices</string>
     <string name="connect_devices">Connected Device(s)</string>
+    <string name="select_title">Please select for device</string>
 
     <!--my package fragment-->
     <string name="no_record">No records found</string>
+
+
+    <!-- dialog-->
+    <string name="btn_confirm">Confirm</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="male">male</string>
+    <string name="female">female</string>
 
 </resources>

@@ -36,4 +36,13 @@
         <item>Scheduled</item>
         <item>History</item>
     </string-array>
+
+
+    <string-array name="device_select">
+        <item>Setting</item>
+        <item>Buy Package</item>
+        <item>Cancel</item>
+    </string-array>
+
+
 </resources>

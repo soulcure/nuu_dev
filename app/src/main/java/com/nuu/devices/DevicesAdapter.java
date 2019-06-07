@@ -1,13 +1,16 @@
 package com.nuu.devices;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nuu.entity.Devices;
 import com.nuu.nuuinfo.R;
@@ -49,6 +52,24 @@ public class DevicesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         final Devices item = mList.get(position);
+        View view = viewHolder.itemView;
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final String[] lesson = mContext.getResources().getStringArray(R.array.device_select);
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                AlertDialog dialog = builder.setIcon(R.mipmap.ic_red_status)
+                        .setTitle(R.string.select_title)
+                        .setItems(lesson, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(mContext, "你选择了" + lesson[which], Toast.LENGTH_SHORT).show();
+                            }
+                        }).create();
+                dialog.show();
+            }
+        });
 
         ImageView img_status = ((TextViewHolder) viewHolder).img_status;
         ImageView img_devices = ((TextViewHolder) viewHolder).img_devices;

@@ -24,4 +24,12 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+
+    <!-- dialog -->
+    <style name="custom_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
 </resources>
