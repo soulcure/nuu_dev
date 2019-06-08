@@ -58,6 +58,8 @@
     <string name="action_sign_in">Login</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_register">Register</string>
+    <string name="lost_password">Lost you password?</string>
+    <string name="lost_email">Lost you email?</string>
 
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
@@ -87,10 +89,23 @@
     <string name="no_record">No records found</string>
 
 
+    <!--register activity-->
+    <string name="input_display_name">Display Name*</string>
+    <string name="input_email">Email*</string>
+    <string name="input_contact">Contact</string>
+    <string name="input_country">Home Country*</string>
+    <string name="input_password">Password*</string>
+    <string name="input_retype">Re_type*</string>
+    <string name="mandatory">*Mandatory input field</string>
+
+
     <!-- dialog-->
     <string name="btn_confirm">Confirm</string>
     <string name="btn_cancel">Cancel</string>
     <string name="male">male</string>
     <string name="female">female</string>
+
+    <!-- country picker-->
+    <string name="search">Search</string>
 
 </resources>

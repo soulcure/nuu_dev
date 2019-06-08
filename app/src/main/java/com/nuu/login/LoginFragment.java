@@ -3,6 +3,7 @@ package com.nuu.login;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputLayout;
@@ -39,13 +40,13 @@ public class LoginFragment extends BasePermissionFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         initView(view);
     }
 
@@ -71,13 +72,13 @@ public class LoginFragment extends BasePermissionFragment {
                 if (loginFormState.getUsernameError() != null) {
                     til_account.setErrorEnabled(true);
                     til_account.setError(getString(loginFormState.getUsernameError()));
-                }else{
+                } else {
                     til_account.setErrorEnabled(false);
                 }
                 if (loginFormState.getPasswordError() != null) {
                     til_password.setErrorEnabled(true);
                     til_password.setError(getString(loginFormState.getPasswordError()));
-                }else{
+                } else {
                     til_password.setErrorEnabled(false);
                 }
             }

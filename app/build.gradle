@@ -77,7 +77,7 @@ dependencies {
     implementation 'com.github.blikoon:QRCodeScanner:0.1.2'
 
     implementation('com.paypal.sdk:paypal-android-sdk:2.16.0')
-
+    implementation 'com.github.promeg:tinypinyin:2.0.3'
     implementation 'pub.devrel:easypermissions:0.4.0' //easy permissions
 }
 

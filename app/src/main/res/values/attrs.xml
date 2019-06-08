@@ -39,4 +39,9 @@
         <attr name="wlv_titleCenterStrokeWidth" format="dimension" />
     </declare-styleable>
 
+    <declare-styleable name="SideBar">
+        <attr name="letterColor" format="color" />
+        <attr name="selectColor" format="color" />
+        <attr name="letterSize" format="dimension" />
+    </declare-styleable>
 </resources>

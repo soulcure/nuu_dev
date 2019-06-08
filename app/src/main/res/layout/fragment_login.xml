@@ -70,14 +70,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Lost you password?" />
+        android:text="@string/lost_password" />
 
     <TextView
         android:id="@+id/tv_forget_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Lost you email?" />
+        android:text="@string/lost_email" />
 
     <Button
         android:id="@+id/btn_register"
@@ -86,5 +86,5 @@
         android:layout_marginTop="30dp"
         android:background="@drawable/btn_commit_selector"
         android:padding="2dp"
-        android:text="Register" />
+        android:text="@string/action_register" />
 </LinearLayout>
