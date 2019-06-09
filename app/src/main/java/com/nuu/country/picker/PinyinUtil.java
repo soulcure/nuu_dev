@@ -1,11 +1,10 @@
 package com.nuu.country.picker;
 
-import com.github.promeg.pinyinhelper.Pinyin;
-
 public class PinyinUtil {
     public static String getPingYin(String inputString) {
         try {
-            return Pinyin.toPinyin(inputString, "");
+            //return Pinyin.toPinyin(inputString, "");
+            return inputString;
         } catch (Exception e) {
             e.printStackTrace();
         }
