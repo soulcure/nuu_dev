@@ -102,12 +102,21 @@
 
     <string name="name_empty">display name is empty!!!</string>
     <string name="email_empty">email is empty!!!</string>
+    <string name="email_error">email address is invalid!!!</string>
     <string name="mobile_empty">mobile is empty!!!</string>
     <string name="mobile_invalid">mobile is invalid!!!</string>
 
     <string name="password_empty">password is empty!!!</string>
     <string name="retype_empty">retype is empty!!!</string>
     <string name="password_retype">password retype error!!!</string>
+
+
+    <!--forget activity-->
+    <string name="forget_email">Forget email</string>
+    <string name="forget_password">Forget password</string>
+
+    <string name="your_email">Your email</string>
+    <string name="your_password">Please enter your mobile</string>
 
     <!-- dialog-->
     <string name="btn_confirm">Confirm</string>

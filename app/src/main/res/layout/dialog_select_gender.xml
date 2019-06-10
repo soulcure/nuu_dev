@@ -30,7 +30,7 @@
         android:background="@drawable/shape_rectangle_white_corner_up"
         android:padding="5dp"
         android:text="option1"
-        android:textColor="@drawable/gender_txt_selector"
+        android:textColor="@drawable/common_txt_selector"
         android:textSize="15sp" />
 
 
@@ -42,7 +42,7 @@
         android:background="@drawable/shape_rectangle_white_corner_down"
         android:padding="5dp"
         android:text="option2"
-        android:textColor="@drawable/gender_txt_selector"
+        android:textColor="@drawable/common_txt_selector"
         android:textSize="15sp" />
 
     <Button
@@ -53,7 +53,7 @@
         android:background="@drawable/shape_rectangle_white"
         android:padding="5dp"
         android:text="@string/btn_cancel"
-        android:textColor="@drawable/gender_txt_selector"
+        android:textColor="@drawable/common_txt_selector"
         android:textSize="15sp" />
 
 </LinearLayout>

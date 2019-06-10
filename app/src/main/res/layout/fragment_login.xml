@@ -59,15 +59,19 @@
         android:id="@+id/tv_forget_pw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="@string/lost_password" />
+        android:layout_marginTop="10dp"
+        android:padding="5dp"
+        android:text="@string/lost_password"
+        android:textColor="@drawable/common_txt_selector" />
 
     <TextView
         android:id="@+id/tv_forget_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="@string/lost_email" />
+        android:layout_marginTop="10dp"
+        android:padding="5dp"
+        android:text="@string/lost_email"
+        android:textColor="@drawable/common_txt_selector" />
 
     <Button
         android:id="@+id/btn_register"

@@ -67,7 +67,9 @@
         <activity android:name="com.nuu.data.UsedDataTodayActivity" />
         <activity android:name="com.nuu.user.UserInfoSettingActivity" />
         <activity android:name="com.nuu.setting.NetSettingActivity" />
+
         <activity android:name="com.nuu.register.RegisterActivity" />
+        <activity android:name="com.nuu.register.ForgetActivity" />
 
 
         <activity android:name="com.nuu.tutorial.VideoPlayerActivity" />

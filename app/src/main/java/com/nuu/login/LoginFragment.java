@@ -26,6 +26,7 @@ import com.nuu.home.HomeFragment;
 import com.nuu.nuuinfo.BasePermissionFragment;
 import com.nuu.nuuinfo.Main2Activity;
 import com.nuu.nuuinfo.R;
+import com.nuu.register.ForgetActivity;
 import com.nuu.register.RegisterActivity;
 
 
@@ -57,6 +58,8 @@ public class LoginFragment extends BasePermissionFragment implements View.OnClic
 
     private void initView(View view) {
         view.findViewById(R.id.btn_register).setOnClickListener(this);
+        view.findViewById(R.id.tv_forget_pw).setOnClickListener(this);
+        view.findViewById(R.id.tv_forget_email).setOnClickListener(this);
 
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
@@ -170,6 +173,18 @@ public class LoginFragment extends BasePermissionFragment implements View.OnClic
         int id = v.getId();
         if (id == R.id.btn_register) {
             startActivity(new Intent(mContext, RegisterActivity.class));
+        } else if (id == R.id.tv_forget_pw) {
+            Intent intent = new Intent(mContext, ForgetActivity.class);
+            intent.putExtra(ForgetActivity.FORGET_TYPE, ForgetActivity.TYPE_PASSWORD);
+
+            startActivity(intent);
+        } else if (id == R.id.tv_forget_email) {
+            Intent intent = new Intent(mContext, ForgetActivity.class);
+            intent.putExtra(ForgetActivity.FORGET_TYPE, ForgetActivity.TYPE_EMAIL);
+
+            startActivity(intent);
         }
+
+
     }
 }
