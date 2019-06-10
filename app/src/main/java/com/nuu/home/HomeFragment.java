@@ -11,9 +11,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nuu.config.AppConfig;
 import com.nuu.drawable.OneDrawable;
+import com.nuu.entity.ReportData;
+import com.nuu.http.IGetListener;
+import com.nuu.http.OkHttpConnector;
 import com.nuu.nuuinfo.BasePermissionFragment;
 import com.nuu.nuuinfo.R;
+import com.nuu.util.GsonUtil;
 import com.nuu.view.WaveLoadingView;
 
 
@@ -45,6 +50,7 @@ public class HomeFragment extends BasePermissionFragment implements View.OnClick
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         initView(view);
+        reqData();
     }
 
 
@@ -77,30 +83,12 @@ public class HomeFragment extends BasePermissionFragment implements View.OnClick
     }
 
 
-    /**
-     * 用户登录
-     *
-     * @param mobile   手机号
-     * @param password 密码
-     * @param imei     设备编码
-     */
-    private void login(final String mobile,
-                       final String password, final String imei, final String phoneMac) {
-
-    }
-
-
-    private void choiceReBindDialog(final String mobile) {
-
-    }
-
-
     @Override
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
             case R.id.tv_connect:
-            break;
+                break;
         }
 
     }
@@ -110,6 +98,60 @@ public class HomeFragment extends BasePermissionFragment implements View.OnClick
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //thirdLogin.onActivityResult(requestCode, resultCode, data); //第三方登录
+    }
+
+
+    private void reqData() {
+        String url = AppConfig.DEVICE_INFO;
+        OkHttpConnector.httpGet(url, new IGetListener() {
+            @Override
+            public void httpReqResult(String response) {
+                ReportData data = GsonUtil.parse(response, ReportData.class);
+                if (data != null) {
+                    int point = data.getHotPoint();
+                    String connect = String.format(getString(R.string.net_connect), point);
+                    tv_connect.setText(connect);
+
+                    int power = data.getPow();
+                    wv_power.setProgressValue(power);
+                    wv_power.setCenterTitle(power + "%");
+
+                    if (data.getSim1() != null) {
+                        int signal = onSignalStrength(data.getSim1().getSignal());
+                        if (signal == 4) {
+                            img_signal.setImageResource(R.mipmap.signal_4);
+                        } else if (signal == 3) {
+                            img_signal.setImageResource(R.mipmap.signal_3);
+                        } else if (signal == 2) {
+                            img_signal.setImageResource(R.mipmap.signal_2);
+                        } else if (signal == 1) {
+                            img_signal.setImageResource(R.mipmap.signal_1);
+                        } else if (signal == 0) {
+                            img_signal.setImageResource(R.mipmap.signal_0);
+                        }
+
+                    }
+                }
+            }
+        });
+
+    }
+
+
+    public int onSignalStrength(int dbm) {
+        int res;
+        if (dbm >= -75) {
+            res = 4;
+        } else if (dbm >= -85) {
+            res = 3;
+        } else if (dbm >= -95) {
+            res = 2;
+        } else if (dbm >= -100) {
+            res = 1;
+        } else {
+            res = 0;
+        }
+        return res;
     }
 
 

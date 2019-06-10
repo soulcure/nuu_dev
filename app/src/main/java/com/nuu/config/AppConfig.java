@@ -18,6 +18,9 @@ public class AppConfig {
     //private static final String HOST = "http://119.23.74.49:80/";//开发服务器
     private static final String HOST = "http://47.91.250.107:80/";//测试服务器
 
+
+    public static final String DEVICE_INFO = "http://192.168.43.1:8088/info";//获取设备状态信息
+
     public static String getIp() {//配置默认ip
         return "119.23.74.49";
     }
