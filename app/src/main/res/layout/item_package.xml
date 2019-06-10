@@ -94,7 +94,7 @@
                 android:id="@+id/img_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/status_selector" />
+                android:src="@drawable/ic_status_enable" />
 
         </LinearLayout>
 

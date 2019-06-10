@@ -71,9 +71,9 @@ public class PurchasePackageAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         tv_total.setText(AppUtils.bytes2mb(item.getData()));
 
         if (item.getStatus() == 1) {
-            img_status.setEnabled(true);
+            img_status.setImageResource(R.drawable.ic_status_enable);
         } else {
-            img_status.setEnabled(false);
+            img_status.setImageResource(R.drawable.ic_status_disable);
         }
 
     }
