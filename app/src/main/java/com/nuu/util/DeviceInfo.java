@@ -71,11 +71,16 @@ public class DeviceInfo {
 
 
     public static String getDeviceSN() {
-        String imei1 = SystemProperties.get("persist.telephony.imei1");
-        if (imei1 == null) {
-            imei1 = "";
+        String sn = SystemProperties.get("persist.telephony.imei1");
+        if (sn == null) {
+            sn = "";
         }
-        return imei1;
+
+        if (BuildConfig.DEBUG) {
+            return "354243074362656";
+        }
+        return sn;
+
     }
 
     public static int getUnixTimeStamp() {

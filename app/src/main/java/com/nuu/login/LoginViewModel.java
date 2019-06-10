@@ -3,12 +3,14 @@ package com.nuu.login;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.text.TextUtils;
 import android.util.Patterns;
 
-import com.nuu.login.model.LoggedInUser;
+import com.nuu.entity.DetailRsp;
+import com.nuu.http.IPostListener;
 import com.nuu.login.model.LoginRepository;
-import com.nuu.login.model.Result;
 import com.nuu.nuuinfo.R;
+import com.nuu.util.GsonUtil;
 
 
 public class LoginViewModel extends ViewModel {
@@ -31,14 +33,18 @@ public class LoginViewModel extends ViewModel {
 
     public void login(String username, String password) {
         // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(username, password);
-
-        if (result instanceof Result.Success) {
-            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
-        } else {
-            loginResult.setValue(new LoginResult(R.string.login_failed));
-        }
+        IPostListener listener = new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                DetailRsp rsp = GsonUtil.parse(response, DetailRsp.class);
+                if (rsp != null && rsp.getErr_code() == 0) {
+                    loginResult.setValue(new LoginResult(new LoggedInUserView(rsp.getErr_desc())));
+                } else if (rsp != null && !TextUtils.isEmpty(rsp.getErr_desc())) {
+                    loginResult.setValue(new LoginResult(R.string.login_failed));
+                }
+            }
+        };
+        loginRepository.login(username, password, listener);
     }
 
     public void loginDataChanged(String username, String password) {

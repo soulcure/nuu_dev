@@ -107,6 +107,8 @@ public class Main2Activity extends BaseActivity
                 Intent intent = new Intent(mContext, PurchasePackageActivity.class);
                 intent.putParcelableArrayListExtra(PurchasePackageActivity.PACK_LIST, null);
                 mContext.startActivity(intent);
+            } else {
+                skipToFragment(BuyPackageFragment.TAG, null);
             }
 
             return true;

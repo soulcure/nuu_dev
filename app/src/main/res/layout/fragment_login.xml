@@ -47,43 +47,33 @@
         android:id="@+id/btn_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/btn_commit_selector"
         android:enabled="false"
         android:padding="2dp"
         android:text="@string/action_sign_in"
         android:textColor="@android:color/white" />
 
-    <ProgressBar
-        android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="64dp"
-        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_forget_pw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:text="@string/lost_password" />
 
     <TextView
         android:id="@+id/tv_forget_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:text="@string/lost_email" />
 
     <Button
         android:id="@+id/btn_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/btn_commit_selector"
         android:padding="2dp"
         android:text="@string/action_register" />

@@ -2,11 +2,13 @@ package com.nuu.login;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -20,11 +22,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nuu.home.HomeFragment;
 import com.nuu.nuuinfo.BasePermissionFragment;
+import com.nuu.nuuinfo.Main2Activity;
 import com.nuu.nuuinfo.R;
+import com.nuu.register.RegisterActivity;
 
 
-public class LoginFragment extends BasePermissionFragment {
+public class LoginFragment extends BasePermissionFragment implements View.OnClickListener {
 
     public final static String TAG = LoginFragment.class.getSimpleName();
 
@@ -51,6 +56,8 @@ public class LoginFragment extends BasePermissionFragment {
     }
 
     private void initView(View view) {
+        view.findViewById(R.id.btn_register).setOnClickListener(this);
+
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
@@ -60,7 +67,6 @@ public class LoginFragment extends BasePermissionFragment {
         final EditText usernameEditText = view.findViewById(R.id.et_account);
         final EditText passwordEditText = view.findViewById(R.id.et_password);
         final Button loginButton = view.findViewById(R.id.btn_login);
-        final ProgressBar loadingProgressBar = view.findViewById(R.id.loading);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -90,17 +96,15 @@ public class LoginFragment extends BasePermissionFragment {
                 if (loginResult == null) {
                     return;
                 }
-                loadingProgressBar.setVisibility(View.GONE);
+                dismissProgressDialog();
                 if (loginResult.getError() != null) {
                     showLoginFailed(loginResult.getError());
                 }
                 if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
                 }
-                //setResult(Activity.RESULT_OK);
 
-                //Complete and destroy login activity once successful
-                //finish();
+
             }
         });
 
@@ -138,7 +142,7 @@ public class LoginFragment extends BasePermissionFragment {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
+                showProgressDialog();
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
             }
@@ -149,12 +153,23 @@ public class LoginFragment extends BasePermissionFragment {
 
 
     private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
-        Toast.makeText(mContext, welcome, Toast.LENGTH_LONG).show();
+        Toast.makeText(mContext, R.string.success, Toast.LENGTH_LONG).show();
+        FragmentActivity act = getActivity();
+        if (act instanceof Main2Activity) {
+            ((Main2Activity) act).skipToFragment(HomeFragment.TAG, null);
+        }
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(mContext, errorString, Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.btn_register) {
+            startActivity(new Intent(mContext, RegisterActivity.class));
+        }
     }
 }

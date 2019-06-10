@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">NuuInfo</string>
+    <string name="success">success</string>
 
     <string name="used">Data Used:</string>
     <string name="total">Data Total:</string>
@@ -97,7 +98,16 @@
     <string name="input_password">Password*</string>
     <string name="input_retype">Re_type*</string>
     <string name="mandatory">*Mandatory input field</string>
+    <string name="submit">Submit</string>
 
+    <string name="name_empty">display name is empty!!!</string>
+    <string name="email_empty">email is empty!!!</string>
+    <string name="mobile_empty">mobile is empty!!!</string>
+    <string name="mobile_invalid">mobile is invalid!!!</string>
+
+    <string name="password_empty">password is empty!!!</string>
+    <string name="retype_empty">retype is empty!!!</string>
+    <string name="password_retype">password retype error!!!</string>
 
     <!-- dialog-->
     <string name="btn_confirm">Confirm</string>

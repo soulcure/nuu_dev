@@ -1,6 +1,8 @@
 package com.nuu.login.model;
 
 
+import com.nuu.http.IPostListener;
+
 /**
  * Class that requests authentication and user information from the remote data source and
  * maintains an in-memory cache of login status and user credentials information.
@@ -42,12 +44,8 @@ public class LoginRepository {
         // @see https://developer.android.com/training/articles/keystore
     }
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public void login(String username, String password, IPostListener callback) {
         // handle login
-        Result<LoggedInUser> result = dataSource.login(username, password);
-        if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
-        }
-        return result;
+        dataSource.login(username, password, callback);
     }
 }
