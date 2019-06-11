@@ -15,9 +15,11 @@
         android:textSize="20sp" />
 
     <TextView
+        android:id="@+id/tv_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:autoLink="all"
         android:text="@string/email_address"
         android:textColor="@android:color/black"
         android:textSize="20sp" />
