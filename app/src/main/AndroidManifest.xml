@@ -73,6 +73,7 @@
 
 
         <activity android:name="com.nuu.tutorial.VideoPlayerActivity" />
+        <activity android:name="com.nuu.buy.PayPalActivity" />
 
 
         <activity android:name=".WebViewActivity" />

@@ -142,7 +142,7 @@ public class Main2Activity extends BaseActivity
 
             skipToFragment(TutorialFragment.TAG, null);
         } else if (id == R.id.nav_buy) {
-            tv_title.setText(R.string.menu_tutorial);
+            tv_title.setText(R.string.menu_buy);
 
             menu.findItem(R.id.action_settings).setVisible(true);
             menu.findItem(R.id.action_settings).setIcon(R.drawable.ic_history);

@@ -29,7 +29,7 @@ public class PayPalHelper {
 
     // note that these credentials will differ between live & sandbox environments.
     //你所注册的APP Id
-    private static final String CONFIG_CLIENT_ID = "";
+    private static final String CONFIG_CLIENT_ID = "ASskKGQjRAf-6jAdwn771epAcx7C_dDNBGH-SMtjbo9xAlbV-D7Ah695YLTdllnRCPklUZdjjH1mlTcW";
 
     private static final int REQUEST_CODE_PAYMENT = 1;
     private static final int REQUEST_CODE_FUTURE_PAYMENT = 2;

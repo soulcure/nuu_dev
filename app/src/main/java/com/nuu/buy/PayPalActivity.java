@@ -2,7 +2,6 @@ package com.nuu.buy;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,7 +38,7 @@ import java.util.Set;
  * For sample mobile backend interactions, see
  * https://github.com/paypal/rest-api-sdk-python/tree/master/samples/mobile_backend
  */
-public class SampleActivity extends Activity {
+public class PayPalActivity extends Activity {
     private static final String TAG = "paymentExample";
     /**
      * - Set to PayPalConfiguration.ENVIRONMENT_PRODUCTION to move real money.
@@ -56,7 +55,7 @@ public class SampleActivity extends Activity {
 
     //你所注册的APP Id
     // note that these credentials will differ between live & sandbox environments.
-    private static final String CONFIG_CLIENT_ID = "credentials from developer.paypal.com";
+    private static final String CONFIG_CLIENT_ID = "ASskKGQjRAf-6jAdwn771epAcx7C_dDNBGH-SMtjbo9xAlbV-D7Ah695YLTdllnRCPklUZdjjH1mlTcW";
 
     private static final int REQUEST_CODE_PAYMENT = 1;
     private static final int REQUEST_CODE_FUTURE_PAYMENT = 2;
@@ -92,7 +91,7 @@ public class SampleActivity extends Activity {
          * See getStuffToBuy(..) for examples of some available payment options.
          */
 
-        Intent intent = new Intent(SampleActivity.this, PaymentActivity.class);
+        Intent intent = new Intent(PayPalActivity.this, PaymentActivity.class);
 
         // send the same configuration for restart resiliency
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
@@ -153,7 +152,7 @@ public class SampleActivity extends Activity {
     }
 
     public void onFuturePaymentPressed(View pressed) {
-        Intent intent = new Intent(SampleActivity.this, PayPalFuturePaymentActivity.class);
+        Intent intent = new Intent(PayPalActivity.this, PayPalFuturePaymentActivity.class);
 
         // send the same configuration for restart resiliency
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
@@ -162,7 +161,7 @@ public class SampleActivity extends Activity {
     }
 
     public void onProfileSharingPressed(View pressed) {
-        Intent intent = new Intent(SampleActivity.this, PayPalProfileSharingActivity.class);
+        Intent intent = new Intent(PayPalActivity.this, PayPalProfileSharingActivity.class);
 
         // send the same configuration for restart resiliency
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
