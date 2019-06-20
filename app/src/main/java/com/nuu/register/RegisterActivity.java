@@ -3,6 +3,7 @@ package com.nuu.register;
 import android.content.ContentValues;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,11 @@ import net.rimoto.intlphoneinput.IntlPhoneInput;
 
 
 public class RegisterActivity extends BaseActivity implements View.OnClickListener {
+    TextInputLayout til_display;
+    TextInputLayout til_email;
+    TextInputLayout til_password;
+    TextInputLayout til_retype;
+
 
     TextInputEditText et_display;
     TextInputEditText et_email;
@@ -48,10 +54,18 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         img_right.setVisibility(View.INVISIBLE);
 
 
+        til_display = findViewById(R.id.til_display);
         et_display = findViewById(R.id.et_display);
+
+        til_email = findViewById(R.id.til_email);
         et_email = findViewById(R.id.et_email);
+
         phoneInputView = findViewById(R.id.phone_input);
+
+        til_password = findViewById(R.id.til_password);
         et_password = findViewById(R.id.et_password);
+
+        til_retype = findViewById(R.id.til_retype);
         et_retype = findViewById(R.id.et_retype);
 
         Button btn_register = findViewById(R.id.btn_register);
@@ -75,13 +89,21 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         String username = et_display.getText().toString();
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(mContext, R.string.name_empty, Toast.LENGTH_SHORT).show();
+            til_display.setError(getString(R.string.name_empty));
+            til_display.setErrorEnabled(true);
             return;
+        } else {
+            til_display.setErrorEnabled(false);
         }
 
         String email = et_email.getText().toString();
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(mContext, R.string.email_empty, Toast.LENGTH_SHORT).show();
+            til_email.setError(getString(R.string.email_empty));
+            til_email.setErrorEnabled(true);
             return;
+        } else {
+            til_email.setErrorEnabled(false);
         }
 
         if (!phoneInputView.isValid()) {
@@ -96,18 +118,30 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         String password = et_password.getText().toString();
         if (TextUtils.isEmpty(password)) {
             Toast.makeText(mContext, R.string.password_empty, Toast.LENGTH_SHORT).show();
+            til_password.setError(getString(R.string.password_empty));
+            til_password.setErrorEnabled(true);
             return;
+        } else {
+            til_password.setErrorEnabled(false);
         }
 
         String retype = et_retype.getText().toString();
         if (TextUtils.isEmpty(retype)) {
             Toast.makeText(mContext, R.string.retype_empty, Toast.LENGTH_SHORT).show();
+            til_password.setError(getString(R.string.retype_empty));
+            til_retype.setErrorEnabled(true);
             return;
+        } else {
+            til_retype.setErrorEnabled(false);
         }
 
         if (!retype.equals(password)) {
             Toast.makeText(mContext, R.string.password_retype, Toast.LENGTH_SHORT).show();
+            til_password.setError(getString(R.string.password_retype));
+            til_retype.setErrorEnabled(true);
             return;
+        } else {
+            til_retype.setErrorEnabled(false);
         }
 
 
