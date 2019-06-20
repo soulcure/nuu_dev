@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -20,7 +21,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nuu.buy.PayPalActivity;
 import com.nuu.config.AppConfig;
 import com.nuu.entity.BuyPackageRsp;
 import com.nuu.http.IPostListener;
@@ -241,7 +241,7 @@ public class BuyPackageActivity extends BaseActivity implements View.OnClickList
     }
 
     private PayPalPayment getThingToBuy(String paymentIntent) {
-        return new PayPalPayment(new BigDecimal("0.01"), "USD", "sample item",
+        return new PayPalPayment(new BigDecimal("1.00"), "USD", "sample item",
                 paymentIntent);
     }
 
@@ -286,6 +286,15 @@ public class BuyPackageActivity extends BaseActivity implements View.OnClickList
                         String paymentId = confirm.getProofOfPayment().getPaymentId();
                         PayPalPayment payPalPayment = confirm.getPayment();
 
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                        builder.setTitle("支付成功");
+                        builder.setMessage(paymentId);
+                        builder.setPositiveButton("确定", null);
+                        builder.setNegativeButton("取消", null);
+                        builder.create().show();
+
+                        Log.i(TAG, "paymentId:" + paymentId);
+                        Log.i(TAG, "payPalPayment:" + payPalPayment.toString());
                         Log.i(TAG, confirm.toJSONObject().toString(4));
                         Log.i(TAG, confirm.getPayment().toJSONObject().toString(4));
                         /**

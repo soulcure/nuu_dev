@@ -8,11 +8,16 @@ import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
+import com.nuu.util.AppUtils;
 
 
 public class MiFiApplication extends MultiDexApplication {
 
     private static final String TAG = MiFiApplication.class.getSimpleName();
+
+    private String token;
+    private String uuid;
+    private long expTime;
 
     @Override
     public void onCreate() {
@@ -30,6 +35,7 @@ public class MiFiApplication extends MultiDexApplication {
                 Log.e(TAG, "初始化失败");
             }
         });
+        init();
     }
 
     /**
@@ -50,5 +56,46 @@ public class MiFiApplication extends MultiDexApplication {
 
     }
 
+
+    private void init() {
+        token = AppUtils.getStringSharedPreferences(this, "token", "");
+        uuid = AppUtils.getStringSharedPreferences(this, "uuid", "");
+        expTime = AppUtils.getLongSharedPreferences(this, "expTime", 0);
+
+        long curTime = System.currentTimeMillis() / 1000;
+        if (expTime < curTime) {
+            Log.d(TAG, "token is expired");
+            token = "";
+            uuid = "";
+            expTime = 0;
+        }
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        AppUtils.setStringSharedPreferences(this, "token", token);
+        this.token = token;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        AppUtils.setStringSharedPreferences(this, "uuid", uuid);
+        this.uuid = uuid;
+    }
+
+    public long getExpTime() {
+        return expTime;
+    }
+
+    public void setExpTime(long expTime) {
+        AppUtils.setLongSharedPreferences(this, "expTime", expTime);
+        this.expTime = expTime;
+    }
 }
 

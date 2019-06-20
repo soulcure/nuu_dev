@@ -1,57 +1,89 @@
 package com.nuu.entity;
 
 public class RegisterRsp {
+
+
     /**
-     * itf_name : device_customer_register_resp
-     * trans_serial : 1234cde
-     * err_code : 0
-     * err_desc : ok
-     * cust_id : 1
+     * code : 0
+     * msg : success
+     * data : {"uuid":"8010a6c1-14d8-4807-aff1-4684442444cb","username":"soulcure002","email":"colin001@qq.com","password":"123456"}
      */
 
-    private String itf_name;
-    private String trans_serial;
-    private int err_code;
-    private String err_desc;
-    private int cust_id;
+    private int code;
+    private String msg;
+    private DataBean data;
 
-    public String getItf_name() {
-        return itf_name;
+    public int getCode() {
+        return code;
     }
 
-    public void setItf_name(String itf_name) {
-        this.itf_name = itf_name;
+    public void setCode(int code) {
+        this.code = code;
     }
 
-    public String getTrans_serial() {
-        return trans_serial;
+    public boolean isSuccess() {
+        return code == 0;
     }
 
-    public void setTrans_serial(String trans_serial) {
-        this.trans_serial = trans_serial;
+    public String getMsg() {
+        return msg;
     }
 
-    public int getErr_code() {
-        return err_code;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
-    public void setErr_code(int err_code) {
-        this.err_code = err_code;
+    public DataBean getData() {
+        return data;
     }
 
-    public String getErr_desc() {
-        return err_desc;
+    public void setData(DataBean data) {
+        this.data = data;
     }
 
-    public void setErr_desc(String err_desc) {
-        this.err_desc = err_desc;
-    }
+    public static class DataBean {
+        /**
+         * uuid : 8010a6c1-14d8-4807-aff1-4684442444cb
+         * username : soulcure002
+         * email : colin001@qq.com
+         * password : 123456
+         */
 
-    public int getCust_id() {
-        return cust_id;
-    }
+        private String uuid;
+        private String username;
+        private String email;
+        private String password;
 
-    public void setCust_id(int cust_id) {
-        this.cust_id = cust_id;
+        public String getUuid() {
+            return uuid;
+        }
+
+        public void setUuid(String uuid) {
+            this.uuid = uuid;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
     }
 }

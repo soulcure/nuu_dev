@@ -3,11 +3,13 @@ package com.nuu.buy;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nuu.nuuinfo.BaseActivity;
 import com.nuu.nuuinfo.R;
 import com.paypal.android.sdk.payments.PayPalAuthorization;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
@@ -38,7 +40,7 @@ import java.util.Set;
  * For sample mobile backend interactions, see
  * https://github.com/paypal/rest-api-sdk-python/tree/master/samples/mobile_backend
  */
-public class PayPalActivity extends Activity {
+public class PayPalActivity extends BaseActivity {
     private static final String TAG = "paymentExample";
     /**
      * - Set to PayPalConfiguration.ENVIRONMENT_PRODUCTION to move real money.
@@ -198,6 +200,12 @@ public class PayPalActivity extends Activity {
                 if (confirm != null) {
                     try {
                         String paymentId = confirm.getProofOfPayment().getPaymentId();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                        builder.setTitle("支付成功");
+                        builder.setMessage(paymentId);
+                        builder.create().show();
+
                         PayPalPayment payPalPayment = confirm.getPayment();
 
                         Log.i(TAG, confirm.toJSONObject().toString(4));

@@ -136,11 +136,11 @@ public class ForgetActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void httpReqResult(String response) {
                 RegisterRsp rsp = GsonUtil.parse(response, RegisterRsp.class);
-                if (rsp != null && rsp.getErr_code() == 0) {
+                if (rsp != null && rsp.isSuccess()) {
                     Toast.makeText(mContext, R.string.success, Toast.LENGTH_SHORT).show();
                     finish();
-                } else if (rsp != null && !TextUtils.isEmpty(rsp.getErr_desc())) {
-                    Toast.makeText(mContext, rsp.getErr_desc(), Toast.LENGTH_SHORT).show();
+                } else if (rsp != null && !TextUtils.isEmpty(rsp.getMsg())) {
+                    Toast.makeText(mContext, rsp.getMsg(), Toast.LENGTH_SHORT).show();
                 }
             }
         });

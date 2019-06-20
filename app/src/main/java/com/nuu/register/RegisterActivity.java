@@ -10,13 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nuu.config.AppConfig;
+import com.nuu.entity.LoginRsp;
 import com.nuu.entity.RegisterRsp;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.nuuinfo.BaseActivity;
 import com.nuu.nuuinfo.R;
-import com.nuu.util.DeviceInfo;
 import com.nuu.util.GsonUtil;
 
 import net.rimoto.intlphoneinput.IntlPhoneInput;
@@ -73,8 +72,8 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
 
     private void checkInput() {
-        String name = et_display.getText().toString();
-        if (TextUtils.isEmpty(name)) {
+        String username = et_display.getText().toString();
+        if (TextUtils.isEmpty(username)) {
             Toast.makeText(mContext, R.string.name_empty, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -89,6 +88,9 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             Toast.makeText(mContext, R.string.mobile_invalid, Toast.LENGTH_SHORT).show();
             return;
         }
+
+        String mobile = phoneInputView.getText();
+        String iso = phoneInputView.getSelectedCountry().getIso();
 
 
         String password = et_password.getText().toString();
@@ -107,42 +109,66 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             Toast.makeText(mContext, R.string.password_retype, Toast.LENGTH_SHORT).show();
             return;
         }
-        String mobile = phoneInputView.getText();
-        String country = phoneInputView.getSelectedCountry().getName();
 
-        reqRegister(name, email, country, mobile);
+
+        reqRegister(username, email, mobile, iso, password);
     }
 
-    private void reqRegister(String name, String email, String country, String mobile) {
-        String url = AppConfig.getHost();
+    private void reqRegister(final String username, String email, String mobile,
+                             String iso, final String password) {
+        String url = "http://119.23.74.49:8899/register";
 
         ContentValues params = new ContentValues();
-        params.put("itf_name", "device_customer_register");  //API name
-        params.put("trans_serial", "1234cde");  //API name
-        params.put("login", "tuser");
-        params.put("auth_code", "abcd456");
-        params.put("device_sn", DeviceInfo.getDeviceSN());
+        params.put("username", username);
         params.put("email", email);
-        params.put("name", name);
-        //params.put("sex", 1);
-        //params.put("age", "30-35");
-        params.put("nationality", country);
-        params.put("mobile_nbr", mobile);
-        //params.put("im_type", "WeChat");
-        //params.put("im", "kenny@nuumobile");
+        params.put("mobile", mobile);
+        params.put("iso", iso);
+        params.put("password", password);
 
         OkHttpConnector.httpPost(url, params, new IPostListener() {
             @Override
             public void httpReqResult(String response) {
                 RegisterRsp rsp = GsonUtil.parse(response, RegisterRsp.class);
-                if (rsp != null && rsp.getErr_code() == 0) {
-                    Toast.makeText(mContext, R.string.success, Toast.LENGTH_SHORT).show();
-                    finish();
-                } else if (rsp != null && !TextUtils.isEmpty(rsp.getErr_desc())) {
-                    Toast.makeText(mContext, rsp.getErr_desc(), Toast.LENGTH_SHORT).show();
+                if (rsp != null && rsp.isSuccess()) {
+                    Toast.makeText(mContext, rsp.getMsg(), Toast.LENGTH_SHORT).show();
+                    reqLogin(username, password);
+                } else if (rsp != null && !TextUtils.isEmpty(rsp.getMsg())) {
+                    Toast.makeText(mContext, rsp.getMsg(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+
     }
+
+    private void reqLogin(String username, String password) {
+        String url = "http://119.23.74.49:8899/login";
+
+        ContentValues params = new ContentValues();
+        params.put("username", username);
+        params.put("password", password);
+
+        OkHttpConnector.httpPost(url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                LoginRsp rsp = GsonUtil.parse(response, LoginRsp.class);
+                if (rsp != null && rsp.isSuccess()) {
+                    String token = rsp.getData().getToken();
+                    String uuid = rsp.getData().getUuid();
+                    long expired = rsp.getData().getExpired();
+                    app.setToken(token);
+                    app.setUuid(uuid);
+                    app.setExpTime(expired);
+
+                    finish();
+                } else if (rsp != null && !TextUtils.isEmpty(rsp.getMsg())) {
+                    Toast.makeText(mContext, rsp.getMsg(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+    }
+
+
 }
