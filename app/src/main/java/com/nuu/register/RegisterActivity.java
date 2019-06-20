@@ -17,6 +17,7 @@ import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.nuuinfo.BaseActivity;
 import com.nuu.nuuinfo.R;
+import com.nuu.util.AppUtils;
 import com.nuu.util.GsonUtil;
 
 import net.rimoto.intlphoneinput.IntlPhoneInput;
@@ -100,6 +101,14 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(mContext, R.string.email_empty, Toast.LENGTH_SHORT).show();
             til_email.setError(getString(R.string.email_empty));
+            til_email.setErrorEnabled(true);
+            return;
+        } else {
+            til_email.setErrorEnabled(false);
+        }
+
+        if (!AppUtils.isEmail(email)) {
+            til_email.setError(getString(R.string.email_error));
             til_email.setErrorEnabled(true);
             return;
         } else {
