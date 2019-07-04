@@ -7,11 +7,15 @@ import android.util.Log;
 
 import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
+import com.nuu.db.bean.Devices;
 import com.nuu.db.dao.DaoMaster;
 import com.nuu.db.dao.DaoSession;
+import com.nuu.entity.ReportData;
+import com.nuu.http.IGetListener;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.util.AppUtils;
+import com.nuu.util.GsonUtil;
 
 
 public class MiFiApplication extends MultiDexApplication {
@@ -21,7 +25,15 @@ public class MiFiApplication extends MultiDexApplication {
     private String token;
     private String uuid;
     private long expTime;
+
     private DaoSession daoSession;
+    private ReportData deviceInfo;
+
+    private DeviceInfo callback;
+
+    public interface DeviceInfo {
+        void onSuccess(ReportData info);
+    }
 
     @Override
     public void onCreate() {
@@ -39,7 +51,9 @@ public class MiFiApplication extends MultiDexApplication {
                 Log.e(TAG, "初始化失败");
             }
         });
-        init();
+
+        initToken();
+        initGreenDao();
     }
 
     /**
@@ -76,7 +90,30 @@ public class MiFiApplication extends MultiDexApplication {
     }
 
 
-    private void init() {
+    public void reqDeviceInfo(final DeviceInfo listener) {
+        if (AppUtils.isWifi(this)) {
+            String url = AppConfig.DEVICE_INFO;
+            OkHttpConnector.httpGet(url, new IGetListener() {
+                @Override
+                public void httpReqResult(String response) {
+                    ReportData data = GsonUtil.parse(response, ReportData.class);
+                    if (data != null) {
+                        deviceInfo = data;
+                        if (listener != null) {
+                            listener.onSuccess(data);
+                        }
+
+                        Devices item = new Devices();
+                        item.setDeviceId(data.getDeviceId());
+                        item.setDeviceSN(data.getDeviceSN());
+                        daoSession.getDevicesDao().insert(item);
+                    }
+                }
+            });
+        }
+    }
+
+    private void initToken() {
         token = AppUtils.getStringSharedPreferences(this, "token", "");
         uuid = AppUtils.getStringSharedPreferences(this, "uuid", "");
         expTime = AppUtils.getLongSharedPreferences(this, "expTime", 0);
