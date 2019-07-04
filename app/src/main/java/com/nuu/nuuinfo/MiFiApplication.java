@@ -1,11 +1,14 @@
 package com.nuu.nuuinfo;
 
 import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.nuu.MiFiManager;
 import com.nuu.config.AppConfig;
+import com.nuu.db.dao.DaoMaster;
+import com.nuu.db.dao.DaoSession;
 import com.nuu.http.IPostListener;
 import com.nuu.http.OkHttpConnector;
 import com.nuu.util.AppUtils;
@@ -18,6 +21,7 @@ public class MiFiApplication extends MultiDexApplication {
     private String token;
     private String uuid;
     private long expTime;
+    private DaoSession daoSession;
 
     @Override
     public void onCreate() {
@@ -36,6 +40,21 @@ public class MiFiApplication extends MultiDexApplication {
             }
         });
         init();
+    }
+
+    /**
+     * 初始化GreenDao,直接在Application中进行初始化操作
+     */
+    private void initGreenDao() {
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "nuu.db");
+        SQLiteDatabase db = helper.getWritableDatabase();
+        DaoMaster daoMaster = new DaoMaster(db);
+        daoSession = daoMaster.newSession();
+    }
+
+
+    public DaoSession getDaoSession() {
+        return daoSession;
     }
 
     /**

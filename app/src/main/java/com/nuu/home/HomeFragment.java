@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,7 +112,8 @@ public class HomeFragment extends BasePermissionFragment implements View.OnClick
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.img_refresh) {
-            reqData();
+            //reqData();
+            test();
         }
 
     }
@@ -188,15 +190,10 @@ public class HomeFragment extends BasePermissionFragment implements View.OnClick
 
 
     private void reqDetailToday() {
-        String url = AppConfig.getHost();
+        String url = AppConfig.getHost() + "/detail";
 
         ContentValues params = new ContentValues();
-        params.put("itf_name", "query_device_package_info");  //API name
-        params.put("trans_serial", "1234cde");  //API name
-        params.put("login", "tuser");
-        params.put("auth_code", "abcd456");
         params.put("device_sn", "354243074362656");
-
 
         OkHttpConnector.httpPost(url, params, new IPostListener() {
             @Override
@@ -221,6 +218,29 @@ public class HomeFragment extends BasePermissionFragment implements View.OnClick
                 }
             }
         });
+
+    }
+
+
+    private void test() {
+        String url = "http://localhost:8899/update";
+        ContentValues header = new ContentValues();
+        header.put("Authorization", "Bearer " + "A21AAGiOzoFgVch66n5EjBXoc2DlkgSFY4VlBFkJWM44RQXXHz3AdogXB786O_b6LyxWxNk5-P1Hjdmv3Jnqr2m7jbS1iJIig");
+
+        ContentValues params = new ContentValues();
+        params.put("username", "yao");
+        params.put("email", "yao851123@sina.com");
+        params.put("mobile", "18664923439");
+        params.put("iso", "CN");
+        params.put("password", "666666");
+
+        OkHttpConnector.httpPost(header, url, params, new IPostListener() {
+            @Override
+            public void httpReqResult(String response) {
+                Log.d(TAG, response);
+            }
+        });
+
 
     }
 

@@ -15,9 +15,9 @@ public class AppConfig {
     public static final String SHARED_PREFERENCES = "sdk_app";
 
 
-    //private static final String HOST = "http://119.23.74.49:80/";//开发服务器
-    private static final String HOST = "http://47.91.250.107:80/";//测试服务器
-
+    //private static final String HOST = "http://119.23.74.49:80";//开发服务器
+    //private static final String HOST = "http://47.91.250.107:80";//测试服务器
+    private static final String HOST = "http://192.168.43.168:8899";//测试服务器
 
     public static final String DEVICE_INFO = "http://192.168.43.1:8088/info";//获取设备状态信息
 
@@ -31,7 +31,7 @@ public class AppConfig {
 
 
     public static String getHost() {
-        return HOST + "api/public_intf";
+        return HOST;
     }
 
     public static String getRouterHost() {
@@ -68,7 +68,7 @@ public class AppConfig {
 
     public static int getSendReportRate() {//默认10分钟上报一次
         if (BuildConfig.DEBUG) {
-            return 20;
+            return 10 * 60;
         }
         return 10 * 60;
     }
@@ -82,7 +82,7 @@ public class AppConfig {
 
     public static int getObtainReportRate() {//默认2分钟
         if (BuildConfig.DEBUG) {
-            return 10;
+            return 2 * 60;
         }
         return 2 * 60;
     }

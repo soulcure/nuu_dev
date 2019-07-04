@@ -1,4 +1,13 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao' // apply plugin
+
+
+greendao {
+    schemaVersion 1
+    daoPackage 'com.nuu.db.dao'
+    targetGenDir 'src/main/java'
+}
+
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION as int
@@ -78,6 +87,7 @@ dependencies {
     implementation('com.paypal.sdk:paypal-android-sdk:2.16.0')
     implementation 'net.rimoto:intlphoneinput:1.0.1'
     implementation 'pub.devrel:easypermissions:0.4.0' //easy permissions
+    implementation 'org.greenrobot:greendao:3.2.2'
 }
 
 project.afterEvaluate {
